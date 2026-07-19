@@ -1,29 +1,28 @@
 import { Request, Response } from "express";
 import { AuthService } from "./auth.service";
-import { successResponse } from "../../common/responses/apiResponse";
-import { asyncHandler } from "../../common/utils/asyncHandler";
-
 
 const authService = new AuthService();
 
+export class AuthController {
+  async register(req: Request, res: Response) {
+    const user = await authService.register(req.body);
 
-export const register = asyncHandler(
-async (
-req:Request,
-res:Response
-)=>{
+    return res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      data: user,
+    });
+  }
 
+  async login(req: Request, res: Response) {
+    const result = await authService.login(req.body);
 
-const user =
-await authService.register(req.body);
+    return res.status(200).json({
+      success: true,
+      message: "Login successful",
+      data: result,
+    });
+  }
+}
 
-
-return res.status(201).json(
-successResponse(
-"User registered successfully",
-user
-)
-);
-
-
-});
+export const authController = new AuthController();
