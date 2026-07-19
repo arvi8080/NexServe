@@ -5,6 +5,7 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../../common/utils/jwt";
+import { verifyRefreshToken } from "../../common/utils/jwt";
 
 export class AuthService {
   private authRepository = new AuthRepository();
@@ -80,4 +81,40 @@ export class AuthService {
       refreshToken,
     };
   }
+
+  async logout(refreshToken: string) {
+  const session =
+    await this.authRepository.findSessionByRefreshToken(refreshToken);
+
+  if (!session) {
+    throw new AppError("Session not found", 404);
+  }
+
+  await this.authRepository.deleteSession(refreshToken);
+
+  return {
+    message: "Logged out successfully",
+  };
+}
+
+async refresh(refreshToken: string) {
+  const payload = verifyRefreshToken(refreshToken);
+
+  const session =
+    await this.authRepository.findSessionByRefreshToken(refreshToken);
+
+  if (!session) {
+    throw new AppError("Invalid refresh token", 401);
+  }
+
+  const accessToken = generateAccessToken({
+    id: payload.id,
+    email: payload.email,
+    role: payload.role,
+  });
+
+  return {
+    accessToken,
+  };
+}
 }

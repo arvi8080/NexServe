@@ -36,4 +36,19 @@ export class AuthRepository {
       },
     });
   }
+  async findSessionByRefreshToken(refreshToken: string) {
+  return prisma.session.findUnique({
+    where: {
+      refreshToken,
+    },
+  });
+}
+
+async deleteSession(refreshToken: string) {
+  return prisma.session.delete({
+    where: {
+      refreshToken,
+    },
+  });
+}
 }

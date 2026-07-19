@@ -23,6 +23,31 @@ export class AuthController {
       data: result,
     });
   }
+
+  async logout(req: Request, res: Response) {
+  const { refreshToken } = req.body;
+
+  const result = await authService.logout(refreshToken);
+
+  return res.status(200).json({
+    success: true,
+    ...result,
+  });
 }
+
+async refresh(req: Request, res: Response) {
+  const { refreshToken } = req.body;
+
+  const result = await authService.refresh(refreshToken);
+
+  return res.status(200).json({
+    success: true,
+    data: result,
+  });
+}
+
+}
+
+
 
 export const authController = new AuthController();
