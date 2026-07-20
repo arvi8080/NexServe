@@ -106,6 +106,25 @@ async delete(
 
 }
 
+
+async search(
+  req: Request,
+  res: Response
+) {
+
+  const services =
+    await serviceService.searchServices(
+      req.query
+    );
+
+
+  return res.status(200).json({
+    success: true,
+    data: services,
+  });
+
+}
+
 }
 
 export const serviceController =

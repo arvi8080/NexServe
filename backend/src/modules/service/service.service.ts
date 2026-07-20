@@ -141,4 +141,18 @@ export class ServiceService {
 
   return;
 }
+
+
+async searchServices(filters: {
+  search?: string;
+  category?: string;
+  city?: string;
+  minPrice?: number;
+  maxPrice?: number;
+}) {
+
+  return this.repository.searchServices(filters);
+
+}
+
 }

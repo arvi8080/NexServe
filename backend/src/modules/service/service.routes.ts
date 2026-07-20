@@ -28,6 +28,11 @@ router.get(
 );
 
 router.get(
+  "/search",
+  serviceController.search
+);
+
+router.get(
   "/:id",
   serviceController.getService
 );

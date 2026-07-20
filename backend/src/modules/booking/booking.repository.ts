@@ -1,0 +1,121 @@
+import prisma from "../../config/prisma";
+
+export class BookingRepository {
+
+  async findServiceById(id: string) {
+    return prisma.service.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        vendor: true,
+      },
+    });
+  }
+
+  async createBooking(data: {
+    customerId: string;
+    vendorId: string;
+    serviceId: string;
+    bookingDate: Date;
+    address: string;
+    notes?: string;
+    totalAmount: number;
+  }) {
+    return prisma.booking.create({
+      data,
+    });
+  }
+
+
+  async getCustomerBookings(customerId: string) {
+  return prisma.booking.findMany({
+    where: {
+      customerId,
+    },
+    include: {
+      service: true,
+      vendor: {
+        select: {
+          id: true,
+          businessName: true,
+          city: true,
+          state: true,
+          phone: true,
+        },
+      },
+    },
+    orderBy: {
+      bookingDate: "desc",
+    },
+  });
+}
+
+
+
+async getVendorBookings(vendorId: string) {
+  return prisma.booking.findMany({
+    where: {
+      vendorId,
+    },
+    include: {
+      customer: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          phone: true,
+        },
+      },
+      service: {
+        select: {
+          id: true,
+          title: true,
+          category: true,
+          price: true,
+          duration: true,
+        },
+      },
+    },
+    orderBy: {
+      bookingDate: "desc",
+    },
+  });
+}
+
+
+async findVendorByUserId(userId: string) {
+  return prisma.vendor.findUnique({
+    where: {
+      userId,
+    },
+  });
+}
+
+async getBookingById(id: string) {
+  return prisma.booking.findUnique({
+    where: {
+      id,
+    },
+  });
+}
+
+async updateBookingStatus(
+  id: string,
+  status: any
+) {
+  return prisma.booking.update({
+    where: {
+      id,
+    },
+    data: {
+      status,
+    },
+  });
+}
+
+
+
+
+}

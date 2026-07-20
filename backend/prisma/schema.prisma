@@ -57,7 +57,10 @@ model User {
   vendor Vendor?
 
   customerBookings Booking[] @relation("CustomerBookings")
-  sessions         Session[]
+
+  reviews Review[] @relation("CustomerReviews")
+
+  sessions Session[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -90,6 +93,7 @@ model Vendor {
   country String
 
   profileImage String?
+ 
 
   status VendorStatus @default(PENDING)
 
@@ -100,6 +104,10 @@ model Vendor {
 
   services Service[]
   bookings Booking[]
+  reviews  Review[]  @relation("VendorReviews")
+  availability Availability[]
+
+  location ProfessionalLocation?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -139,6 +147,7 @@ model Booking {
   bookingDate DateTime
   address     String
   notes       String?
+  review      Review?
 
   totalAmount Float
 
@@ -152,4 +161,61 @@ model Booking {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Review {
+  id String @id @default(cuid())
+
+  bookingId  String @unique
+  customerId String
+  vendorId   String
+
+  rating  Int
+  comment String?
+
+  createdAt DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  customer User @relation(name: "CustomerReviews", fields: [customerId], references: [id])
+
+  vendor Vendor @relation(name: "VendorReviews", fields: [vendorId], references: [id])
+}
+
+
+
+model ProfessionalLocation {
+
+  id String @id @default(cuid())
+
+  vendorId String @unique
+
+  latitude Float
+  longitude Float
+
+  isOnline Boolean @default(false)
+
+  lastUpdated DateTime @updatedAt
+
+
+  vendor Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+}
+
+
+model Availability {
+
+ id String @id @default(cuid())
+
+ vendorId String
+
+ dayOfWeek Int
+
+ startTime String
+
+ endTime String
+
+
+ vendor Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
 }
