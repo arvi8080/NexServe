@@ -29,27 +29,39 @@ export class BookingService {
 
 
     if (!service) {
-      throw new AppError(
-        "Service not found",
-        404
-      );
-    }
+  throw new AppError(
+    "Service not found",
+    404
+  );
+}
 
+if (!service.isActive) {
+  throw new AppError(
+    "Service is inactive",
+    400
+  );
+}
 
-    if (!service.isActive) {
-      throw new AppError(
-        "Service is inactive",
-        400
-      );
-    }
+if (service.vendor.status !== "APPROVED") {
+  throw new AppError(
+    "Vendor is not approved",
+    400
+  );
+}
 
+if (!service.vendor.location) {
+  throw new AppError(
+    "Professional location not found",
+    400
+  );
+}
 
-    if (service.vendor.status !== "APPROVED") {
-      throw new AppError(
-        "Vendor is not approved",
-        400
-      );
-    }
+if (service.vendor.location.status !== "ONLINE") {
+  throw new AppError(
+    "Professional is currently unavailable",
+    400
+  );
+}
 
 
     const booking =
@@ -126,134 +138,76 @@ export class BookingService {
 
 
   async updateBookingStatus(
-    userId: string,
-    bookingId: string,
-    status: any
-  ) {
+  userId: string,
+  bookingId: string,
+  status: any
+) {
 
-
-    const vendor =
-      await this.repository.findVendorByUserId(
-        userId
-      );
-
-
-    if (!vendor) {
-      throw new AppError(
-        "Vendor not found",
-        404
-      );
-    }
-
-
-    const booking =
-      await this.repository.getBookingById(
-        bookingId
-      );
-
-
-    if (!booking) {
-      throw new AppError(
-        "Booking not found",
-        404
-      );
-    }
-
-
-    if (booking.vendorId !== vendor.id) {
-
-      throw new AppError(
-        "Unauthorized",
-        403
-      );
-
-    }
-
-
-    const updatedBooking =
- await this.repository.updateBookingStatus(
-   bookingId,
-   status
- );
-
-
-sendBookingStatusUpdate(
- booking.customerId,
- updatedBooking
-);
-
-
-return updatedBooking;
-
-  }
-
-
-
-
-  async cancelBooking(
-    userId: string,
-    bookingId: string
-  ) {
-
-
-    const booking =
-      await this.repository.getBookingById(
-        bookingId
-      );
-
-
-    if (!booking) {
-
-      throw new AppError(
-        "Booking not found",
-        404
-      );
-
-    }
-
-
-    if (booking.customerId !== userId) {
-
-      throw new AppError(
-        "Unauthorized",
-        403
-      );
-
-    }
-
-
-
-    if (
-      booking.status === "ONGOING" ||
-      booking.status === "COMPLETED"
-    ) {
-
-      throw new AppError(
-        "Booking cannot be cancelled",
-        400
-      );
-
-    }
-
-
-
-    if (booking.status === "CANCELLED") {
-
-      throw new AppError(
-        "Booking already cancelled",
-        400
-      );
-
-    }
-
-
-
-    return this.repository.updateBookingStatus(
-      bookingId,
-      "CANCELLED"
+  const vendor =
+    await this.repository.findVendorByUserId(
+      userId
     );
 
+  if (!vendor) {
+    throw new AppError(
+      "Vendor not found",
+      404
+    );
   }
+
+  const booking =
+    await this.repository.getBookingById(
+      bookingId
+    );
+
+  if (!booking) {
+    throw new AppError(
+      "Booking not found",
+      404
+    );
+  }
+
+  if (booking.vendorId !== vendor.id) {
+    throw new AppError(
+      "Unauthorized",
+      403
+    );
+  }
+
+  // Update booking status
+  const updatedBooking =
+    await this.repository.updateBookingStatus(
+      bookingId,
+      status
+    );
+
+  // Update professional availability
+  if (status === "ACCEPTED") {
+    await this.repository.updateProfessionalStatus(
+      vendor.id,
+      "BUSY"
+    );
+  }
+
+  if (
+    status === "COMPLETED" ||
+    status === "CANCELLED"
+  ) {
+    await this.repository.updateProfessionalStatus(
+      vendor.id,
+      "ONLINE"
+    );
+  }
+
+  // Notify customer
+  sendBookingStatusUpdate(
+    booking.customerId,
+    updatedBooking
+  );
+
+  return updatedBooking;
+
+}
 
 
 }

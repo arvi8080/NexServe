@@ -3,15 +3,19 @@ import prisma from "../../config/prisma";
 export class BookingRepository {
 
   async findServiceById(id: string) {
-    return prisma.service.findUnique({
-      where: {
-        id,
+  return prisma.service.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      vendor: {
+        include: {
+          location: true,
+        },
       },
-      include: {
-        vendor: true,
-      },
-    });
-  }
+    },
+  });
+}
 
   async createBooking(data: {
     customerId: string;
@@ -108,6 +112,20 @@ async updateBookingStatus(
   return prisma.booking.update({
     where: {
       id,
+    },
+    data: {
+      status,
+    },
+  });
+}
+
+async updateProfessionalStatus(
+  vendorId: string,
+  status: "ONLINE" | "BUSY" | "OFFLINE"
+) {
+  return prisma.professionalLocation.update({
+    where: {
+      vendorId,
     },
     data: {
       status,

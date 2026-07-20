@@ -42,6 +42,12 @@ enum BookingStatus {
   CANCELLED
 }
 
+enum AvailabilityStatus {
+  OFFLINE
+  ONLINE
+  BUSY
+}
+
 model User {
   id String @id @default(cuid())
 
@@ -93,7 +99,6 @@ model Vendor {
   country String
 
   profileImage String?
- 
 
   status VendorStatus @default(PENDING)
 
@@ -102,9 +107,9 @@ model Vendor {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  services Service[]
-  bookings Booking[]
-  reviews  Review[]  @relation("VendorReviews")
+  services     Service[]
+  bookings     Booking[]
+  reviews      Review[]       @relation("VendorReviews")
   availability Availability[]
 
   location ProfessionalLocation?
@@ -148,6 +153,7 @@ model Booking {
   address     String
   notes       String?
   review      Review?
+  assignedAt  DateTime?
 
   totalAmount Float
 
@@ -182,40 +188,33 @@ model Review {
   vendor Vendor @relation(name: "VendorReviews", fields: [vendorId], references: [id])
 }
 
-
-
 model ProfessionalLocation {
-
   id String @id @default(cuid())
 
   vendorId String @unique
 
-  latitude Float
+  latitude  Float
   longitude Float
 
-  isOnline Boolean @default(false)
+  status AvailabilityStatus @default(OFFLINE)
 
   lastUpdated DateTime @updatedAt
 
-
   vendor Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-
 }
 
-
 model Availability {
+  id String @id @default(cuid())
 
- id String @id @default(cuid())
+  vendorId String
 
- vendorId String
+  dayOfWeek Int
 
- dayOfWeek Int
+  startTime String
 
- startTime String
+  endTime String
 
- endTime String
+  isAvailable Boolean @default(true)
 
-
- vendor Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-
+  vendor Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
 }
