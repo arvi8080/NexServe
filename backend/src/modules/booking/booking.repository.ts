@@ -102,6 +102,14 @@ async getBookingById(id: string) {
     where: {
       id,
     },
+    include: {
+      service: true,
+      vendor: {
+        select: {
+          userId: true,
+        },
+      },
+    },
   });
 }
 
@@ -133,7 +141,82 @@ async updateProfessionalStatus(
   });
 }
 
+async hasBookingConflict(
+  vendorId: string,
+  bookingDate: Date
+) {
 
+  return prisma.booking.findFirst({
+
+    where:{
+
+      vendorId,
+
+      bookingDate,
+
+      status:{
+        in:[
+          "PENDING",
+          "ACCEPTED",
+          "ONGOING"
+        ]
+      }
+
+    }
+
+  });
+
+}
+
+
+async getVendorActiveBookings(
+  vendorId: string
+) {
+
+  return prisma.booking.findMany({
+
+    where: {
+
+      vendorId,
+
+      status: {
+        in: [
+          "PENDING",
+          "ACCEPTED",
+          "ONGOING"
+        ]
+      }
+
+    },
+
+    include: {
+      service: true
+    }
+
+  });
+
+}
+
+
+
+async rescheduleBooking(
+  bookingId: string,
+  bookingDate: Date
+) {
+
+  return prisma.booking.update({
+
+    where: {
+      id: bookingId
+    },
+
+    data: {
+      bookingDate
+    }
+
+  });
+
+}
 
 
 }

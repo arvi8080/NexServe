@@ -58,6 +58,11 @@ model User {
   phone    String? @unique
   password String
 
+  profileImage String?
+  isEmailVerified Boolean @default(false)
+  isPhoneVerified Boolean @default(false)
+  lastLogin DateTime?
+
   role Role @default(CUSTOMER)
 
   vendor Vendor?
@@ -66,7 +71,10 @@ model User {
 
   reviews Review[] @relation("CustomerReviews")
 
+  sentMessages ChatMessage[]
+
   sessions Session[]
+  notifications Notification[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -82,6 +90,30 @@ model Session {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
+}
+
+enum NotificationType {
+  INFO
+  WARNING
+  SUCCESS
+  ERROR
+  BOOKING
+  REVIEW
+}
+
+model Notification {
+  id String @id @default(cuid())
+
+  userId String
+  title  String
+  message String
+  type NotificationType
+  isRead Boolean @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Vendor {
@@ -109,6 +141,7 @@ model Vendor {
 
   services     Service[]
   bookings     Booking[]
+  assignments  Assignment[]
   reviews      Review[]       @relation("VendorReviews")
   availability Availability[]
 
@@ -154,6 +187,7 @@ model Booking {
   notes       String?
   review      Review?
   assignedAt  DateTime?
+  payment Payment?
 
   totalAmount Float
 
@@ -163,7 +197,12 @@ model Booking {
 
   vendor Vendor @relation(fields: [vendorId], references: [id])
 
+  assignments Assignment[]
+
   service Service @relation(fields: [serviceId], references: [id])
+
+  chatMessages ChatMessage[]
+  invoice Invoice?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -217,4 +256,101 @@ model Availability {
   isAvailable Boolean @default(true)
 
   vendor Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+}
+
+
+enum AssignmentStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+model Assignment {
+
+  id String @id @default(cuid())
+
+  bookingId String
+
+  vendorId String
+
+  status AssignmentStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+
+  vendor Vendor @relation(fields: [vendorId], references: [id])
+}
+
+
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+model Payment {
+
+  id String @id @default(cuid())
+
+  bookingId String @unique
+
+  razorpayOrderId String?
+
+  razorpayPaymentId String?
+
+  razorpaySignature String?
+
+  amount Float
+
+  status PaymentStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model ChatMessage {
+
+  id String @id @default(cuid())
+
+  bookingId String
+
+  senderId String
+
+  content String
+
+  createdAt DateTime @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  sender User @relation(fields: [senderId], references: [id], onDelete: Cascade)
+}
+
+model Invoice {
+
+  id String @id @default(cuid())
+
+  bookingId String @unique
+
+  invoiceNumber String @unique
+
+  issueDate DateTime @default(now())
+
+  dueDate DateTime
+
+  subtotal Float
+
+  tax Float
+
+  total Float
+
+  status String @default("UNPAID")
+
+  details String?
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 }

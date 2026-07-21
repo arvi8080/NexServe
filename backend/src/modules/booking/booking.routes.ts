@@ -5,6 +5,7 @@ import { bookingController } from "./booking.controller";
 import {
   createBookingSchema,
   updateBookingStatusSchema,
+  rescheduleBookingSchema,
 } from "./booking.validation";
 
 const router = Router();
@@ -45,6 +46,14 @@ router.patch(
     "/:id/cancel",
     authenticate,
     bookingController.cancelBooking
+);
+
+
+router.patch(
+  "/:id/reschedule",
+  authenticate,
+  validate(rescheduleBookingSchema),
+  bookingController.reschedule
 );
 
 // Get Booking By Id (Later)

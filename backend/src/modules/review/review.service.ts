@@ -1,10 +1,15 @@
+import { NotificationType } from "@prisma/client";
 import { AppError } from "../../common/errors/AppError";
 import { ReviewRepository } from "./review.repository";
+import { NotificationService } from "../notification/notification.service";
 
 export class ReviewService {
 
   private repository =
     new ReviewRepository();
+
+  private notificationService =
+    new NotificationService();
 
   async createReview(
     userId: string,
@@ -77,6 +82,13 @@ export class ReviewService {
       stats._avg.rating ?? 0,
       stats._count.rating
     );
+
+    await this.notificationService.createNotification({
+      userId: booking.vendor.userId,
+      title: "New Review",
+      message: "You received a new review.",
+      type: NotificationType.REVIEW,
+    });
 
     return review;
   }

@@ -1,3 +1,4 @@
+import { AvailabilityStatus } from "@prisma/client";
 import prisma from "../../config/prisma";
 
 
@@ -21,11 +22,15 @@ where:{
 
 create:{
  vendorId,
- ...data
+ latitude: data.latitude,
+ longitude: data.longitude,
+ status: data.isOnline ? AvailabilityStatus.ONLINE : AvailabilityStatus.OFFLINE
 },
 
 update:{
- ...data
+ latitude: data.latitude,
+ longitude: data.longitude,
+ status: data.isOnline ? AvailabilityStatus.ONLINE : AvailabilityStatus.OFFLINE
 }
 
 });
@@ -43,7 +48,7 @@ const professionals =
 await prisma.professionalLocation.findMany({
 
 where:{
- isOnline:true
+ status: AvailabilityStatus.ONLINE
 },
 
 include:{

@@ -18,3 +18,7 @@ export const updateBookingStatusSchema = z.object({
     "CANCELLED",
   ]),
 });
+
+export const rescheduleBookingSchema = z.object({
+  bookingDate: z.string().datetime()
+});

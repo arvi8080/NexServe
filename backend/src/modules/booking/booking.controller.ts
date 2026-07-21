@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { BookingService } from "./booking.service";
 
+
 const bookingService = new BookingService();
 
 export class BookingController {
@@ -60,14 +61,14 @@ async getVendorBookings(
 
 
 async updateStatus(
-  req: Request,
+  req: Request<{ id: string }>,
   res: Response
 ) {
 
   const booking =
     await bookingService.updateBookingStatus(
       req.user!.id,
-      req.params.id as string,
+      req.params.id,
       req.body.status
     );
 
@@ -80,12 +81,12 @@ async updateStatus(
 }
 
 
-async cancelBooking(req: Request, res: Response) {
+async cancelBooking(req: Request<{ id: string }>, res: Response) {
 
     const booking =
         await bookingService.cancelBooking(
             req.user!.id,
-            req.params.id as string
+            req.params.id
         );
 
     return res.status(200).json({
@@ -93,6 +94,25 @@ async cancelBooking(req: Request, res: Response) {
         message: "Booking cancelled successfully",
         data: booking,
     });
+
+}
+
+async reschedule(
+  req: Request<{ id: string }>,
+  res: Response
+) {
+
+  const booking =
+    await bookingService.rescheduleBooking(
+      req.user!.id,
+      req.params.id,
+      req.body.bookingDate
+    );
+
+  res.json({
+    success: true,
+    data: booking
+  });
 
 }
 
