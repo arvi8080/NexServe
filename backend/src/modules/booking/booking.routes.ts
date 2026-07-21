@@ -8,6 +8,62 @@ import {
   rescheduleBookingSchema,
 } from "./booking.validation";
 
+/**
+ * @openapi
+ * /api/v1/booking:
+ *   post:
+ *     summary: Create a booking
+ *     tags: [Booking]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       201:
+ *         description: Booking created successfully
+ *   get:
+ *     summary: Get my bookings
+ *     tags: [Booking]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Bookings retrieved successfully
+ * /api/v1/booking/vendor:
+ *   get:
+ *     summary: Get vendor bookings
+ *     tags: [Booking]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Vendor bookings retrieved successfully
+ * /api/v1/booking/{id}/status:
+ *   patch:
+ *     summary: Update booking status
+ *     tags: [Booking]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Booking status updated successfully
+ * /api/v1/booking/{id}/cancel:
+ *   patch:
+ *     summary: Cancel a booking
+ *     tags: [Booking]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Booking cancelled successfully
+ * /api/v1/booking/{id}/reschedule:
+ *   patch:
+ *     summary: Reschedule a booking
+ *     tags: [Booking]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Booking rescheduled successfully
+ */
 const router = Router();
 
 // Create Booking

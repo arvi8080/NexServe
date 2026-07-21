@@ -14,6 +14,52 @@ import {
   getPaymentSchema,
 } from "./payment.validation";
 
+/**
+ * @openapi
+ * /api/v1/payment/create-order:
+ *   post:
+ *     summary: Create a payment order
+ *     tags: [Payment]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       201:
+ *         description: Payment order created successfully
+ * /api/v1/payment/verify:
+ *   post:
+ *     summary: Verify a payment
+ *     tags: [Payment]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Payment verified successfully
+ * /api/v1/payment/refund:
+ *   post:
+ *     summary: Refund a payment
+ *     tags: [Payment]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Payment refunded successfully
+ * /api/v1/payment/{bookingId}:
+ *   get:
+ *     summary: Get payment details by booking ID
+ *     tags: [Payment]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Payment details returned successfully
+ * /api/v1/payment/webhook:
+ *   post:
+ *     summary: Razorpay webhook endpoint
+ *     tags: [Payment]
+ *     responses:
+ *       200:
+ *         description: Webhook processed successfully
+ */
 const router = Router();
 
 router.post(
