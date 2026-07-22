@@ -6,6 +6,7 @@ import {
   loginSchema,
 } from "./auth.validation";
 import { authenticate } from "../../common/middleware/auth.middleware";
+import { asyncHandler } from "../../common/utils/asyncHandler";
 
 /**
  * @openapi
@@ -18,6 +19,15 @@ import { authenticate } from "../../common/middleware/auth.middleware";
  *     responses:
  *       200:
  *         description: Authenticated user returned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 user:
+ *                   type: object
  * /api/v1/auth/register:
  *   post:
  *     summary: Register a new user
@@ -28,9 +38,34 @@ import { authenticate } from "../../common/middleware/auth.middleware";
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - firstName
+ *               - email
+ *               - password
+ *             properties:
+ *               firstName:
+ *                 type: string
+ *                 minLength: 2
+ *               lastName:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *                 minLength: 8
  *     responses:
  *       201:
  *         description: User registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
  * /api/v1/auth/login:
  *   post:
  *     summary: Login a user
@@ -41,9 +76,30 @@ import { authenticate } from "../../common/middleware/auth.middleware";
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *                 minLength: 8
  *     responses:
  *       200:
  *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 token:
+ *                   type: string
+ *                 user:
+ *                   type: object
  * /api/v1/auth/logout:
  *   post:
  *     summary: Logout a user
@@ -53,6 +109,15 @@ import { authenticate } from "../../common/middleware/auth.middleware";
  *     responses:
  *       200:
  *         description: Logout successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
  * /api/v1/auth/refresh:
  *   post:
  *     summary: Refresh auth tokens
@@ -60,6 +125,15 @@ import { authenticate } from "../../common/middleware/auth.middleware";
  *     responses:
  *       200:
  *         description: Tokens refreshed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 token:
+ *                   type: string
  */
 const router = Router();
 
@@ -77,17 +151,17 @@ router.get(
 router.post(
   "/register",
   validate(registerSchema),
-  authController.register
+  asyncHandler(authController.register)
 );
 
 router.post(
   "/login",
   validate(loginSchema),
-  authController.login
+  asyncHandler(authController.login)
 );
 
 
-router.post("/logout", authController.logout);
+router.post("/logout", authenticate, asyncHandler(authController.logout));
 
-router.post("/refresh", authController.refresh);
+router.post("/refresh", authenticate, asyncHandler(authController.refresh));
 export default router;

@@ -144,17 +144,32 @@ return booking;
 
 
 
-  async getMyBookings(customerId: string) {
+  async getMyBookings(
+    customerId: string,
+    options?: {
+      status?: string;
+      page?: number;
+      limit?: number;
+    }
+  ) {
 
     return this.repository.getCustomerBookings(
-      customerId
+      customerId,
+      options
     );
 
   }
 
 
 
-  async getVendorBookings(userId: string) {
+  async getVendorBookings(
+    userId: string,
+    options?: {
+      status?: string;
+      page?: number;
+      limit?: number;
+    }
+  ) {
 
     const vendor =
       await this.repository.findVendorByUserId(
@@ -171,7 +186,8 @@ return booking;
 
 
     return this.repository.getVendorBookings(
-      vendor.id
+      vendor.id,
+      options
     );
 
   }

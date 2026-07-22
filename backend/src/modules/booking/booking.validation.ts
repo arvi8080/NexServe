@@ -22,3 +22,19 @@ export const updateBookingStatusSchema = z.object({
 export const rescheduleBookingSchema = z.object({
   bookingDate: z.string().datetime()
 });
+
+export const bookingQuerySchema = z.object({
+  status: z
+    .enum(["PENDING", "ACCEPTED", "ONGOING", "COMPLETED", "CANCELLED"])
+    .optional(),
+  page: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val, 10) : undefined))
+    .pipe(z.number().int().positive().optional()),
+  limit: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val, 10) : undefined))
+    .pipe(z.number().int().positive().optional()),
+});

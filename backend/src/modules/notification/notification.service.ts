@@ -44,11 +44,16 @@ export class NotificationService {
   }
 
   async getMyNotifications(
-    userId: string
+    userId: string,
+    options?: {
+      limit?: number;
+      offset?: number;
+    }
   ) {
 
     return this.repository.getUserNotifications(
-      userId
+      userId,
+      options
     );
 
   }

@@ -30,9 +30,12 @@ export class BookingController {
   res: Response
 ) {
 
+  const { status, page, limit } = req.query as any;
+
   const bookings =
     await bookingService.getMyBookings(
-      req.user!.id
+      req.user!.id,
+      { status, page, limit }
     );
 
   return res.status(200).json({
@@ -47,9 +50,12 @@ async getVendorBookings(
   res: Response
 ) {
 
+  const { status, page, limit } = req.query as any;
+
   const bookings =
     await bookingService.getVendorBookings(
-      req.user!.id
+      req.user!.id,
+      { status, page, limit }
     );
 
   return res.status(200).json({

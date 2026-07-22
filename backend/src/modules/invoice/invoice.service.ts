@@ -58,7 +58,10 @@ export class InvoiceService {
     return invoice;
   }
 
-  async getAllInvoices() {
-    return this.repository.getInvoices();
+  async getAllInvoices(options?: {
+    page?: number;
+    limit?: number;
+  }) {
+    return this.repository.getInvoices(options);
   }
 }

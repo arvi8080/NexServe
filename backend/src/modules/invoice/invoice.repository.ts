@@ -23,7 +23,13 @@ export class InvoiceRepository {
     });
   }
 
-  async getInvoices() {
+  async getInvoices(options?: {
+    page?: number;
+    limit?: number;
+  }) {
+    const take = options?.limit || 50;
+    const skip = options?.page ? (options.page - 1) * take : 0;
+
     return prisma.invoice.findMany({
       include: {
         booking: {
@@ -50,6 +56,8 @@ export class InvoiceRepository {
       orderBy: {
         issueDate: "desc",
       },
+      take,
+      skip,
     });
   }
 }

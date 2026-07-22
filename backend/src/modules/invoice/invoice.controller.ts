@@ -27,8 +27,9 @@ export class InvoiceController {
     });
   }
 
-  async getAllInvoices(_req: Request, res: Response) {
-    const invoices = await invoiceService.getAllInvoices();
+  async getAllInvoices(req: Request, res: Response) {
+    const { page, limit } = req.query as any;
+    const invoices = await invoiceService.getAllInvoices({ page, limit });
 
     return res.status(200).json({
       success: true,

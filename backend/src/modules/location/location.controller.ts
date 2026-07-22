@@ -14,14 +14,14 @@ req:Request,
 res:Response
 ){
 
-const vendorId =
+const userId =
 req.user!.id;
 
 
 const result =
 await service.updateLocation(
-vendorId,
-req.body
+  userId,
+  req.body
 );
 
 

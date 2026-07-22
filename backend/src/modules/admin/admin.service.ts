@@ -5,8 +5,12 @@ export class AdminService {
 
   private adminRepository = new AdminRepository();
 
-  async getPendingVendors() {
-    return this.adminRepository.getPendingVendors();
+  async getPendingVendors(options?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+  }) {
+    return this.adminRepository.getPendingVendors(options);
   }
 
   async updateVendorStatus(

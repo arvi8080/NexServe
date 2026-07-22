@@ -32,36 +32,64 @@ export class BookingRepository {
   }
 
 
-  async getCustomerBookings(customerId: string) {
-  return prisma.booking.findMany({
-    where: {
-      customerId,
-    },
-    include: {
-      service: true,
-      vendor: {
-        select: {
-          id: true,
-          businessName: true,
-          city: true,
-          state: true,
-          phone: true,
+  async getCustomerBookings(
+    customerId: string,
+    options?: {
+      status?: string;
+      page?: number;
+      limit?: number;
+    }
+  ) {
+    const where: any = { customerId };
+    if (options?.status) {
+      where.status = options.status;
+    }
+
+    const take = options?.limit || 50;
+    const skip = options?.page ? (options.page - 1) * take : 0;
+
+    return prisma.booking.findMany({
+      where,
+      include: {
+        service: true,
+        vendor: {
+          select: {
+            id: true,
+            businessName: true,
+            city: true,
+            state: true,
+            phone: true,
+          },
         },
       },
-    },
-    orderBy: {
-      bookingDate: "desc",
-    },
-  });
-}
+      orderBy: {
+        bookingDate: "desc",
+      },
+      take,
+      skip,
+    });
+  }
 
 
 
-async getVendorBookings(vendorId: string) {
+async getVendorBookings(
+  vendorId: string,
+  options?: {
+    status?: string;
+    page?: number;
+    limit?: number;
+  }
+) {
+  const where: any = { vendorId };
+  if (options?.status) {
+    where.status = options.status;
+  }
+
+  const take = options?.limit || 50;
+  const skip = options?.page ? (options.page - 1) * take : 0;
+
   return prisma.booking.findMany({
-    where: {
-      vendorId,
-    },
+    where,
     include: {
       customer: {
         select: {
@@ -85,6 +113,8 @@ async getVendorBookings(vendorId: string) {
     orderBy: {
       bookingDate: "desc",
     },
+    take,
+    skip,
   });
 }
 

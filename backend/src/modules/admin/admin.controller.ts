@@ -16,8 +16,10 @@ req: Request,
 res: Response
 ){
 
+const { page, limit, search } = req.query as any;
+
 const vendors =
-await adminService.getPendingVendors();
+await adminService.getPendingVendors({ page, limit, search });
 
 
 return res.status(200).json({

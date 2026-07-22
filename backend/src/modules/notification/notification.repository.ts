@@ -14,7 +14,13 @@ export class NotificationRepository {
     });
   }
 
-  async getUserNotifications(userId: string) {
+  async getUserNotifications(
+    userId: string,
+    options?: {
+      limit?: number;
+      offset?: number;
+    }
+  ) {
     return prisma.notification.findMany({
       where: {
         userId,
@@ -22,6 +28,8 @@ export class NotificationRepository {
       orderBy: {
         createdAt: "desc",
       },
+      take: options?.limit || 50,
+      skip: options?.offset || 0,
     });
   }
 

@@ -1,6 +1,5 @@
-import { PrismaClient, PaymentStatus } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { PaymentStatus } from "@prisma/client";
+import prisma from "../../config/prisma";
 
 export class PaymentRepository {
 
@@ -125,3 +124,4 @@ export class PaymentRepository {
   }
 
 }
+

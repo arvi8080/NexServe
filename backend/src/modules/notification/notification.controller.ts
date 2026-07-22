@@ -17,9 +17,12 @@ class NotificationController {
       const userId =
         req.user!.id;
 
+      const { limit, offset } = req.query as any;
+
       const notifications =
         await this.service.getMyNotifications(
-          userId
+          userId,
+          { limit, offset }
         );
 
       res.status(200).json({

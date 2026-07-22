@@ -16,12 +16,74 @@ export class AdminDashboardRepository {
       },
     });
 
+    const recentBookings = await prisma.booking.findMany({
+      take: 5,
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        customer: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+        vendor: {
+          select: {
+            id: true,
+            businessName: true,
+          },
+        },
+        service: {
+          select: {
+            id: true,
+            title: true,
+            category: true,
+          },
+        },
+      },
+    });
+
+    const pendingVendorsCount = await prisma.vendor.count({
+      where: {
+        status: "PENDING",
+      },
+    });
+
+    const pendingVendors = await prisma.vendor.findMany({
+      where: {
+        status: "PENDING",
+      },
+      select: {
+        id: true,
+        businessName: true,
+        city: true,
+        state: true,
+        createdAt: true,
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
     return {
       totalUsers,
       totalVendors,
       totalBookings,
-      revenue: revenueResult._sum.totalAmount ?? 0,
+      totalRevenue: revenueResult._sum.totalAmount ?? 0,
       activeServices,
+      recentBookings,
+      pendingVendors,
     };
   }
 }

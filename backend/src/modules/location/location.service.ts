@@ -1,4 +1,6 @@
+import { AppError } from "../../common/errors/AppError";
 import { LocationRepository } from "./location.repository";
+import prisma from "../../config/prisma";
 
 
 export class LocationService {
@@ -10,14 +12,26 @@ new LocationRepository();
 
 
 async updateLocation(
-vendorId:string,
-data:any
+userId: string,
+data: {
+  latitude: number;
+  longitude: number;
+  isOnline: boolean;
+}
 ){
+  // Lookup vendor by userId first
+  const vendor = await prisma.vendor.findUnique({
+    where: { userId }
+  });
 
-return this.repository.updateLocation(
-vendorId,
-data
-);
+  if (!vendor) {
+    throw new AppError("Vendor profile not found", 404);
+  }
+
+  return this.repository.updateLocation(
+    vendor.id,
+    data
+  );
 
 }
 

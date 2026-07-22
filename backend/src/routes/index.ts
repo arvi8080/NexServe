@@ -13,6 +13,7 @@ import reviewRoutes from "../modules/review/review.routes";
 import notificationRoutes from "../modules/notification/notification.routes";
 import paymentRoutes from "../modules/payment/payment.routes";
 import availabilityRoutes from "../modules/availability/availability.routes";
+import locationRoutes from "../modules/location/location.routes";
 
 
 
@@ -37,7 +38,6 @@ router.use(
 );
 router.use("/payment", paymentRoutes);
 router.use("/availability", availabilityRoutes);
-
-
+router.use("/location", locationRoutes);
 
 export default router;
