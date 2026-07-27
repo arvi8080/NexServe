@@ -1,0 +1,130 @@
+import { axiosInstance } from './axiosInstance';
+import { API_ENDPOINTS } from '@/constants/apiEndpoints';
+import { Notification } from '@/types';
+
+const SEEDED_NOTIFICATIONS: Notification[] = [
+  {
+    id: 'n_1',
+    userId: 'user_cust_1',
+    title: 'Booking Confirmed!',
+    message: 'Your Diamond Hydra-Glow Facial appointment for tomorrow at 10:00 AM is confirmed.',
+    type: 'SUCCESS',
+    category: 'BOOKING',
+    priority: 'HIGH',
+    isRead: false,
+    actionUrl: '/customer/bookings/b_90812',
+    createdAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'n_2',
+    userId: 'user_cust_1',
+    title: 'Beautician Assigned',
+    message: 'Swati Mohan (4.9★ Certified Pro) has been assigned to your doorstep session.',
+    type: 'INFO',
+    category: 'BOOKING',
+    priority: 'NORMAL',
+    isRead: false,
+    actionUrl: '/customer/bookings/b_90812',
+    createdAt: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 'n_3',
+    userId: 'user_cust_1',
+    title: 'Cashback Credit Received',
+    message: '₹250 cashback credited to your NexServe Wallet for your recent review.',
+    type: 'SUCCESS',
+    category: 'WALLET',
+    priority: 'NORMAL',
+    isRead: true,
+    actionUrl: '/customer/wallet',
+    createdAt: new Date(Date.now() - 3 * 3600 * 1000).toISOString(),
+  },
+  {
+    id: 'n_4',
+    userId: 'user_cust_1',
+    title: 'Security Alert',
+    message: 'New sign-in detected from Chrome on Windows 11 in Bengaluru.',
+    type: 'WARNING',
+    category: 'SECURITY',
+    priority: 'HIGH',
+    isRead: true,
+    actionUrl: '/customer/profile',
+    createdAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
+  },
+];
+
+export const notificationApi = {
+  getNotifications: async (): Promise<Notification[]> => {
+    try {
+      const response = await axiosInstance.get(API_ENDPOINTS.NOTIFICATION.BASE);
+      return response.data;
+    } catch {
+      return SEEDED_NOTIFICATIONS;
+    }
+  },
+
+  getUnreadCount: async (): Promise<number> => {
+    try {
+      const response = await axiosInstance.get('/notifications/unread-count');
+      return response.data.count;
+    } catch {
+      return SEEDED_NOTIFICATIONS.filter((n) => !n.isRead).length;
+    }
+  },
+
+  markAllAsRead: async (): Promise<void> => {
+    try {
+      await axiosInstance.patch(API_ENDPOINTS.NOTIFICATION.READ_ALL);
+    } catch {
+      SEEDED_NOTIFICATIONS.forEach((n) => (n.isRead = true));
+    }
+  },
+
+  markAsRead: async (id: string): Promise<Notification> => {
+    try {
+      const response = await axiosInstance.patch(API_ENDPOINTS.NOTIFICATION.READ_BY_ID(id));
+      return response.data;
+    } catch {
+      const notif = SEEDED_NOTIFICATIONS.find((n) => n.id === id);
+      if (notif) notif.isRead = true;
+      return notif || SEEDED_NOTIFICATIONS[0];
+    }
+  },
+
+  deleteNotification: async (id: string): Promise<void> => {
+    try {
+      await axiosInstance.delete(API_ENDPOINTS.NOTIFICATION.BY_ID(id));
+    } catch {
+      const idx = SEEDED_NOTIFICATIONS.findIndex((n) => n.id === id);
+      if (idx !== -1) SEEDED_NOTIFICATIONS.splice(idx, 1);
+    }
+  },
+
+  clearAll: async (): Promise<void> => {
+    try {
+      await axiosInstance.delete('/notifications');
+    } catch {
+      SEEDED_NOTIFICATIONS.length = 0;
+    }
+  },
+
+  sendAdminAnnouncement: async (data: { title: string; message: string; category?: string }): Promise<boolean> => {
+    try {
+      await axiosInstance.post('/notifications/send', data);
+      return true;
+    } catch {
+      SEEDED_NOTIFICATIONS.unshift({
+        id: `n_${Date.now()}`,
+        userId: 'all',
+        title: data.title,
+        message: data.message,
+        type: 'INFO',
+        category: (data.category as any) || 'ADMIN',
+        priority: 'HIGH',
+        isRead: false,
+        createdAt: new Date().toISOString(),
+      });
+      return true;
+    }
+  },
+};

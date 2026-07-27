@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    --primary: #FF2E7E;
+    --primary-to: #FF5CA8;
+    --accent: #FCE7F3;
+  }
+
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    @apply bg-[#FFFDFE] text-[#111827] antialiased selection:bg-[#FF2E7E] selection:text-white min-h-screen flex flex-col text-base leading-relaxed;
+  }
+
+  /* Typography Hierarchy with Responsive Fluid Font Sizes */
+  h1 {
+    @apply text-3xl sm:text-4xl md:text-5xl lg:text-[60px] font-extrabold tracking-tight text-[#111827] leading-[1.1];
+  }
+
+  h2 {
+    @apply text-2xl sm:text-3xl md:text-4xl lg:text-[40px] font-bold tracking-tight text-[#111827] leading-tight;
+  }
+
+  h3 {
+    @apply text-lg sm:text-xl md:text-[22px] font-bold text-[#111827] tracking-tight;
+  }
+
+  h4 {
+    @apply text-base sm:text-lg font-semibold text-[#111827];
+  }
+}
+
+/* Glassmorphism 32px Cards & Luxury Touch Buttons */
+.glass-panel {
+  @apply bg-white border border-[#ECECEC] shadow-2xl shadow-[#FF2E7E]/10 rounded-2xl md:rounded-[32px] p-5 sm:p-8 md:p-10 max-w-full;
+}
+
+.glass-card {
+  @apply bg-white border border-[#ECECEC] rounded-2xl md:rounded-[32px] p-5 sm:p-6 transition-all duration-300 hover:border-[#FF2E7E]/40 hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-2xl hover:shadow-[#FF2E7E]/15 max-w-full;
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-[#FF2E7E] via-[#FF5CA8] to-[#FF2E7E] bg-clip-text text-transparent;
+}
+
+.gradient-btn {
+  @apply bg-gradient-to-r from-[#FF2E7E] to-[#FF5CA8] hover:from-[#e01f68] hover:to-[#f0488e] text-white font-bold shadow-lg shadow-[#FF2E7E]/25 hover:shadow-xl hover:shadow-[#FF2E7E]/35 transition-all duration-300 active:scale-[0.98] hover:scale-[1.02] min-h-[48px] sm:min-h-[52px] px-6 sm:px-8 rounded-full flex items-center justify-center gap-2.5 touch-manipulation;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #fff0f5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ff5ca8;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ff2e7e;
+}

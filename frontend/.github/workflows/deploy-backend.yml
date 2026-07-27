@@ -1,0 +1,19 @@
+name: NexServe Backend Render / Railway CD
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  trigger-render-deploy:
+    name: Continuous Deployment to Render / Railway
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render Deploy Hook
+        run: |
+          if [ -n "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" ]; then
+            curl -s -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+            echo "Render deployment triggered successfully."
+          else
+            echo "RENDER_DEPLOY_HOOK_URL secret not set. Skipping Render webhook trigger."
+          fi

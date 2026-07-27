@@ -1,0 +1,281 @@
+// Prisma Schema for NexServe Marketplace Platform (PostgreSQL on Neon Cloud)
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  CUSTOMER
+  VENDOR_OWNER
+  PROFESSIONAL
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  ACCEPTED
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  AUTHORIZED
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum NotificationCategory {
+  BOOKING
+  PAYMENT
+  WALLET
+  PROMOTION
+  SECURITY
+  SYSTEM
+  REVIEW
+  CHAT
+  ADMIN
+}
+
+model User {
+  id            String            @id @default(uuid())
+  email         String            @unique
+  password      String
+  firstName     String
+  lastName      String
+  phone         String?
+  role          Role              @default(CUSTOMER)
+  avatar        String?
+  walletBalance Float             @default(0.0)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  bookings      Booking[]
+  reviews       Review[]
+  vendors       Vendor[]
+  addresses     CustomerAddress[]
+  notifications Notification[]
+
+  @@map("users")
+}
+
+model Notification {
+  id        String               @id @default(uuid())
+  userId    String
+  title     String
+  message   String
+  type      String               @default("INFO") // INFO, SUCCESS, WARNING, ERROR, BOOKING
+  category  NotificationCategory @default(SYSTEM)
+  priority  NotificationPriority @default(NORMAL)
+  read      Boolean              @default(false)
+  actionUrl String?
+  icon      String?
+  createdAt DateTime             @default(now())
+  expiresAt DateTime?
+
+  user      User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model CustomerAddress {
+  id           String   @id @default(uuid())
+  userId       String
+  label        String   @default("Home") // Home, Office, Other
+  fullName     String
+  phoneNumber  String
+  addressLine1 String
+  addressLine2 String?
+  landmark     String?
+  city         String
+  state        String
+  country      String   @default("India")
+  postalCode   String
+  latitude     Float
+  longitude    Float
+  isDefault    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("customer_addresses")
+}
+
+model Vendor {
+  id            String           @id @default(uuid())
+  ownerId       String
+  businessName  String
+  description   String?
+  phone         String
+  address       String
+  city          String
+  state         String
+  zipCode       String
+  status        String           @default("PENDING") // PENDING, APPROVED, REJECTED
+  averageRating Float            @default(5.0)
+  totalReviews  Int              @default(0)
+  profileImage  String?
+  isVerified    Boolean          @default(false)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  owner          User             @relation(fields: [ownerId], references: [id])
+  vendorServices VendorService[]
+  bookings       Booking[]
+  coverage       VendorCoverage?
+
+  @@map("vendors")
+}
+
+model VendorCoverage {
+  id              String   @id @default(uuid())
+  vendorId        String   @unique
+  city            String
+  serviceRadius   Float    @default(10.0) // Radius in KM
+  latitude        Float
+  longitude       Float
+  availableCities String[] @default(["Bengaluru"])
+  travelCharges   Float    @default(0.0)
+  maxDistance     Float    @default(25.0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  vendor          Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@map("vendor_coverages")
+}
+
+// Master Global Service (WHAT is offered - Global Catalog Definition)
+model Service {
+  id          String          @id @default(uuid())
+  categoryId  String
+  name        String
+  description String
+  image       String?
+  icon        String?
+  slug        String          @unique
+  isActive    Boolean         @default(true)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  vendorServices VendorService[]
+  bookings       Booking[]
+
+  @@map("services")
+}
+
+// VendorService (WHO offers it and under WHAT conditions)
+model VendorService {
+  id                  String               @id @default(uuid())
+  vendorId            String
+  serviceId           String
+  price               Float
+  discountPrice       Float?
+  discountPercentage  Int?                 @default(0)
+  duration            Int                  // Duration in minutes
+  experienceYears     Int                  @default(5)
+  available           Boolean              @default(true)
+  instantBooking      Boolean              @default(true)
+  homeService         Boolean              @default(true)
+  serviceRadius       Int                  @default(10) // Radius in km
+  maxBookingsPerDay   Int                  @default(6)
+  status              String               @default("ACTIVE")
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+
+  vendor              Vendor               @relation(fields: [vendorId], references: [id])
+  service             Service              @relation(fields: [serviceId], references: [id])
+  images              VendorServiceImage[]
+
+  @@map("vendor_services")
+}
+
+model VendorServiceImage {
+  id              String        @id @default(uuid())
+  vendorServiceId String
+  imageUrl        String
+  isPrimary       Boolean       @default(false)
+
+  vendorService   VendorService @relation(fields: [vendorServiceId], references: [id], onDelete: Cascade)
+
+  @@map("vendor_service_images")
+}
+
+model Booking {
+  id          String        @id @default(uuid())
+  customerId  String
+  vendorId    String
+  serviceId   String
+  bookingDate DateTime
+  address     String
+  latitude    Float?
+  longitude   Float?
+  distanceKm  Float?
+  travelCost  Float?        @default(0.0)
+  notes       String?
+  totalAmount Float
+  status      BookingStatus @default(PENDING)
+  otpCode     String        @default("4892")
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  customer    User          @relation(fields: [customerId], references: [id])
+  vendor      Vendor        @relation(fields: [vendorId], references: [id])
+  service     Service       @relation(fields: [serviceId], references: [id])
+  payments    Payment[]
+
+  @@map("bookings")
+}
+
+model Payment {
+  id                String        @id @default(uuid())
+  bookingId         String
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  amount            Float
+  currency          String        @default("INR")
+  status            PaymentStatus @default(PENDING)
+  createdAt         DateTime      @default(now())
+
+  booking           Booking       @relation(fields: [bookingId], references: [id])
+
+  @@map("payments")
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  userId    String
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("reviews")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  details   String?
+  createdAt DateTime @default(now())
+
+  @@map("audit_logs")
+}
