@@ -58,6 +58,7 @@ import { VendorApproval } from '@/pages/admin/VendorApproval';
 import { Analytics } from '@/pages/admin/Analytics';
 import { CompanyERP } from '@/pages/admin/CompanyERP';
 import { SecurityMatrix } from '@/pages/admin/SecurityMatrix';
+import { BranchManager } from '@/pages/admin/BranchManager';
 
 // Guard
 import { ProtectedRoute } from './ProtectedRoute';
@@ -144,6 +145,7 @@ export const AppRoutes: React.FC = () => {
         <Route path="/admin/analytics" element={<Analytics />} />
         <Route path="/admin/erp" element={<CompanyERP />} />
         <Route path="/admin/security" element={<SecurityMatrix />} />
+        <Route path="/admin/branches" element={<BranchManager />} />
       </Route>
 
       {/* Wildcard Fallback */}

@@ -15,15 +15,16 @@ import {
   DollarSign,
   ChevronDown,
   Building,
+  Globe,
 } from 'lucide-react';
 import { serviceApi } from '@/api/service';
 import { vendorServiceApi } from '@/api/vendorService.api';
 import { Service, VendorService } from '@/types';
-import { formatCurrency } from '@/utils/formatters';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { useToast } from '@/context/ToastContext';
 import { useAuth } from '@/context/AuthContext';
+import { useCountry } from '@/context/CountryContext';
 import { SkeletonLoader } from '@/components/common/SkeletonLoader';
 
 export const ServiceDetails: React.FC = () => {
@@ -31,6 +32,7 @@ export const ServiceDetails: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const { isAuthenticated } = useAuth();
+  const { selectedCountry, formatPrice } = useCountry();
 
   const [service, setService] = useState<Service | null>(null);
   const [vendorOfferings, setVendorOfferings] = useState<VendorService[]>([]);
@@ -44,7 +46,7 @@ export const ServiceDetails: React.FC = () => {
     setIsLoading(true);
     Promise.all([
       serviceApi.getServiceById(id || 'service_1'),
-      vendorServiceApi.getVendorServicesByGlobalServiceId(id || 'service_1'),
+      vendorServiceApi.getVendorServicesByGlobalServiceId(id || 'service_1', selectedCountry.code),
     ])
       .then(([sData, vData]) => {
         setService(sData);
@@ -54,7 +56,7 @@ export const ServiceDetails: React.FC = () => {
         }
       })
       .finally(() => setIsLoading(false));
-  }, [id]);
+  }, [id, selectedCountry]);
 
   const handleBookVendorOffering = (offering: VendorService) => {
     if (!isAuthenticated) {
@@ -78,12 +80,13 @@ export const ServiceDetails: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto space-y-12 pb-28 px-4 bg-[#FFFDFE] text-[#111827] relative">
-      {/* 1. GLOBAL SERVICE HEADER BANNER (WHAT IS OFFERED) */}
+      {/* 1. GLOBAL SERVICE HEADER BANNER */}
       <div className="p-8 md:p-12 rounded-[40px] bg-gradient-to-br from-pink-500/90 via-[#FF2E7E] to-purple-900 text-white shadow-2xl space-y-6">
         <div className="flex flex-wrap items-center gap-3">
           <Badge variant="purple">GLOBAL TREATMENT DEFINITION</Badge>
-          <span className="px-3 py-1 rounded-full bg-white/20 text-white text-xs font-bold backdrop-blur-md">
-            100% Sealed Mono-Dose Kit Included
+          <span className="px-3 py-1 rounded-full bg-white/20 text-white text-xs font-bold backdrop-blur-md flex items-center gap-1.5">
+            <span>{selectedCountry.flag}</span>
+            <span>Region: {selectedCountry.name} ({selectedCountry.currency})</span>
           </span>
         </div>
 
@@ -102,18 +105,18 @@ export const ServiceDetails: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. URBAN COMPANY VENDOR MARKETPLACE COMPARISON TABLE (WHO OFFERS IT & AT WHAT PRICE) */}
+      {/* 2. MULTI-VENDOR MARKETPLACE COMPARISON TABLE (TRUST BADGES & SCORES) */}
       <div className="space-y-6">
         <div>
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-pink-50 text-[#FF2E7E] text-xs font-extrabold border border-pink-200">
             <Building size={14} />
-            <span>Multi-Vendor Marketplace Comparison</span>
+            <span>Multi-Vendor Marketplace Comparison ({selectedCountry.name})</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111827] mt-2">
             Select Certified Professional Offering This Service
           </h2>
           <p className="text-xs text-[#64748B] font-semibold mt-1">
-            Compare pricing, discounts, rating, experience, and service radius across competing salons
+            Compare independent {selectedCountry.name} business prices ({selectedCountry.currencySymbol}), ratings, and 5-stage verified trust scores
           </p>
         </div>
 
@@ -131,21 +134,22 @@ export const ServiceDetails: React.FC = () => {
                 }`}
               >
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                  {/* Vendor Info */}
+                  {/* Vendor Info & Trust Badges */}
                   <div className="flex items-center gap-5">
                     <img
                       src={offering.vendor?.profileImage || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80'}
                       alt={offering.vendor?.businessName}
                       className="w-16 h-16 rounded-2xl object-cover border-2 border-pink-200 shrink-0"
                     />
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
+                    <div className="space-y-1.5">
+                      <div className="flex flex-wrap items-center gap-2">
                         <h3 className="text-lg font-bold text-[#111827]">{offering.vendor?.businessName}</h3>
-                        {offering.vendor?.isVerified && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-extrabold border border-emerald-200">
-                            ✓ 5-Stage Verified
-                          </span>
-                        )}
+                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-extrabold border border-emerald-200">
+                          ✓ 5-Stage Verified
+                        </span>
+                        <span className="px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 text-[10px] font-extrabold border border-purple-200">
+                          🏆 98 Trust Score
+                        </span>
                       </div>
                       <div className="flex items-center gap-3 text-xs font-semibold text-slate-600">
                         <span className="flex items-center gap-1 text-amber-500 font-bold">
@@ -163,10 +167,12 @@ export const ServiceDetails: React.FC = () => {
                   <div className="flex items-center gap-6">
                     <div className="text-left md:text-right">
                       {offering.discountPrice && (
-                        <span className="text-xs text-slate-400 line-through block">₹{offering.price}</span>
+                        <span className="text-xs text-slate-400 line-through block">
+                          {formatPrice(offering.price)}
+                        </span>
                       )}
                       <span className="text-2xl font-extrabold text-[#FF2E7E]">
-                        {formatCurrency(offering.discountPrice || offering.price)}
+                        {formatPrice(offering.discountPrice || offering.price)}
                       </span>
                       {offering.discountPercentage && offering.discountPercentage > 0 && (
                         <span className="text-[10px] font-extrabold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full block mt-0.5">
@@ -185,7 +191,7 @@ export const ServiceDetails: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Time Slot Picker for Selected Offering */}
+                {/* Time Slot Picker */}
                 {isSelected && (
                   <div className="pt-4 border-t border-[#ECECEC] space-y-3">
                     <span className="text-xs font-bold text-[#111827] block">Select Slot for {offering.vendor?.businessName}:</span>

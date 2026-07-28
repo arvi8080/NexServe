@@ -16,6 +16,9 @@ import {
   ChevronRight,
   Menu,
   X,
+  Network,
+  ShieldCheck,
+  Building2,
 } from 'lucide-react';
 import { Role } from '@/types';
 
@@ -47,6 +50,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ role }) => {
   const adminLinks = [
     { name: 'Overview Stats', path: '/admin/dashboard', icon: LayoutDashboard },
     { name: 'Vendor Approvals', path: '/admin/vendors/pending', icon: CheckSquare },
+    { name: 'Franchises & Branches', path: '/admin/branches', icon: Network },
+    { name: 'Enterprise ERP', path: '/admin/erp', icon: Building2 },
+    { name: 'Security Matrix', path: '/admin/security', icon: ShieldCheck },
     { name: 'Analytics', path: '/admin/analytics', icon: BarChart3 },
   ];
 
@@ -59,99 +65,82 @@ export const Sidebar: React.FC<SidebarProps> = ({ role }) => {
 
   return (
     <>
-      {/* 1. Desktop Floating Sidebar (1024px+) */}
-      <aside className="w-[280px] bg-white border border-[#ECECEC] rounded-3xl min-h-[calc(100vh-6rem)] p-5 flex-col justify-between shrink-0 hidden lg:flex shadow-xl shadow-[#FF2E7E]/5 mr-6">
-        <div className="space-y-6">
-          {/* Active Portal Badge */}
-          <div className="px-4 py-3.5 bg-pink-50/80 rounded-2xl border border-pink-100">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-[#FF2E7E] block">ACTIVE PORTAL</span>
-            <span className="text-sm font-extrabold text-[#111827] capitalize">{role.toLowerCase().replace('_', ' ')} Panel</span>
-          </div>
+      {/* Mobile Drawer Trigger Button */}
+      <button
+        onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
+        className="md:hidden fixed bottom-6 right-6 z-40 p-4 rounded-full bg-[#FF2E7E] text-white shadow-2xl flex items-center justify-center cursor-pointer"
+        aria-label="Open Sidebar Navigation"
+      >
+        {mobileDrawerOpen ? <X size={20} /> : <Menu size={20} />}
+      </button>
 
-          {/* Navigation Items */}
-          <nav className="space-y-1.5">
-            {links.map((link) => {
-              const Icon = link.icon;
-              const isActive = location.pathname === link.path;
+      {/* Desktop Persistent Glass Sidebar (280px) */}
+      <aside className="hidden md:flex flex-col w-[280px] shrink-0 p-6 space-y-8 bg-white/80 backdrop-blur-2xl border border-[#ECECEC] rounded-[36px] shadow-xl shadow-[#FF2E7E]/5 self-start sticky top-28">
+        <div className="space-y-1 px-2">
+          <span className="text-[10px] font-mono font-extrabold text-[#FF2E7E] uppercase tracking-widest block">
+            {role.replace('_', ' ')} PORTAL
+          </span>
+          <h3 className="text-lg font-bold text-[#111827]">Command Center</h3>
+        </div>
 
-              return (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold transition-all ${
-                    isActive
-                      ? 'bg-gradient-to-r from-[#FF2E7E] to-[#FF5CA8] text-white shadow-md shadow-[#FF2E7E]/25 font-bold'
-                      : 'text-[#64748B] hover:text-[#111827] hover:bg-slate-50'
-                  }`}
-                >
-                  <div className={`p-1.5 rounded-xl ${isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>
-                    <Icon size={16} />
-                  </div>
+        <nav className="space-y-1.5">
+          {links.map((link) => {
+            const isActive = location.pathname === link.path;
+            const Icon = link.icon;
+            return (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`flex items-center justify-between px-4 py-3.5 rounded-2xl text-xs font-bold transition-all ${
+                  isActive
+                    ? 'bg-gradient-to-r from-[#FF2E7E] to-[#FF5CA8] text-white shadow-lg shadow-[#FF2E7E]/20'
+                    : 'text-slate-600 hover:text-[#111827] hover:bg-slate-100/80'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Icon size={18} className={isActive ? 'text-white' : 'text-slate-400'} />
                   <span>{link.name}</span>
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* Bottom Concierge Support Card */}
-        <div className="p-5 rounded-2xl bg-gradient-to-br from-pink-50/80 via-rose-50/40 to-white border border-pink-100 text-center space-y-3 shadow-xs">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#FF2E7E] to-[#FF5CA8] flex items-center justify-center text-white mx-auto shadow-md shadow-[#FF2E7E]/20">
-            <Sparkles size={20} />
-          </div>
-          <div>
-            <h4 className="text-xs font-bold text-[#111827]">Need Support?</h4>
-            <p className="text-[11px] text-[#64748B] leading-relaxed">24/7 Concierge team ready to assist.</p>
-          </div>
-          <Link
-            to="/contact"
-            className="inline-block w-full py-2.5 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-[#111827] shadow-xs transition-all hover:scale-[1.02]"
-          >
-            Contact Concierge
-          </Link>
-        </div>
+                </div>
+                {isActive && <ChevronRight size={14} className="text-white/80" />}
+              </Link>
+            );
+          })}
+        </nav>
       </aside>
 
-      {/* 2. Mobile / Tablet Floating Action Bar & Collapsible Navigation (<1024px) */}
-      <div className="lg:hidden w-full mb-6">
-        <button
-          onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
-          className="w-full p-4 rounded-2xl bg-white border border-[#ECECEC] shadow-md flex items-center justify-between text-xs font-bold text-[#111827]"
-        >
-          <div className="flex items-center gap-2">
-            <span className="p-2 rounded-xl bg-pink-50 text-[#FF2E7E]">
-              <LayoutDashboard size={18} />
-            </span>
-            <span>Dashboard Menu ({role.toLowerCase().replace('_', ' ')})</span>
-          </div>
-          <ChevronRight size={18} className={`text-slate-400 transition-transform ${mobileDrawerOpen ? 'rotate-90' : ''}`} />
-        </button>
+      {/* Mobile Drawer Overlay */}
+      {mobileDrawerOpen && (
+        <div className="md:hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex justify-end">
+          <div className="w-[280px] h-full bg-white p-6 space-y-6 overflow-y-auto animate-in slide-in-from-right duration-200">
+            <div className="flex items-center justify-between border-b border-[#ECECEC] pb-4">
+              <span className="text-xs font-bold text-[#FF2E7E] uppercase font-mono">{role} NAVIGATION</span>
+              <button onClick={() => setMobileDrawerOpen(false)} className="p-2 text-slate-400 hover:text-slate-600">
+                <X size={20} />
+              </button>
+            </div>
 
-        {mobileDrawerOpen && (
-          <div className="mt-2 p-4 rounded-2xl bg-white border border-[#ECECEC] shadow-xl space-y-2">
-            {links.map((link) => {
-              const Icon = link.icon;
-              const isActive = location.pathname === link.path;
-
-              return (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  onClick={() => setMobileDrawerOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition-all ${
-                    isActive
-                      ? 'bg-gradient-to-r from-[#FF2E7E] to-[#FF5CA8] text-white shadow-md'
-                      : 'text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  <Icon size={16} />
-                  <span>{link.name}</span>
-                </Link>
-              );
-            })}
+            <nav className="space-y-2">
+              {links.map((link) => {
+                const isActive = location.pathname === link.path;
+                const Icon = link.icon;
+                return (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    onClick={() => setMobileDrawerOpen(false)}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold transition-all ${
+                      isActive ? 'bg-[#FF2E7E] text-white' : 'text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    <Icon size={18} />
+                    <span>{link.name}</span>
+                  </Link>
+                );
+              })}
+            </nav>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </>
   );
 };

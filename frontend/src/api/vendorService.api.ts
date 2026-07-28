@@ -3,20 +3,22 @@ import { VendorService } from '@/types';
 import { MOCK_VENDORS, MOCK_SERVICES } from '@/services/mockDataService';
 
 export const vendorServiceApi = {
-  // Get all vendor service offerings for a specific global treatment
-  getVendorServicesByGlobalServiceId: async (serviceId: string): Promise<VendorService[]> => {
+  // Get all vendor service offerings for a specific global treatment and country
+  getVendorServicesByGlobalServiceId: async (serviceId: string, countryCode: string = 'IN'): Promise<VendorService[]> => {
     try {
-      const response = await apiClient.get<VendorService[]>(`/vendor-services/service/${serviceId}`);
+      const response = await apiClient.get<VendorService[]>(`/vendor-services/service/${serviceId}?country=${countryCode}`);
       return response.data;
     } catch {
-      // Dynamic mock vendor offerings for marketplace comparison
+      // Independent Country Business Pricing (Zero Currency Conversion)
+      const isNepal = countryCode === 'NP';
+
       return [
         {
-          id: 'vs_1',
+          id: `vs_1_${countryCode}`,
           vendorId: MOCK_VENDORS[0].id,
           serviceId: serviceId || MOCK_SERVICES[0].id,
-          price: 1499,
-          discountPrice: 1199,
+          price: isNepal ? 2399 : 1499,
+          discountPrice: isNepal ? 1899 : 1199,
           discountPercentage: 20,
           duration: 60,
           experienceYears: 8,
@@ -30,11 +32,11 @@ export const vendorServiceApi = {
           service: MOCK_SERVICES[0],
         },
         {
-          id: 'vs_2',
+          id: `vs_2_${countryCode}`,
           vendorId: MOCK_VENDORS[1].id,
           serviceId: serviceId || MOCK_SERVICES[0].id,
-          price: 1699,
-          discountPrice: 1359,
+          price: isNepal ? 2699 : 1699,
+          discountPrice: isNepal ? 2159 : 1359,
           discountPercentage: 20,
           duration: 75,
           experienceYears: 10,
@@ -51,19 +53,20 @@ export const vendorServiceApi = {
     }
   },
 
-  // Get all offerings listed by a specific vendor
-  getVendorServicesByVendorId: async (vendorId: string): Promise<VendorService[]> => {
+  // Get all offerings listed by a specific vendor for a country
+  getVendorServicesByVendorId: async (vendorId: string, countryCode: string = 'IN'): Promise<VendorService[]> => {
     try {
-      const response = await apiClient.get<VendorService[]>(`/vendor-services/vendor/${vendorId}`);
+      const response = await apiClient.get<VendorService[]>(`/vendor-services/vendor/${vendorId}?country=${countryCode}`);
       return response.data;
     } catch {
+      const isNepal = countryCode === 'NP';
       return [
         {
-          id: 'vs_1',
+          id: `vs_1_${countryCode}`,
           vendorId,
           serviceId: MOCK_SERVICES[0].id,
-          price: 1499,
-          discountPrice: 1199,
+          price: isNepal ? 2399 : 1499,
+          discountPrice: isNepal ? 1899 : 1199,
           discountPercentage: 20,
           duration: 60,
           experienceYears: 8,
@@ -75,6 +78,24 @@ export const vendorServiceApi = {
           status: 'ACTIVE',
           vendor: MOCK_VENDORS[0],
           service: MOCK_SERVICES[0],
+        },
+        {
+          id: `vs_3_${countryCode}`,
+          vendorId,
+          serviceId: MOCK_SERVICES[1].id,
+          price: isNepal ? 2099 : 1299,
+          discountPrice: isNepal ? 1679 : 999,
+          discountPercentage: 23,
+          duration: 45,
+          experienceYears: 6,
+          available: true,
+          instantBooking: true,
+          homeService: true,
+          serviceRadius: 8,
+          maxBookingsPerDay: 8,
+          status: 'ACTIVE',
+          vendor: MOCK_VENDORS[0],
+          service: MOCK_SERVICES[1],
         },
       ];
     }

@@ -1,9 +1,8 @@
-export const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0,
-  }).format(amount);
+export const formatCurrency = (amount: number, currencySymbol: string = '₹', currencyCode: string = 'INR'): string => {
+  if (currencySymbol === 'रु' || currencyCode === 'NPR') {
+    return `रु ${new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(amount)}`;
+  }
+  return `${currencySymbol}${new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(amount)}`;
 };
 
 export const formatDate = (dateString: string): string => {

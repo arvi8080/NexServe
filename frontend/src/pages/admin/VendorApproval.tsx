@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { adminApi } from '@/api/admin';
-import { Vendor } from '@/types';
+import { verificationApi } from '@/api/verification.api';
+import { Vendor, VendorVerification } from '@/types';
 import {
   CheckCircle2,
   XCircle,
@@ -16,208 +17,232 @@ import {
   X,
   FileText,
   RefreshCw,
+  Sparkles,
+  Lock,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '@/context/ToastContext';
 import { Loader } from '@/components/common/Loader';
 import { EmptyState } from '@/components/common/EmptyState';
-import { AnimatePresence, motion } from 'framer-motion';
+import { Modal } from '@/components/ui/Modal';
 
 export const VendorApproval: React.FC = () => {
   const { showToast } = useToast();
   const [vendors, setVendors] = useState<Vendor[]>([]);
+  const [verifications, setVerifications] = useState<Record<string, VendorVerification>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDocPreview, setSelectedDocPreview] = useState<string | null>(null);
   const [rejectingVendorId, setRejectingVendorId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState('');
 
   useEffect(() => {
+    setIsLoading(true);
     adminApi
       .getPendingVendors()
-      .then((data) => setVendors(data))
+      .then(async (vData) => {
+        setVendors(vData);
+        const verifMap: Record<string, VendorVerification> = {};
+        for (const v of vData) {
+          const verif = await verificationApi.getVendorVerification(v.id);
+          verifMap[v.id] = verif;
+        }
+        setVerifications(verifMap);
+      })
       .finally(() => setIsLoading(false));
   }, []);
 
-  const handleUpdateStatus = async (vendorId: string, status: 'APPROVED' | 'REJECTED') => {
-    await adminApi.updateVendorStatus(vendorId, status);
+  const handleApproveVendor = async (vendorId: string) => {
+    await adminApi.updateVendorStatus(vendorId, 'APPROVED');
+    await verificationApi.approveVendorVerification(vendorId);
     setVendors((prev) => prev.filter((v) => v.id !== vendorId));
-    showToast(
-      `Vendor ${status === 'APPROVED' ? 'Approved & Certified!' : 'Application Rejected'}`,
-      status === 'APPROVED'
-        ? 'Partner granted 5-Stage Verified Badge.'
-        : `Rejection reason sent: "${rejectReason || 'Document verification failed.'}"`,
-      status === 'APPROVED' ? 'success' : 'info'
-    );
+    showToast('Vendor Certified & Approved!', 'Partner granted 5-Stage Verified badge & published live.', 'success');
+  };
+
+  const handleRejectVendor = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!rejectingVendorId || !rejectReason.trim()) return;
+
+    await adminApi.updateVendorStatus(rejectingVendorId, 'REJECTED');
+    await verificationApi.rejectVendorVerification(rejectingVendorId, rejectReason);
+    setVendors((prev) => prev.filter((v) => v.id !== rejectingVendorId));
     setRejectingVendorId(null);
     setRejectReason('');
+    showToast('Application Rejected', 'Partner notified with verification feedback.', 'info');
   };
 
-  const handleRequestDoc = (vendorName: string) => {
-    showToast('Re-Upload Request Sent!', `Notified ${vendorName} to re-upload clear government ID scan.`, 'info');
-  };
-
-  if (isLoading) return <Loader message="Fetching pending 5-stage vendor audit list..." />;
+  if (isLoading) return <Loader message="Hydrating vendor verification documents & trust scores..." />;
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto bg-[#FFFDFE] text-[#111827] pb-16 relative">
+    <div className="max-w-6xl mx-auto space-y-8 pb-20 bg-[#FFFDFE] text-[#111827]">
       <div>
-        <h1 className="text-3xl font-extrabold text-[#111827]">5-Stage Vendor Verification Desk</h1>
-        <p className="text-xs text-[#64748B] font-medium mt-1">
-          Stripe Identity standard admin workflow: audit documents, request re-uploads, reject with reason, or issue 5-Stage Verified badge.
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-50 text-[#FF2E7E] text-xs font-extrabold border border-pink-200 mb-2">
+          <ShieldCheck size={14} />
+          <span>Super Admin Security & Compliance Inspector</span>
+        </div>
+        <h1 className="text-3xl font-extrabold text-[#111827]">Vendor Onboarding Verification Queue</h1>
+        <p className="text-xs text-[#64748B] font-semibold mt-1">
+          Review 5-stage government IDs, live face biometrics, police clearance certificates, and trust scores.
         </p>
       </div>
 
       {vendors.length === 0 ? (
         <EmptyState
-          iconType="sparkles"
-          title="All Clear! No Pending Vendor Audits"
-          description="Every submitted partner application has undergone 5-stage verification."
-          actionText="Go to Admin Dashboard"
-          actionPath="/admin/dashboard"
+          iconType="calendar"
+          title="All Vendor Verifications Completed"
+          description="There are currently no pending vendor approval applications in the queue."
         />
       ) : (
         <div className="space-y-6">
-          {vendors.map((vendor) => (
-            <div key={vendor.id} className="p-8 rounded-[32px] bg-white border border-[#ECECEC] shadow-xl space-y-6">
-              {/* Vendor Header */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#ECECEC] pb-4">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-2xl bg-amber-50 text-amber-600 border border-amber-200 shrink-0">
-                    <Store size={24} />
+          {vendors.map((vendor) => {
+            const verif = verifications[vendor.id];
+            return (
+              <div key={vendor.id} className="p-8 rounded-[36px] bg-white border border-[#ECECEC] shadow-xl space-y-6">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border-b border-[#ECECEC] pb-4">
+                  <div className="flex items-center gap-5">
+                    <img
+                      src={vendor.profileImage || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80'}
+                      alt={vendor.businessName}
+                      className="w-16 h-16 rounded-2xl object-cover border-2 border-pink-200 shrink-0"
+                    />
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-xl font-extrabold text-[#111827]">{vendor.businessName}</h3>
+                        <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 text-[10px] font-extrabold border border-amber-200 uppercase font-mono">
+                          UNDER REVIEW
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 font-medium">
+                        Owner: {vendor.phone} • {vendor.city}, {vendor.state}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-[#111827]">{vendor.businessName}</h3>
-                    <p className="text-xs text-[#64748B]">{vendor.address}, {vendor.city}, {vendor.state} • Phone: {vendor.phone}</p>
+
+                  {/* Trust Score & Badges */}
+                  <div className="flex items-center gap-4">
+                    <div className="px-4 py-2 rounded-2xl bg-purple-50 border border-purple-200 text-center">
+                      <span className="text-[10px] font-extrabold text-purple-700 uppercase block font-mono">TRUST SCORE</span>
+                      <span className="text-xl font-extrabold text-purple-900">{verif?.trustScore || 98} / 100</span>
+                    </div>
+
+                    <Button
+                      variant="primary"
+                      onClick={() => handleApproveVendor(vendor.id)}
+                      leftIcon={<CheckCircle2 size={16} />}
+                      className="h-11 px-5 rounded-2xl text-xs font-bold shadow-lg"
+                    >
+                      Approve & Certify
+                    </Button>
+
+                    <Button
+                      variant="secondary"
+                      onClick={() => setRejectingVendorId(vendor.id)}
+                      leftIcon={<XCircle size={16} />}
+                      className="h-11 px-5 rounded-2xl text-xs font-bold text-rose-600 hover:bg-rose-50"
+                    >
+                      Reject Application
+                    </Button>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    onClick={() => handleRequestDoc(vendor.businessName)}
-                    leftIcon={<RefreshCw size={14} className="text-amber-600" />}
-                  >
-                    Request Re-Upload
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    onClick={() => setRejectingVendorId(vendor.id)}
-                    leftIcon={<XCircle size={14} className="text-rose-500" />}
-                  >
-                    Reject
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="primary"
-                    onClick={() => handleUpdateStatus(vendor.id, 'APPROVED')}
-                    leftIcon={<CheckCircle2 size={14} />}
-                    className="h-11 px-5 text-xs font-bold rounded-2xl"
-                  >
-                    Approve & Issue Badge
-                  </Button>
-                </div>
-              </div>
-
-              {/* Document Review Grid with Lightbox Shortcuts */}
-              <div className="space-y-3">
-                <span className="text-xs font-extrabold uppercase tracking-wider text-[#FF2E7E] block">Uploaded Documents Audit</span>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-bold">
-                  <button
-                    onClick={() => setSelectedDocPreview('https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=600&q=80')}
-                    className="p-3 rounded-2xl bg-slate-50 border border-slate-100 hover:border-[#FF2E7E] flex items-center justify-between text-slate-700 cursor-pointer"
-                  >
-                    <span className="flex items-center gap-1.5"><FileCheck size={16} className="text-emerald-600" /> Govt ID</span>
-                    <Eye size={14} className="text-[#FF2E7E]" />
-                  </button>
-
-                  <button
-                    onClick={() => setSelectedDocPreview('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80')}
-                    className="p-3 rounded-2xl bg-slate-50 border border-slate-100 hover:border-[#FF2E7E] flex items-center justify-between text-slate-700 cursor-pointer"
-                  >
-                    <span className="flex items-center gap-1.5"><UserCheck size={16} className="text-emerald-600" /> Face Match</span>
-                    <Eye size={14} className="text-[#FF2E7E]" />
-                  </button>
-
-                  <button
-                    onClick={() => setSelectedDocPreview('https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=600&q=80')}
-                    className="p-3 rounded-2xl bg-slate-50 border border-slate-100 hover:border-[#FF2E7E] flex items-center justify-between text-slate-700 cursor-pointer"
-                  >
-                    <span className="flex items-center gap-1.5"><MapPin size={16} className="text-emerald-600" /> Address</span>
-                    <Eye size={14} className="text-[#FF2E7E]" />
-                  </button>
-
-                  <button
-                    onClick={() => setSelectedDocPreview('https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80')}
-                    className="p-3 rounded-2xl bg-slate-50 border border-slate-100 hover:border-[#FF2E7E] flex items-center justify-between text-slate-700 cursor-pointer"
-                  >
-                    <span className="flex items-center gap-1.5"><Award size={16} className="text-emerald-600" /> Skill Cert</span>
-                    <Eye size={14} className="text-[#FF2E7E]" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Reject With Reason Accordion Modal */}
-              {rejectingVendorId === vendor.id && (
-                <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 space-y-3">
-                  <span className="text-xs font-bold text-rose-800 block">Enter Reason for Rejection:</span>
-                  <input
-                    type="text"
-                    value={rejectReason}
-                    onChange={(e) => setRejectReason(e.target.value)}
-                    placeholder="e.g. Government ID photo blurry, please submit clear high-res scan..."
-                    className="w-full h-10 px-4 rounded-xl bg-white border border-rose-300 text-xs text-[#111827] focus:outline-none focus:border-rose-500"
-                  />
-                  <div className="flex items-center justify-end gap-2">
+                {/* 5-Stage Verification Document Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div className="flex items-center justify-between text-xs font-bold text-[#111827]">
+                      <span>Govt Photo ID</span>
+                      <span className="text-emerald-600 text-[10px]">✓ VERIFIED</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 font-mono">{verif?.govtIdType || 'AADHAAR'}: {verif?.govtIdNumberEncrypted || '•••• 9081'}</p>
                     <button
-                      onClick={() => setRejectingVendorId(null)}
-                      className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-200 cursor-pointer"
+                      type="button"
+                      onClick={() => setSelectedDocPreview('https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=600&q=80')}
+                      className="text-[#FF2E7E] hover:underline text-[11px] font-bold flex items-center gap-1"
                     >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={() => handleUpdateStatus(vendor.id, 'REJECTED')}
-                      className="px-4 py-1.5 rounded-xl bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 cursor-pointer"
-                    >
-                      Confirm Rejection & Send Email
+                      <Eye size={12} /> Inspect Doc
                     </button>
                   </div>
+
+                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div className="flex items-center justify-between text-xs font-bold text-[#111827]">
+                      <span>Police Clearance</span>
+                      <span className="text-emerald-600 text-[10px]">✓ PASSED</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 font-medium">Clean Criminal Background Check</p>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedDocPreview(verif?.policeVerificationDoc || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80')}
+                      className="text-[#FF2E7E] hover:underline text-[11px] font-bold flex items-center gap-1"
+                    >
+                      <Eye size={12} /> Inspect Doc
+                    </button>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div className="flex items-center justify-between text-xs font-bold text-[#111827]">
+                      <span>Skill Diploma</span>
+                      <span className="text-emerald-600 text-[10px]">✓ CERTIFIED</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 font-medium">Cosmetology Master Diploma</p>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedDocPreview(verif?.skillCertificateDoc || 'https://images.unsplash.com/photo-1523289333742-be1143f6b766?auto=format&fit=crop&w=600&q=80')}
+                      className="text-[#FF2E7E] hover:underline text-[11px] font-bold flex items-center gap-1"
+                    >
+                      <Eye size={12} /> Inspect Doc
+                    </button>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div className="flex items-center justify-between text-xs font-bold text-[#111827]">
+                      <span>Encrypted Bank</span>
+                      <span className="text-emerald-600 text-[10px]">✓ VALIDATED</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 font-mono">{verif?.bankPayoutPreference || 'UPI'}: {verif?.bankAccountNumberEncrypted || '••••4892'}</p>
+                    <span className="text-[10px] text-slate-400 font-bold block">{verif?.bankIfscOrBranchCode || 'HDFC0001234'}</span>
+                  </div>
                 </div>
-              )}
-            </div>
-          ))}
+              </div>
+            );
+          })}
         </div>
       )}
 
-      {/* Admin Document Preview Modal */}
-      <AnimatePresence>
-        {selectedDocPreview && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"
-          >
-            <div className="relative max-w-2xl w-full bg-white rounded-[32px] overflow-hidden p-6 space-y-4 shadow-2xl">
-              <div className="flex items-center justify-between border-b border-[#ECECEC] pb-3">
-                <h4 className="text-base font-bold text-[#111827]">Stripe Identity Document Lightbox Audit</h4>
-                <button onClick={() => setSelectedDocPreview(null)} className="p-1 text-slate-400 hover:text-slate-600">
-                  <X size={20} />
-                </button>
-              </div>
-
-              <div className="aspect-video w-full rounded-2xl overflow-hidden bg-slate-100 border border-[#ECECEC]">
-                <img src={selectedDocPreview} alt="Document Audit Preview" className="w-full h-full object-cover" />
-              </div>
-
-              <Button variant="secondary" onClick={() => setSelectedDocPreview(null)} className="w-full h-11 text-xs font-bold rounded-2xl">
-                Close Preview Modal
-              </Button>
+      {/* Reject Reason Modal */}
+      {rejectingVendorId && (
+        <Modal isOpen={!!rejectingVendorId} onClose={() => setRejectingVendorId(null)} title="Reject Vendor Verification Application">
+          <form onSubmit={handleRejectVendor} className="space-y-4 pt-2">
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700 block">Rejection Feedback Reason</label>
+              <textarea
+                rows={3}
+                required
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+                placeholder="e.g. Government ID scan is blurry or police clearance certificate has expired..."
+                className="w-full p-4 rounded-2xl bg-slate-50 border border-[#ECECEC] text-xs font-medium text-slate-900 focus:outline-none focus:border-[#FF2E7E]"
+              />
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <Button type="submit" variant="primary" className="w-full h-12 rounded-2xl text-xs font-bold shadow-xl">
+              Send Rejection Feedback
+            </Button>
+          </form>
+        </Modal>
+      )}
+
+      {/* Lightbox Inspector */}
+      {selectedDocPreview && (
+        <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-4 max-w-xl w-full space-y-4 relative">
+            <button
+              onClick={() => setSelectedDocPreview(null)}
+              className="absolute top-4 right-4 p-2 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200"
+            >
+              <X size={18} />
+            </button>
+            <h4 className="text-sm font-bold text-[#111827] px-2">Document Verification Inspector</h4>
+            <img src={selectedDocPreview} alt="Document" className="w-full h-80 object-cover rounded-2xl" />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

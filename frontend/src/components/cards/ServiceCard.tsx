@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Clock, ArrowRight, MapPin, Star } from 'lucide-react';
 import { Service } from '@/types';
-import { formatCurrency } from '@/utils/formatters';
+import { useCountry } from '@/context/CountryContext';
 import { Badge } from '@/components/ui/Badge';
 import { Link } from 'react-router-dom';
 
@@ -11,6 +11,8 @@ interface ServiceCardProps {
 }
 
 export const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
+  const { formatPrice } = useCountry();
+
   return (
     <motion.div
       whileHover={{ y: -6, scale: 1.02 }}
@@ -60,11 +62,11 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
           <span className="truncate">{service.vendor?.businessName || 'Glow & Grace Studio'}, Koramangala</span>
         </div>
 
-        {/* 5. Starting ₹399 & 6. Book Now CTA Button */}
+        {/* 5. Starting Price & 6. Book Now CTA Button */}
         <div className="flex items-center justify-between pt-2 mt-auto">
           <div>
             <span className="text-xs text-slate-400 font-semibold block uppercase tracking-wider">Starting</span>
-            <span className="text-2xl font-extrabold text-slate-900 tracking-tight">{formatCurrency(service.price)}</span>
+            <span className="text-2xl font-extrabold text-slate-900 tracking-tight">{formatPrice(service.price)}</span>
           </div>
 
           <Link

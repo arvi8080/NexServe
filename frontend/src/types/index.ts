@@ -2,6 +2,19 @@ export type Role = 'SUPER_ADMIN' | 'ADMIN' | 'CUSTOMER' | 'VENDOR_OWNER' | 'PROF
 
 export type VendorStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
+export type BranchType = 'COMPANY_OWNED' | 'FRANCHISE' | 'CORPORATE';
+
+export type VerificationStatus = 'PENDING' | 'UNDER_REVIEW' | 'VERIFIED' | 'REJECTED' | 'SUSPENDED' | 'EXPIRED';
+
+export type VerificationBadge =
+  | 'VERIFIED_IDENTITY'
+  | 'VERIFIED_PROFESSIONAL'
+  | 'TOP_RATED'
+  | 'FAST_RESPONSE'
+  | 'RECOMMENDED'
+  | 'ELITE_PARTNER'
+  | 'PREMIUM_VENDOR';
+
 export type BeautyCategory =
   | 'FACIAL'
   | 'HAIR_CUT'
@@ -35,6 +48,99 @@ export type NotificationPriority = 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT';
 
 export type PaymentStatus = 'PENDING' | 'SUCCESS' | 'FAILED' | 'REFUNDED';
 
+export interface Country {
+  id: string;
+  name: string;
+  code: string; // IN, NP, BD, LK, AE, SG, MY
+  currency: string; // INR, NPR
+  currencySymbol: string; // ₹, रु
+  phoneCode: string; // +91, +977
+  timezone: string; // Asia/Kolkata, Asia/Kathmandu
+  defaultLanguage: string;
+  flag: string; // 🇮🇳, 🇳🇵
+  taxName: string; // GST, VAT
+  taxRate: number; // 18.0, 13.0
+  active: boolean;
+}
+
+export interface State {
+  id: string;
+  countryId: string;
+  name: string;
+  code: string;
+}
+
+export interface City {
+  id: string;
+  stateId: string;
+  countryId: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  active: boolean;
+}
+
+export interface Branch {
+  id: string;
+  countryId: string;
+  stateId: string;
+  cityId: string;
+  franchiseId?: string;
+  branchName: string;
+  branchType: BranchType;
+  managerName: string;
+  email: string;
+  phone: string;
+  active: boolean;
+  country?: Country;
+  state?: State;
+  city?: City;
+  franchise?: FranchisePartner;
+  createdAt?: string;
+}
+
+export interface FranchisePartner {
+  id: string;
+  companyName: string;
+  ownerName: string;
+  email: string;
+  phone: string;
+  agreementStart: string;
+  agreementEnd: string;
+  commissionPercentage: number;
+  status: 'ACTIVE' | 'SUSPENDED' | 'EXPIRED';
+  branches?: Branch[];
+  createdAt?: string;
+}
+
+export interface VendorVerification {
+  id: string;
+  vendorId: string;
+  govtIdType: string;
+  govtIdNumberEncrypted: string;
+  policeVerificationDoc?: string;
+  skillCertificateDoc?: string;
+  bankAccountHolder: string;
+  bankAccountNumberEncrypted: string;
+  bankIfscOrBranchCode: string;
+  bankPayoutPreference: string;
+  trustScore: number; // 0 - 100
+  status: VerificationStatus;
+  verificationBadges: VerificationBadge[];
+  reviewedBy?: string;
+  rejectionReason?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PaymentGatewayConfig {
+  id: string;
+  countryId: string;
+  gatewayName: string; // RAZORPAY, PHONEPE, ESEWA, KHALTI, FONEPAY, CASH
+  isDefault: boolean;
+  active: boolean;
+}
+
 export interface User {
   id: string;
   firstName: string;
@@ -43,6 +149,11 @@ export interface User {
   phone?: string;
   profileImage?: string;
   role: Role;
+  countryId?: string;
+  stateId?: string;
+  cityId?: string;
+  preferredCurrency?: string;
+  preferredLanguage?: string;
   isEmailVerified?: boolean;
   isPhoneVerified?: boolean;
   createdAt?: string;
@@ -90,6 +201,10 @@ export interface VendorCoverage {
 export interface Vendor {
   id: string;
   userId: string;
+  countryId?: string;
+  stateId?: string;
+  cityId?: string;
+  branchId?: string;
   businessName: string;
   description?: string;
   phone: string;
@@ -105,6 +220,8 @@ export interface Vendor {
   user?: User;
   services?: Service[];
   coverage?: VendorCoverage;
+  branch?: Branch;
+  verification?: VendorVerification;
   createdAt?: string;
 }
 
@@ -173,6 +290,8 @@ export interface Booking {
   customerId: string;
   vendorId: string;
   serviceId: string;
+  branchId?: string;
+  franchiseId?: string;
   bookingDate: string;
   address: string;
   latitude?: number;
@@ -181,10 +300,13 @@ export interface Booking {
   travelCost?: number;
   notes?: string;
   totalAmount: number;
+  currency?: string;
   status: BookingStatus;
   customer?: User;
   vendor?: Vendor;
   service?: Service;
+  branch?: Branch;
+  franchise?: FranchisePartner;
   review?: Review;
   payment?: Payment;
   invoice?: Invoice;
@@ -228,6 +350,7 @@ export interface Payment {
   razorpayPaymentId?: string;
   razorpaySignature?: string;
   amount: number;
+  currency?: string;
   status: PaymentStatus;
   createdAt?: string;
 }

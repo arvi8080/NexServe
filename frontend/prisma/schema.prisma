@@ -52,19 +52,157 @@ enum NotificationCategory {
   ADMIN
 }
 
-model User {
-  id            String            @id @default(uuid())
-  email         String            @unique
-  password      String
-  firstName     String
-  lastName      String
-  phone         String?
-  role          Role              @default(CUSTOMER)
-  avatar        String?
-  walletBalance Float             @default(0.0)
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+enum BranchType {
+  COMPANY_OWNED
+  FRANCHISE
+  CORPORATE
+}
 
+enum VerificationStatus {
+  PENDING
+  UNDER_REVIEW
+  VERIFIED
+  REJECTED
+  SUSPENDED
+  EXPIRED
+}
+
+model Country {
+  id              String                 @id @default(uuid())
+  name            String
+  code            String                 @unique // IN, NP, BD, LK, AE, SG, MY
+  currency        String                 // INR, NPR
+  currencySymbol  String                 // ₹, रु
+  phoneCode       String                 // +91, +977
+  timezone        String                 // Asia/Kolkata, Asia/Kathmandu
+  defaultLanguage String                 @default("en")
+  flag            String                 // 🇮🇳, 🇳🇵
+  taxName         String                 @default("GST") // GST, VAT
+  taxRate         Float                  @default(18.0) // 18.0%, 13.0%
+  active          Boolean                @default(true)
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+
+  states          State[]
+  cities          City[]
+  branches        Branch[]
+  paymentGateways PaymentGatewayConfig[]
+  users           User[]
+  vendors         Vendor[]
+
+  @@map("countries")
+}
+
+model State {
+  id        String   @id @default(uuid())
+  countryId String
+  name      String
+  code      String
+
+  country   Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  cities    City[]
+  branches  Branch[]
+  users     User[]
+  vendors   Vendor[]
+
+  @@map("states")
+}
+
+model City {
+  id        String   @id @default(uuid())
+  stateId   String
+  countryId String
+  name      String
+  latitude  Float
+  longitude Float
+  active    Boolean  @default(true)
+
+  state     State    @relation(fields: [stateId], references: [id], onDelete: Cascade)
+  country   Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  branches  Branch[]
+  users     User[]
+  vendors   Vendor[]
+
+  @@map("cities")
+}
+
+model Branch {
+  id          String     @id @default(uuid())
+  countryId   String
+  stateId     String
+  cityId      String
+  franchiseId String?
+  branchName  String
+  branchType  BranchType @default(COMPANY_OWNED)
+  managerName String
+  email       String
+  phone       String
+  active      Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  country   Country           @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  state     State             @relation(fields: [stateId], references: [id], onDelete: Cascade)
+  city      City              @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  franchise FranchisePartner? @relation(fields: [franchiseId], references: [id])
+  vendors   Vendor[]
+  bookings  Booking[]
+
+  @@map("branches")
+}
+
+model FranchisePartner {
+  id                   String    @id @default(uuid())
+  companyName          String
+  ownerName            String
+  email                String    @unique
+  phone                String
+  agreementStart       DateTime
+  agreementEnd         DateTime
+  commissionPercentage Float     @default(15.0)
+  status               String    @default("ACTIVE")
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  branches             Branch[]
+  bookings             Booking[]
+
+  @@map("franchise_partners")
+}
+
+model PaymentGatewayConfig {
+  id          String   @id @default(uuid())
+  countryId   String
+  gatewayName String   // RAZORPAY, PHONEPE, ESEWA, KHALTI, FONEPAY, CASH
+  isDefault   Boolean  @default(false)
+  active      Boolean  @default(true)
+
+  country     Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  @@map("payment_gateway_configs")
+}
+
+model User {
+  id                String            @id @default(uuid())
+  email             String            @unique
+  password          String
+  firstName         String
+  lastName          String
+  phone             String?
+  role              Role              @default(CUSTOMER)
+  avatar            String?
+  countryId         String?
+  stateId           String?
+  cityId            String?
+  preferredCurrency String            @default("INR")
+  preferredLanguage String            @default("en")
+  walletBalance     Float             @default(0.0)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  country       Country?          @relation(fields: [countryId], references: [id])
+  state         State?            @relation(fields: [stateId], references: [id])
+  city          City?             @relation(fields: [cityId], references: [id])
   bookings      Booking[]
   reviews       Review[]
   vendors       Vendor[]
@@ -79,7 +217,7 @@ model Notification {
   userId    String
   title     String
   message   String
-  type      String               @default("INFO") // INFO, SUCCESS, WARNING, ERROR, BOOKING
+  type      String               @default("INFO")
   category  NotificationCategory @default(SYSTEM)
   priority  NotificationPriority @default(NORMAL)
   read      Boolean              @default(false)
@@ -96,7 +234,7 @@ model Notification {
 model CustomerAddress {
   id           String   @id @default(uuid())
   userId       String
-  label        String   @default("Home") // Home, Office, Other
+  label        String   @default("Home")
   fullName     String
   phoneNumber  String
   addressLine1 String
@@ -118,8 +256,12 @@ model CustomerAddress {
 }
 
 model Vendor {
-  id            String           @id @default(uuid())
+  id            String              @id @default(uuid())
   ownerId       String
+  countryId     String?
+  stateId       String?
+  cityId        String?
+  branchId      String?
   businessName  String
   description   String?
   phone         String
@@ -127,15 +269,20 @@ model Vendor {
   city          String
   state         String
   zipCode       String
-  status        String           @default("PENDING") // PENDING, APPROVED, REJECTED
-  averageRating Float            @default(5.0)
-  totalReviews  Int              @default(0)
+  status        String              @default("PENDING")
+  averageRating Float               @default(5.0)
+  totalReviews  Int                 @default(0)
   profileImage  String?
-  isVerified    Boolean          @default(false)
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+  isVerified    Boolean             @default(false)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
 
-  owner          User             @relation(fields: [ownerId], references: [id])
+  owner          User                @relation(fields: [ownerId], references: [id])
+  country        Country?            @relation(fields: [countryId], references: [id])
+  state          State?              @relation(fields: [stateId], references: [id])
+  cityRel        City?               @relation(fields: [cityId], references: [id])
+  branch         Branch?             @relation(fields: [branchId], references: [id])
+  verification   VendorVerification?
   vendorServices VendorService[]
   bookings       Booking[]
   coverage       VendorCoverage?
@@ -143,11 +290,35 @@ model Vendor {
   @@map("vendors")
 }
 
+model VendorVerification {
+  id                        String             @id @default(uuid())
+  vendorId                  String             @unique
+  govtIdType                String             @default("AADHAAR") // AADHAAR, PAN, CITIZENSHIP_NEPAL, PASSPORT, DRIVING_LICENSE
+  govtIdNumberEncrypted     String
+  policeVerificationDoc     String?
+  skillCertificateDoc       String?
+  bankAccountHolder         String
+  bankAccountNumberEncrypted String
+  bankIfscOrBranchCode      String
+  bankPayoutPreference      String             @default("UPI") // UPI, RAZORPAY, ESEWA, KHALTI
+  trustScore                Int                @default(98) // 0 - 100
+  status                    VerificationStatus @default(VERIFIED)
+  verificationBadges        String[]           @default(["VERIFIED_IDENTITY", "TOP_RATED", "ELITE_PARTNER"])
+  reviewedBy                String?
+  rejectionReason           String?
+  createdAt                 DateTime           @default(now())
+  updatedAt                 DateTime           @updatedAt
+
+  vendor                    Vendor             @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@map("vendor_verifications")
+}
+
 model VendorCoverage {
   id              String   @id @default(uuid())
   vendorId        String   @unique
   city            String
-  serviceRadius   Float    @default(10.0) // Radius in KM
+  serviceRadius   Float    @default(10.0)
   latitude        Float
   longitude       Float
   availableCities String[] @default(["Bengaluru"])
@@ -161,7 +332,6 @@ model VendorCoverage {
   @@map("vendor_coverages")
 }
 
-// Master Global Service (WHAT is offered - Global Catalog Definition)
 model Service {
   id          String          @id @default(uuid())
   categoryId  String
@@ -180,7 +350,6 @@ model Service {
   @@map("services")
 }
 
-// VendorService (WHO offers it and under WHAT conditions)
 model VendorService {
   id                  String               @id @default(uuid())
   vendorId            String
@@ -188,12 +357,12 @@ model VendorService {
   price               Float
   discountPrice       Float?
   discountPercentage  Int?                 @default(0)
-  duration            Int                  // Duration in minutes
+  duration            Int
   experienceYears     Int                  @default(5)
   available           Boolean              @default(true)
   instantBooking      Boolean              @default(true)
   homeService         Boolean              @default(true)
-  serviceRadius       Int                  @default(10) // Radius in km
+  serviceRadius       Int                  @default(10)
   maxBookingsPerDay   Int                  @default(6)
   status              String               @default("ACTIVE")
   createdAt           DateTime             @default(now())
@@ -222,6 +391,8 @@ model Booking {
   customerId  String
   vendorId    String
   serviceId   String
+  branchId    String?
+  franchiseId String?
   bookingDate DateTime
   address     String
   latitude    Float?
@@ -230,14 +401,17 @@ model Booking {
   travelCost  Float?        @default(0.0)
   notes       String?
   totalAmount Float
+  currency    String        @default("INR")
   status      BookingStatus @default(PENDING)
   otpCode     String        @default("4892")
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  customer    User          @relation(fields: [customerId], references: [id])
-  vendor      Vendor        @relation(fields: [vendorId], references: [id])
-  service     Service       @relation(fields: [serviceId], references: [id])
+  customer    User              @relation(fields: [customerId], references: [id])
+  vendor      Vendor            @relation(fields: [vendorId], references: [id])
+  service     Service           @relation(fields: [serviceId], references: [id])
+  branch      Branch?           @relation(fields: [branchId], references: [id])
+  franchise   FranchisePartner? @relation(fields: [franchiseId], references: [id])
   payments    Payment[]
 
   @@map("bookings")

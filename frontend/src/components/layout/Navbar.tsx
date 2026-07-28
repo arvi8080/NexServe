@@ -4,6 +4,7 @@ import { Sparkles, Menu, X, Search, User, Bot } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProfileMenu } from './ProfileMenu';
 import { NotificationBell } from './NotificationBell';
+import { CountrySelectorModal } from '@/components/common/CountrySelectorModal';
 import { useAuth } from '@/context/AuthContext';
 
 export const Navbar: React.FC = () => {
@@ -63,8 +64,10 @@ export const Navbar: React.FC = () => {
           })}
         </nav>
 
-        {/* Right Action Icons & Profile */}
+        {/* Right Action Icons, Country Flag Selector & Profile */}
         <div className="flex items-center gap-2 sm:gap-3">
+          <CountrySelectorModal />
+
           <Link
             to="/search"
             className="p-2 sm:p-2.5 text-slate-500 hover:text-[#111827] rounded-full hover:bg-pink-50 transition-all touch-manipulation"
