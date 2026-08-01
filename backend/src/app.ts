@@ -104,6 +104,8 @@ app.use("/api/v1", routes);
  *             schema:
  *               type: object
  *               properties:
+ *                 status:
+ *                   type: string
  *                 success:
  *                   type: boolean
  *                 message:
@@ -111,6 +113,7 @@ app.use("/api/v1", routes);
  */
 app.get("/health", (_req, res) => {
   res.json({
+    status: "OK",
     success: true,
     message: "GlowHome Backend Running Successfully",
     timestamp: new Date().toISOString(),

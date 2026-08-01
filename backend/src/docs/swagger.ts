@@ -10,14 +10,18 @@ const options: swaggerJsdoc.Options = {
       description:
         "REST API documentation for GlowHome - On Demand Home Services Platform",
       contact: {
-        name: "Arvind Prajapati",
-        email: "your-email@example.com",
+        name: "GlowHome Engineering Team",
+        email: "glowhome.help@gmail.com",
       },
     },
 
     servers: [
       {
-        url: `http://localhost:${env.PORT}`,
+        url: process.env.BACKEND_URL || "https://nexserve-back.onrender.com",
+        description: "Production Server",
+      },
+      {
+        url: `http://localhost:${env.PORT || 5000}`,
         description: "Development Server",
       },
     ],
