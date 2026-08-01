@@ -20,6 +20,31 @@ import customerRoutes from "../modules/customer/customer.routes";
 
 const router = Router();
 
+// Root API v1 Information Endpoint
+router.get("/", (_req, res) => {
+  res.json({
+    success: true,
+    message: "GlowHome Marketplace API v1 Gateway",
+    version: "1.0.0",
+    endpoints: {
+      auth: "/api/v1/auth",
+      services: "/api/v1/service",
+      bookings: "/api/v1/booking",
+      customer: "/api/v1/customer",
+      vendor: "/api/v1/vendor",
+      admin: "/api/v1/admin",
+      reviews: "/api/v1/review",
+      notifications: "/api/v1/notification",
+      payments: "/api/v1/payment",
+      invoices: "/api/v1/invoice",
+      chat: "/api/v1/chat",
+      location: "/api/v1/location",
+      health: "/health",
+      docs: "/api-docs",
+    },
+  });
+});
+
 router.use("/auth", authRoutes);
 router.use("/", publicRoutes);
 router.use("/user", userRoutes);

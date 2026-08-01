@@ -62,6 +62,19 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
 
+// Root Welcome Route
+app.get("/", (_req, res) => {
+  res.json({
+    success: true,
+    name: "GlowHome Marketplace API Engine",
+    version: "1.0.0",
+    status: "ONLINE",
+    documentation: "/api-docs",
+    health: "/health",
+    apiPrefix: "/api/v1",
+  });
+});
+
 // Swagger Documentation
 app.get("/api-docs.json", (_req, res) => {
   res.setHeader("Content-Type", "application/json");
@@ -100,6 +113,7 @@ app.get("/health", (_req, res) => {
   res.json({
     success: true,
     message: "GlowHome Backend Running Successfully",
+    timestamp: new Date().toISOString(),
   });
 });
 
