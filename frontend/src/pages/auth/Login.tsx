@@ -4,13 +4,14 @@ import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { normalizeRole } from '@/types';
 
 export const Login: React.FC = () => {
   const { login } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState('customer@nexserve.com');
+  const [email, setEmail] = useState('customer@glowhome.com');
   const [password, setPassword] = useState('password123');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
@@ -24,9 +25,10 @@ export const Login: React.FC = () => {
       const user = await login({ email, password });
       showToast('Welcome back!', `Logged in as ${user.firstName}`, 'success');
 
-      if (user.role === 'SUPER_ADMIN') navigate('/admin/erp');
-      else if (user.role === 'ADMIN') navigate('/admin/dashboard');
-      else if (user.role === 'VENDOR_OWNER' || user.role === 'PROFESSIONAL') navigate('/vendor/dashboard');
+      const role = normalizeRole(user.role);
+      if (role === 'SUPER_ADMIN') navigate('/admin/erp');
+      else if (role === 'ADMIN') navigate('/admin/dashboard');
+      else if (role === 'VENDOR') navigate('/vendor/dashboard');
       else navigate('/customer/dashboard');
     } catch {
       showToast('Login Failed', 'Invalid credentials provided', 'error');
@@ -39,7 +41,7 @@ export const Login: React.FC = () => {
     <div className="glass-panel p-8 md:p-10 bg-white/95 backdrop-blur-2xl border border-[#ECECEC] shadow-2xl shadow-[#FF2E7A]/10 rounded-[32px] space-y-7">
       {/* Top Header */}
       <div className="space-y-1 text-left">
-        <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Sign In to NexServe</h2>
+        <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Sign In to GlowHome</h2>
         <p className="text-xs text-[#6B7280] font-medium">Access your customer dashboard securely.</p>
       </div>
 
@@ -55,7 +57,7 @@ export const Login: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full h-13 pl-12 pr-4 rounded-2xl bg-white border border-[#ECECEC] text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#FF2E7A] focus:ring-4 focus:ring-[#FF2E7A]/10 font-medium transition-all"
-              placeholder="customer@nexserve.com"
+              placeholder="customer@glowhome.com"
             />
           </div>
         </div>
@@ -138,7 +140,7 @@ export const Login: React.FC = () => {
       {/* Bottom Lavender/Pink CTA Card */}
       <div className="p-4 rounded-2xl bg-pink-50/60 border border-pink-100 flex items-center justify-between gap-3">
         <div className="text-left">
-          <h4 className="text-xs font-bold text-slate-900">New to NexServe?</h4>
+          <h4 className="text-xs font-bold text-slate-900">New to GlowHome?</h4>
           <p className="text-[11px] text-slate-500 font-medium">Join thousands of happy customers.</p>
         </div>
         <Link
@@ -152,7 +154,7 @@ export const Login: React.FC = () => {
       {/* Footer SSL Security */}
       <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 font-medium pt-1">
         <ShieldCheck size={14} className="text-emerald-500" />
-        <span>Protected by NexServe 256-bit SSL Encryption.</span>
+        <span>Protected by GlowHome 256-bit SSL Encryption.</span>
       </div>
     </div>
   );

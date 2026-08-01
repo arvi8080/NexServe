@@ -4,7 +4,7 @@ import { bookingApi } from '@/api/booking';
 import { locationApi } from '@/api/location';
 import { Booking, ProfessionalLocation } from '@/types';
 import { formatCurrency, formatDateTime } from '@/utils/formatters';
-import { MapPin, Navigation, MessageSquare, Clock, CheckCircle2, ShieldAlert, FileText, Lock, ShieldCheck, Phone } from 'lucide-react';
+import { MapPin, Navigation, MessageSquare, Clock, CheckCircle2, ShieldAlert, FileText, Lock, ShieldCheck, Phone, Info, Wallet } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Loader } from '@/components/common/Loader';
@@ -50,82 +50,95 @@ export const BookingTracking: React.FC = () => {
 
   const handleTriggerSOS = () => {
     setSosTriggered(true);
-    showToast('🚨 SOS ALERT TRIGGERED!', 'NexServe 24/7 Safety Command Center and local emergency contacts notified.', 'error');
+    showToast('EMERGENCY SOS ACTIVATED', 'Nearby safety emergency response dispatched & contacts notified.', 'error');
   };
 
-  if (isLoading) return <Loader fullScreen message="Connecting to Leaflet live GPS network..." />;
-  if (!booking) return <div className="text-center py-20 text-slate-500 font-bold">Booking details not available.</div>;
+  if (isLoading || !booking) {
+    return <Loader message="Connecting live GPS telemetry & tracking..." />;
+  }
 
-  const vendorLat = location?.latitude || 12.942;
-  const vendorLng = location?.longitude || 77.632;
-  const customerLat = 12.9352;
-  const customerLng = 77.6245;
+  const customerLat = booking.latitude || 12.9716;
+  const customerLng = booking.longitude || 77.5946;
+  const vendorLat = location?.latitude || 12.9352;
+  const vendorLng = location?.longitude || 77.6245;
 
   return (
-    <div className="space-y-8 max-w-4xl mx-auto bg-[#FFFDFE] text-[#111827] pb-16">
-      {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-8 rounded-[32px] bg-white border border-[#ECECEC] shadow-xl">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-extrabold text-[#111827]">Booking Tracking #{booking.id.substring(0, 8)}</h1>
-            <Badge variant="purple">{booking.status}</Badge>
+    <div className="max-w-5xl mx-auto space-y-8 pb-20 bg-[#FFFDFE] text-[#111827]">
+      {/* Header Banner */}
+      <div className="p-8 rounded-[36px] bg-gradient-to-br from-[#111827] to-slate-900 text-white shadow-2xl space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="space-y-1">
+            <span className="px-3 py-1 rounded-full bg-[#FF2E7E] text-white text-[10px] font-extrabold uppercase font-mono tracking-wider">
+              {booking.status}
+            </span>
+            <h1 className="text-3xl font-extrabold tracking-tight">Live Doorstep Session Tracking</h1>
+            <p className="text-xs text-slate-300 font-medium">
+              Booking Ref: <span className="font-mono text-[#FF2E7E]">{booking.id}</span> • Scheduled for {formatDateTime(booking.bookingDate)}
+            </p>
           </div>
-          <p className="text-xs text-[#64748B] font-medium mt-1">Live OpenStreetMap GPS Tracking & Doorstep Security Telemetry</p>
-        </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
-          <Link to={`/customer/invoice/${booking.id}`}>
-            <Button size="sm" variant="secondary" leftIcon={<FileText size={14} />}>
-              Digital Invoice
-            </Button>
-          </Link>
-
-          <Link to={`/customer/chat/${booking.id}`}>
-            <Button size="sm" variant="primary" leftIcon={<MessageSquare size={14} />}>
-              Open Chat
-            </Button>
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link to={`/customer/chat/${booking.id}`}>
+              <Button variant="primary" leftIcon={<MessageSquare size={16} />} className="h-11 px-5 rounded-2xl text-xs font-bold shadow-lg">
+                Chat Pro
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
 
-      {/* OTP Authentication & SOS Emergency Bar */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Service Start OTP Box */}
-        <div className="p-6 rounded-3xl bg-pink-50/70 border border-pink-200 shadow-md flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-3 rounded-2xl bg-[#FF2E7E] text-white font-bold">
-              <Lock size={20} />
-            </div>
-            <div>
-              <span className="text-xs text-[#FF2E7E] font-extrabold uppercase tracking-wider block">Service Start OTP</span>
-              <p className="text-xs text-[#64748B]">Share this code with your beautician upon arrival.</p>
-            </div>
+      {/* Direct Vendor Payment Status Banner */}
+      <div className="p-6 rounded-[28px] bg-white border border-[#ECECEC] shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-amber-700">
+            <Wallet size={20} />
           </div>
-          <div className="px-4 py-2 rounded-2xl bg-white border border-pink-300 text-xl font-extrabold text-[#FF2E7E] shadow-sm tracking-widest">
-            4892
+          <div>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">MVP Payment Mode</span>
+            <h3 className="text-sm font-extrabold text-[#111827]">Direct Vendor Payment (0% Platform Fee)</h3>
+            <p className="text-xs text-slate-500 font-medium mt-0.5">
+              Pay the service provider directly using Cash or their preferred UPI/Wallet account upon session completion.
+            </p>
           </div>
         </div>
 
-        {/* SOS Emergency Trigger Card */}
-        <div className="p-6 rounded-3xl bg-rose-50 border border-rose-200 shadow-md flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-3 rounded-2xl bg-rose-600 text-white font-bold animate-pulse">
-              <ShieldAlert size={20} />
-            </div>
-            <div>
-              <span className="text-xs text-rose-700 font-extrabold uppercase tracking-wider block">24/7 Safety & SOS</span>
-              <p className="text-xs text-rose-600">{sosTriggered ? 'SOS Active • Command Alerted' : 'Instant emergency support dispatch.'}</p>
-            </div>
+        <span className="px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-800 text-xs font-extrabold border border-emerald-200 shrink-0">
+          ✓ Provider Confirms Payment Directly
+        </span>
+      </div>
+
+      {/* 4-DIGIT SECURITY OTP LOCK CARD */}
+      <div className="p-6 rounded-[28px] bg-gradient-to-r from-pink-50 to-purple-50 border border-pink-200 shadow-md flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <ShieldCheck className="w-8 h-8 text-[#FF2E7E]" />
+          <div>
+            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Start-Service Verification OTP</h4>
+            <p className="text-xs text-slate-600 font-medium">Share this 4-digit code with your beautician only upon arrival</p>
           </div>
-          <button
-            onClick={handleTriggerSOS}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
-              sosTriggered ? 'bg-rose-700 text-white shadow-md' : 'bg-rose-600 hover:bg-rose-700 text-white'
-            }`}
-          >
-            {sosTriggered ? 'ALERT SENT' : 'TRIGGER SOS'}
-          </button>
         </div>
+        <div className="bg-white px-5 py-2.5 rounded-2xl border-2 border-[#FF2E7E] shadow-sm font-mono text-2xl font-extrabold text-[#FF2E7E] tracking-widest">
+          4892
+        </div>
+      </div>
+
+      {/* SOS & Safety Row */}
+      <div className="p-5 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <ShieldAlert className="w-6 h-6 text-rose-600" />
+          <div className="text-xs">
+            <span className="font-bold text-rose-900 block">24/7 Doorstep Safety Emergency Guard</span>
+            <span className="text-rose-700 font-medium">Press SOS to dispatch emergency response immediately.</span>
+          </div>
+        </div>
+
+        <button
+          onClick={handleTriggerSOS}
+          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
+            sosTriggered ? 'bg-rose-700 text-white shadow-md' : 'bg-rose-600 hover:bg-rose-700 text-white'
+          }`}
+        >
+          {sosTriggered ? 'ALERT SENT' : 'TRIGGER SOS'}
+        </button>
       </div>
 
       {/* Leaflet Map Card */}
@@ -174,15 +187,15 @@ export const BookingTracking: React.FC = () => {
           <div className="space-y-3 text-xs text-slate-700 font-medium">
             <div className="flex items-center gap-2.5">
               <CheckCircle2 size={16} className="text-emerald-500 shrink-0" />
-              <span>Booking Confirmed & Paid ({formatDateTime(booking.createdAt || '')})</span>
+              <span>Booking Confirmed ({formatDateTime(booking.createdAt || '')})</span>
             </div>
             <div className="flex items-center gap-2.5">
               <CheckCircle2 size={16} className="text-emerald-500 shrink-0" />
-              <span>5-Stage Partner Verified</span>
+              <span>Direct Vendor Payment Mode (Pay Provider Directly)</span>
             </div>
             <div className="flex items-center gap-2.5">
-              <Clock size={16} className="text-[#FF2E7E] shrink-0 animate-pulse" />
-              <span className="font-bold text-[#FF2E7E]">Partner Travelling (ETA 10 Mins)</span>
+              <Clock size={16} className="text-[#FF2E7E] shrink-0" />
+              <span>Beautician En Route to Doorstep Location</span>
             </div>
           </div>
         </div>

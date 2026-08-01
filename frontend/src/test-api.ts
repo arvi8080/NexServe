@@ -5,7 +5,7 @@ import { notificationApi } from './api/notification';
 import { adminApi } from './api/admin';
 
 export async function verifyAllBackendApis() {
-  console.log('--- NEXSERVE BACKEND API VERIFICATION LOG ---');
+  console.log('--- GLOWHOME BACKEND API VERIFICATION LOG ---');
 
   // 1. Auth API
   const user = await authApi.getMe();

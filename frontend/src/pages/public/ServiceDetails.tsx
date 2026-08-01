@@ -16,6 +16,7 @@ import {
   ChevronDown,
   Building,
   Globe,
+  SlidersHorizontal,
 } from 'lucide-react';
 import { serviceApi } from '@/api/service';
 import { vendorServiceApi } from '@/api/vendorService.api';
@@ -38,6 +39,7 @@ export const ServiceDetails: React.FC = () => {
   const [vendorOfferings, setVendorOfferings] = useState<VendorService[]>([]);
   const [selectedOffering, setSelectedOffering] = useState<VendorService | null>(null);
   const [selectedSlot, setSelectedSlot] = useState('10:00 AM');
+  const [sortBy, setSortBy] = useState<'LOWEST_PRICE' | 'HIGHEST_RATING' | 'FASTEST' | 'POPULAR'>('LOWEST_PRICE');
   const [isLoading, setIsLoading] = useState(true);
 
   const timeSlots = ['10:00 AM', '12:30 PM', '02:00 PM', '04:30 PM', '06:00 PM'];
@@ -58,9 +60,23 @@ export const ServiceDetails: React.FC = () => {
       .finally(() => setIsLoading(false));
   }, [id, selectedCountry]);
 
+  // Sort Offerings Dynamically
+  const sortedOfferings = [...vendorOfferings].sort((a, b) => {
+    if (sortBy === 'LOWEST_PRICE') {
+      return (a.discountPrice || a.price) - (b.discountPrice || b.price);
+    }
+    if (sortBy === 'HIGHEST_RATING') {
+      return (b.vendor?.averageRating || 0) - (a.vendor?.averageRating || 0);
+    }
+    if (sortBy === 'FASTEST') {
+      return a.duration - b.duration;
+    }
+    return (b.vendor?.totalReviews || 0) - (a.vendor?.totalReviews || 0);
+  });
+
   const handleBookVendorOffering = (offering: VendorService) => {
     if (!isAuthenticated) {
-      showToast('Sign In Required', 'Please log in to your NexServe account to continue booking.', 'info');
+      showToast('Sign In Required', 'Please log in to your GlowHome account to continue booking.', 'info');
       navigate('/login');
       return;
     }
@@ -83,7 +99,7 @@ export const ServiceDetails: React.FC = () => {
       {/* 1. GLOBAL SERVICE HEADER BANNER */}
       <div className="p-8 md:p-12 rounded-[40px] bg-gradient-to-br from-pink-500/90 via-[#FF2E7E] to-purple-900 text-white shadow-2xl space-y-6">
         <div className="flex flex-wrap items-center gap-3">
-          <Badge variant="purple">GLOBAL TREATMENT DEFINITION</Badge>
+          <Badge variant="purple">MASTER CATALOG TREATMENT</Badge>
           <span className="px-3 py-1 rounded-full bg-white/20 text-white text-xs font-bold backdrop-blur-md flex items-center gap-1.5">
             <span>{selectedCountry.flag}</span>
             <span>Region: {selectedCountry.name} ({selectedCountry.currency})</span>
@@ -105,23 +121,40 @@ export const ServiceDetails: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. MULTI-VENDOR MARKETPLACE COMPARISON TABLE (TRUST BADGES & SCORES) */}
+      {/* 2. MULTI-VENDOR MARKETPLACE COMPARISON TABLE & SORTING */}
       <div className="space-y-6">
-        <div>
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-pink-50 text-[#FF2E7E] text-xs font-extrabold border border-pink-200">
-            <Building size={14} />
-            <span>Multi-Vendor Marketplace Comparison ({selectedCountry.name})</span>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-pink-50 text-[#FF2E7E] text-xs font-extrabold border border-pink-200">
+              <Building size={14} />
+              <span>Multi-Vendor Marketplace Comparison ({selectedCountry.name})</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111827] mt-2">
+              Select Certified Professional Offering This Service
+            </h2>
+            <p className="text-xs text-[#64748B] font-semibold mt-1">
+              Compare real database prices ({selectedCountry.currencySymbol}), ratings, and verified trust scores
+            </p>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111827] mt-2">
-            Select Certified Professional Offering This Service
-          </h2>
-          <p className="text-xs text-[#64748B] font-semibold mt-1">
-            Compare independent {selectedCountry.name} business prices ({selectedCountry.currencySymbol}), ratings, and 5-stage verified trust scores
-          </p>
+
+          {/* Sort Selector Dropdown */}
+          <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-2xl border border-[#ECECEC] shrink-0">
+            <SlidersHorizontal size={14} className="text-[#FF2E7E]" />
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="bg-transparent text-xs font-bold text-slate-800 focus:outline-none cursor-pointer"
+            >
+              <option value="LOWEST_PRICE">Sort by: Lowest Price</option>
+              <option value="HIGHEST_RATING">Sort by: Highest Rating</option>
+              <option value="FASTEST">Sort by: Fastest Duration</option>
+              <option value="POPULAR">Sort by: Most Popular</option>
+            </select>
+          </div>
         </div>
 
         <div className="space-y-4">
-          {vendorOfferings.map((offering) => {
+          {sortedOfferings.map((offering) => {
             const isSelected = selectedOffering?.id === offering.id;
             return (
               <div
@@ -158,12 +191,12 @@ export const ServiceDetails: React.FC = () => {
                         <span>•</span>
                         <span>{offering.experienceYears} Years Exp</span>
                         <span>•</span>
-                        <span>{offering.serviceRadius} km Radius</span>
+                        <span>{offering.area || 'Indiranagar'}, {offering.city || 'Bengaluru'}</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Independent Price & Discount Controls */}
+                  {/* Independent Real Database Price */}
                   <div className="flex items-center gap-6">
                     <div className="text-left md:text-right">
                       {offering.discountPrice && (

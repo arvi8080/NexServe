@@ -89,7 +89,7 @@ export const CompanyERP: React.FC = () => {
               <span>Phase 6 Enterprise Operations Engine</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-              NexServe Enterprise CMS + ERP Hub
+              GlowHome Enterprise CMS + ERP Hub
             </h1>
             <p className="text-xs text-slate-300 max-w-xl font-medium">
               Integrated enterprise management software powering 15 core operational, financial, AI forecast, and multi-city modules.
@@ -337,7 +337,7 @@ export const CompanyERP: React.FC = () => {
               {modules.find((m) => m.id === activeTab)?.name} Module Active
             </h3>
             <p className="text-xs text-[#64748B] max-w-md mx-auto leading-relaxed">
-              Enterprise management telemetry connected. Live operational data feeds are synced with NexServe core backend.
+              Enterprise management telemetry connected. Live operational data feeds are synced with GlowHome core backend.
             </p>
           </div>
         )}

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { MapPin, Navigation, Home, Briefcase, Plus, X, Check, Save } from 'lucide-react';
+import { MapPin, Navigation, Home, Briefcase, Plus, X, Check, Save, Globe, Building, Info } from 'lucide-react';
 import { CustomerAddress } from '@/types';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '@/context/ToastContext';
+
+// TODO: Enable Google Maps, Nearby Search, Live GPS Tracking, and Distance Calculation after reaching ~100 active users by setting ENABLE_GOOGLE_MAPS=true
 
 interface AddressManagerModalProps {
   isOpen: boolean;
@@ -21,96 +23,81 @@ export const AddressManagerModal: React.FC<AddressManagerModalProps> = ({
 }) => {
   const { showToast } = useToast();
   const [isAddingNew, setIsAddingNew] = useState(false);
-  const [isDetectingGps, setIsDetectingGps] = useState(false);
 
-  // Form State
+  // Form State for Manual Selection (Country -> State -> City -> Area)
+  const [country, setCountry] = useState('India');
+  const [state, setState] = useState('Karnataka');
+  const [city, setCity] = useState('Bengaluru');
+  const [area, setArea] = useState('Indiranagar');
   const [label, setLabel] = useState<'Home' | 'Office' | 'Other'>('Home');
   const [fullName, setFullName] = useState('Arvind Kumar');
   const [phoneNumber, setPhoneNumber] = useState('+91 98765 43210');
-  const [addressLine1, setAddressLine1] = useState('');
-  const [addressLine2, setAddressLine2] = useState('');
-  const [landmark, setLandmark] = useState('');
-  const [city, setCity] = useState('Bengaluru');
+  const [addressLine1, setAddressLine1] = useState('10th Main Road, Suite 402');
+  const [landmark, setLandmark] = useState('Near Metro Station');
   const [postalCode, setPostalCode] = useState('560038');
 
   if (!isOpen) return null;
 
-  const handleDetectCurrentLocation = () => {
-    setIsDetectingGps(true);
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setIsDetectingGps(false);
-          setAddressLine1(`GPS Pin (${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)})`);
-          setAddressLine2('10th Main Road, Indiranagar');
-          setCity('Bengaluru');
-          setPostalCode('560038');
-          showToast('GPS Detected!', 'Current location pinned via browser Geolocation API.', 'success');
-        },
-        () => {
-          setIsDetectingGps(false);
-          setAddressLine1('Indiranagar 10th Main Road');
-          setCity('Bengaluru');
-          setPostalCode('560038');
-          showToast('Location Set', 'Using default Bengaluru Indiranagar coordinates.', 'info');
-        }
-      );
-    } else {
-      setIsDetectingGps(false);
-    }
-  };
-
-  const handleSubmitNewAddress = (e: React.FormEvent) => {
+  const handleSaveAddress = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!addressLine1.trim() || !city.trim()) {
+      showToast('Missing Fields', 'Please complete doorstep address line and city.', 'error');
+      return;
+    }
+
     const newAddress: Partial<CustomerAddress> = {
       label,
       fullName,
       phoneNumber,
-      addressLine1,
-      addressLine2,
+      addressLine1: `${addressLine1}, ${area}`,
       landmark,
       city,
-      state: 'Karnataka',
-      country: 'India',
+      state,
+      country,
       postalCode,
       latitude: 12.971598,
       longitude: 77.641151,
       isDefault: savedAddresses.length === 0,
     };
+
     onAddNewAddress(newAddress);
     setIsAddingNew(false);
-    showToast('Address Saved!', `New ${label} address added to address book.`, 'success');
+    showToast('Address Saved!', 'New doorstep service location added to address book.', 'success');
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-      <div className="max-w-xl w-full p-8 rounded-[36px] bg-white border border-[#ECECEC] shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4">
+      <div className="bg-white rounded-[36px] p-6 md:p-8 max-w-xl w-full space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+        {/* Header */}
         <div className="flex items-center justify-between border-b border-[#ECECEC] pb-4">
-          <div className="flex items-center gap-2.5">
-            <MapPin className="text-[#FF2E7E]" size={22} />
-            <h3 className="text-xl font-extrabold text-[#111827]">Doorstep Service Address</h3>
+          <div>
+            <span className="text-[10px] font-bold text-[#FF2E7E] uppercase font-mono tracking-wider block">
+              MVP MANUAL ADDRESS SELECTION
+            </span>
+            <h3 className="text-xl font-extrabold text-[#111827]">Doorstep Location Book</h3>
           </div>
-          <button type="button" onClick={onClose} className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600">
+          <button onClick={onClose} className="p-2 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100">
             <X size={20} />
           </button>
         </div>
 
+        {/* Saved Addresses List vs Add Form */}
         {!isAddingNew ? (
-          <div className="space-y-6">
-            {/* GPS Detection Bar */}
-            <button
-              type="button"
-              onClick={handleDetectCurrentLocation}
-              disabled={isDetectingGps}
-              className="w-full p-4 rounded-2xl bg-pink-50/80 hover:bg-pink-100/80 border border-pink-200 text-[#FF2E7E] text-xs font-extrabold flex items-center justify-center gap-2 transition-colors cursor-pointer"
-            >
-              <Navigation size={16} className={isDetectingGps ? 'animate-spin' : ''} />
-              <span>{isDetectingGps ? 'Detecting GPS Satellite Coordinates...' : 'Use Current Live GPS Location'}</span>
-            </button>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Saved Locations</span>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => setIsAddingNew(true)}
+                leftIcon={<Plus size={14} />}
+                className="h-9 px-3 text-xs font-bold rounded-xl"
+              >
+                + Add Location
+              </Button>
+            </div>
 
-            {/* Saved Address List */}
             <div className="space-y-3">
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Saved Address Book:</span>
               {savedAddresses.map((addr) => (
                 <div
                   key={addr.id}
@@ -118,145 +105,134 @@ export const AddressManagerModal: React.FC<AddressManagerModalProps> = ({
                     onSelectAddress(addr);
                     onClose();
                   }}
-                  className="p-5 rounded-2xl bg-slate-50 border border-[#ECECEC] hover:border-[#FF2E7E] hover:bg-white transition-all cursor-pointer flex items-start justify-between gap-4 group"
+                  className="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-[#FF2E7E] transition-all cursor-pointer space-y-2 group"
                 >
-                  <div className="flex items-start gap-3.5">
-                    <div className="p-2.5 rounded-xl bg-white border border-[#ECECEC] text-[#FF2E7E] shrink-0">
-                      {addr.label === 'Home' ? <Home size={18} /> : <Briefcase size={18} />}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-0.5 rounded-full bg-pink-100 text-[#FF2E7E] text-[10px] font-extrabold uppercase">
+                        {addr.label}
+                      </span>
+                      <h4 className="text-sm font-bold text-[#111827] group-hover:text-[#FF2E7E]">{addr.fullName}</h4>
                     </div>
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-[#111827]">{addr.label} Address</span>
-                        {addr.isDefault && (
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-extrabold border border-emerald-200">
-                            DEFAULT
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-slate-700 font-medium">
-                        {addr.addressLine1}, {addr.addressLine2 ? `${addr.addressLine2}, ` : ''}{addr.city} - {addr.postalCode}
-                      </p>
-                      <span className="text-[11px] text-slate-400 font-semibold block">{addr.fullName} • {addr.phoneNumber}</span>
-                    </div>
+                    <span className="text-xs text-slate-500 font-semibold">{addr.phoneNumber}</span>
                   </div>
-
-                  <Button variant="secondary" size="sm" className="h-9 px-4 text-xs font-bold shrink-0 opacity-80 group-hover:opacity-100">
-                    Select
-                  </Button>
+                  <p className="text-xs text-slate-600 font-medium">
+                    {addr.addressLine1}, {addr.city}, {addr.state} - {addr.postalCode}
+                  </p>
                 </div>
               ))}
             </div>
-
-            <Button
-              variant="outline"
-              onClick={() => setIsAddingNew(true)}
-              leftIcon={<Plus size={16} />}
-              className="w-full h-12 rounded-2xl text-xs font-bold"
-            >
-              Add New Address
-            </Button>
           </div>
         ) : (
-          /* Add New Address Form */
-          <form onSubmit={handleSubmitNewAddress} className="space-y-4">
-            {/* Label Chips */}
-            <div>
-              <label className="text-xs font-bold text-[#111827] block mb-1">Save Address As</label>
-              <div className="flex items-center gap-2">
-                {(['Home', 'Office', 'Other'] as const).map((lbl) => (
-                  <button
-                    key={lbl}
-                    type="button"
-                    onClick={() => setLabel(lbl)}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold cursor-pointer transition-all ${
-                      label === lbl
-                        ? 'bg-[#FF2E7E] text-white shadow-md'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                    }`}
-                  >
-                    {lbl}
-                  </button>
-                ))}
+          <form onSubmit={handleSaveAddress} className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-[#FF2E7E] uppercase font-mono">NEW MANUAL ADDRESS</span>
+              <button type="button" onClick={() => setIsAddingNew(false)} className="text-xs text-slate-400 hover:underline">
+                Back to saved
+              </button>
+            </div>
+
+            {/* Country -> State Dropdowns */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 block">Country</label>
+                <select
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  className="w-full h-11 px-3 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-bold text-slate-900"
+                >
+                  <option value="India">🇮🇳 India</option>
+                  <option value="Nepal">🇳🇵 Nepal</option>
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 block">State / Province</label>
+                <select
+                  value={state}
+                  onChange={(e) => setState(e.target.value)}
+                  className="w-full h-11 px-3 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-bold text-slate-900"
+                >
+                  <option value="Karnataka">Karnataka</option>
+                  <option value="Maharashtra">Maharashtra</option>
+                  <option value="Delhi">Delhi</option>
+                  <option value="Bagmati">Bagmati (Nepal)</option>
+                  <option value="Gandaki">Gandaki (Nepal)</option>
+                </select>
               </div>
             </div>
 
+            {/* City -> Area Dropdowns */}
             <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs font-bold text-[#111827] block mb-1">Full Name</label>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 block">City</label>
+                <select
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  className="w-full h-11 px-3 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-bold text-slate-900"
+                >
+                  <option value="Bengaluru">Bengaluru</option>
+                  <option value="Mumbai">Mumbai</option>
+                  <option value="New Delhi">New Delhi</option>
+                  <option value="Kathmandu">Kathmandu</option>
+                  <option value="Pokhara">Pokhara</option>
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 block">Area / Locality</label>
                 <input
                   type="text"
                   required
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full h-11 px-4 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-medium"
-                />
-              </div>
-              <div>
-                <label className="text-xs font-bold text-[#111827] block mb-1">Phone Number</label>
-                <input
-                  type="tel"
-                  required
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  className="w-full h-11 px-4 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-medium"
+                  value={area}
+                  onChange={(e) => setArea(e.target.value)}
+                  placeholder="e.g. Indiranagar / Durbar Marg"
+                  className="w-full h-11 px-3 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-bold text-slate-900"
                 />
               </div>
             </div>
 
-            <div>
-              <label className="text-xs font-bold text-[#111827] block mb-1">House / Flat / Building No. & Street</label>
+            {/* Address Line 1 & Landmark */}
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-700 block">Street Address / House No.</label>
               <input
                 type="text"
                 required
                 value={addressLine1}
                 onChange={(e) => setAddressLine1(e.target.value)}
-                placeholder="Flat 402, Royal Palms, 10th Main Road"
-                className="w-full h-11 px-4 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-medium"
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-bold text-[#111827] block mb-1">Landmark (Optional)</label>
-              <input
-                type="text"
-                value={landmark}
-                onChange={(e) => setLandmark(e.target.value)}
-                placeholder="Behind Corner House Ice Cream"
-                className="w-full h-11 px-4 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-medium"
+                placeholder="Flat 402, 10th Main Road"
+                className="w-full h-11 px-3 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-bold text-slate-900"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs font-bold text-[#111827] block mb-1">City</label>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 block">Landmark</label>
                 <input
                   type="text"
-                  required
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  className="w-full h-11 px-4 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-medium"
+                  value={landmark}
+                  onChange={(e) => setLandmark(e.target.value)}
+                  placeholder="Near Metro Station"
+                  className="w-full h-11 px-3 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-bold text-slate-900"
                 />
               </div>
-              <div>
-                <label className="text-xs font-bold text-[#111827] block mb-1">Pincode / Postal Code</label>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 block">Postal Code</label>
                 <input
                   type="text"
                   required
                   value={postalCode}
                   onChange={(e) => setPostalCode(e.target.value)}
-                  className="w-full h-11 px-4 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-medium"
+                  placeholder="560038"
+                  className="w-full h-11 px-3 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-bold text-slate-900"
                 />
               </div>
             </div>
 
-            <div className="flex items-center gap-3 pt-3">
-              <Button type="button" variant="outline" onClick={() => setIsAddingNew(false)} className="w-1/2 h-11 rounded-2xl text-xs font-bold">
-                Cancel
-              </Button>
-              <Button type="submit" variant="primary" leftIcon={<Save size={16} />} className="w-1/2 h-11 rounded-2xl text-xs font-bold">
-                Save & Use Address
-              </Button>
-            </div>
+            <Button type="submit" variant="primary" className="w-full h-12 rounded-2xl text-xs font-bold shadow-xl">
+              Save Doorstep Location
+            </Button>
           </form>
         )}
       </div>

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authenticate } from "../../common/middleware/auth.middleware";
+import { authorize } from "../../common/middleware/authorize.middleware";
 import { validate, validateQuery } from "../../common/middleware/validate";
 import { updateLocationSchema, nearbyQuerySchema } from "./location.validation";
 import { locationController } from "./location.controller";
@@ -83,6 +84,7 @@ const router = Router();
 router.patch(
 "/",
 authenticate,
+authorize("VENDOR", "SUPER_ADMIN"),
 validate(updateLocationSchema),
 asyncHandler(locationController.update)
 );

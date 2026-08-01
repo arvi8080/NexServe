@@ -39,6 +39,15 @@ export const API_ENDPOINTS = {
   },
   VENDOR: {
     PROFILE: '/vendor/profile',
+    DASHBOARD: '/vendor/dashboard',
+    EARNINGS: '/vendor/earnings',
+    WALLET: '/vendor/wallet',
+    TRANSACTIONS: '/vendor/transactions',
+    WITHDRAW: '/vendor/withdraw',
+    WITHDRAWALS: '/vendor/withdrawals',
+    VERIFICATION: '/vendor/verification',
+    SECURITY: '/vendor/security',
+    CHANGE_PASSWORD: '/vendor/change-password',
   },
   ADMIN: {
     DASHBOARD: '/admin/dashboard',

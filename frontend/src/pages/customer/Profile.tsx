@@ -94,7 +94,7 @@ export const Profile: React.FC = () => {
           <input
             type="email"
             disabled
-            value={user?.email || 'customer@nexserve.com'}
+            value={user?.email || 'customer@glowhome.com'}
             className="w-full h-11 px-4 rounded-2xl bg-slate-100 border border-[#ECECEC] text-xs text-slate-400 cursor-not-allowed font-medium"
           />
         </div>
@@ -166,7 +166,7 @@ export const Profile: React.FC = () => {
       {/* Danger Zone */}
       <div className="p-8 rounded-[32px] bg-rose-50/60 border border-rose-200 space-y-4">
         <h3 className="text-sm font-bold text-rose-800 uppercase tracking-wider">Danger Zone</h3>
-        <p className="text-xs text-rose-700">Permanently delete your NexServe profile and associated booking logs.</p>
+        <p className="text-xs text-rose-700">Permanently delete your GlowHome profile and associated booking logs.</p>
         <Button variant="danger" onClick={() => setDeleteModalOpen(true)} leftIcon={<Trash2 size={16} />} className="h-11 px-5 rounded-2xl text-xs font-bold">
           Delete Account
         </Button>
@@ -177,7 +177,7 @@ export const Profile: React.FC = () => {
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleDeleteAccount}
         title="Delete Account?"
-        message="Are you sure you want to permanently erase your NexServe account? This action cannot be undone."
+        message="Are you sure you want to permanently erase your GlowHome account? This action cannot be undone."
         confirmText="Yes, Erase Profile"
         isDanger
       />

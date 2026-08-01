@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, Role } from '@/types';
 import { authApi, RegisterData } from '@/api/auth';
-import { getStoredToken, setStoredToken, getStoredUser, setStoredUser, clearAuthStorage } from '@/utils/storage';
+import { getStoredToken, setStoredToken, getStoredUser, setStoredUser, setStoredRefreshToken, clearAuthStorage } from '@/utils/storage';
 
 interface AuthContextType {
   user: User | null;
@@ -36,6 +36,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const res = await authApi.login(credentials);
       const activeToken = res.token || res.accessToken || 'mock_jwt_token_2026';
+      if (res.refreshToken) {
+        setStoredRefreshToken(res.refreshToken);
+      }
       setUser(res.user);
       setToken(activeToken);
       setStoredToken(activeToken);
@@ -51,6 +54,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const res = await authApi.register(data);
       const activeToken = res.token || res.accessToken || 'mock_jwt_token_2026';
+      if (res.refreshToken) {
+        setStoredRefreshToken(res.refreshToken);
+      }
       setUser(res.user);
       setToken(activeToken);
       setStoredToken(activeToken);

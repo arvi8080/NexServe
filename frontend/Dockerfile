@@ -1,4 +1,4 @@
-# Multi-Stage Production Dockerfile for NexServe App
+# Multi-Stage Production Dockerfile for GlowHome App
 FROM node:20-alpine AS builder
 
 WORKDIR /app

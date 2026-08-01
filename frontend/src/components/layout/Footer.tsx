@@ -13,11 +13,11 @@ export const Footer: React.FC = () => {
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-extrabold text-white tracking-tight">
-              Nex<span className="gradient-text">Serve</span>
+              Glow<span className="gradient-text">Home</span>
             </span>
           </Link>
           <p className="text-slate-400 text-xs leading-relaxed">
-            India's premier doorstep luxury beauty & spa platform. Certified top-tier professionals delivered safely to your living room.
+            Premier doorstep beauty, cleaning, repairs, and home services marketplace. Certified top-tier professionals delivered safely to your living room.
           </p>
         </div>
 
@@ -49,7 +49,7 @@ export const Footer: React.FC = () => {
           <h4 className="text-sm font-bold text-white uppercase tracking-wider">Contact</h4>
           <ul className="space-y-3 text-xs text-slate-400">
             <li className="flex items-center gap-3"><Phone size={16} className="text-[#FF4D8D]" /> +91 1800 200 8899</li>
-            <li className="flex items-center gap-3"><Mail size={16} className="text-[#FF4D8D]" /> support@nexserve.com</li>
+            <li className="flex items-center gap-3"><Mail size={16} className="text-[#FF4D8D]" /> glowhome.help@gmail.com</li>
             <li className="flex items-start gap-3"><MapPin size={16} className="text-[#FF4D8D] mt-0.5" /> 100 Feet Road, Indiranagar, Bengaluru</li>
           </ul>
         </div>
@@ -57,7 +57,7 @@ export const Footer: React.FC = () => {
         {/* Col 5: App Download & Socials */}
         <div className="space-y-4">
           <h4 className="text-sm font-bold text-white uppercase tracking-wider">Get the App</h4>
-          <p className="text-xs text-slate-400">Book doorstep beauty in seconds from your mobile phone.</p>
+          <p className="text-xs text-slate-400">Book doorstep beauty & home services in seconds from your mobile phone.</p>
           <div className="flex items-center gap-2">
             <button className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-xs font-semibold text-white transition-colors">
               <Smartphone size={16} className="text-[#FF4D8D]" /> App Store
@@ -75,7 +75,7 @@ export const Footer: React.FC = () => {
       </div>
 
       <div className="border-t border-slate-800 py-6 text-center flex flex-col sm:flex-row items-center justify-between max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-xs text-slate-500">
-        <p>© 2026 NexServe Technologies Inc. All rights reserved.</p>
+        <p>© 2026 GlowHome Technologies Inc. All rights reserved.</p>
         <p className="flex items-center gap-1 mt-2 sm:mt-0">
           Made with <Heart size={14} className="text-[#FF4D8D] fill-[#FF4D8D]" /> for supreme elegance
         </p>

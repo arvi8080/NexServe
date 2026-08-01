@@ -6,6 +6,7 @@ import {
   loginSchema,
 } from "./auth.validation";
 import { authenticate } from "../../common/middleware/auth.middleware";
+import { authorize } from "../../common/middleware/authorize.middleware";
 import { asyncHandler } from "../../common/utils/asyncHandler";
 
 /**
@@ -140,6 +141,7 @@ const router = Router();
 router.get(
   "/me",
   authenticate,
+  authorize("CUSTOMER", "VENDOR", "ADMIN", "SUPER_ADMIN"),
   (req, res) => {
     return res.status(200).json({
       success: true,
@@ -161,7 +163,15 @@ router.post(
 );
 
 
-router.post("/logout", authenticate, asyncHandler(authController.logout));
+router.post(
+  "/logout",
+  authenticate,
+  authorize("CUSTOMER", "VENDOR", "ADMIN", "SUPER_ADMIN"),
+  asyncHandler(authController.logout)
+);
 
-router.post("/refresh", authenticate, asyncHandler(authController.refresh));
+router.post(
+  "/refresh",
+  asyncHandler(authController.refresh)
+);
 export default router;

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authenticate } from "../../common/middleware/auth.middleware";
+import { authorize } from "../../common/middleware/authorize.middleware";
 import { validate } from "../../common/middleware/validate";
 import { availabilityController } from "./availability.controller";
 import { createAvailabilitySchema, updateAvailabilitySchema } from "./availability.validation";
@@ -95,6 +96,7 @@ const router = Router();
 router.patch(
   "/",
   authenticate,
+  authorize("VENDOR", "SUPER_ADMIN"),
   validate(createAvailabilitySchema),
   availabilityController.upsert
 );

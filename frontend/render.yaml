@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: nexserve-api
+    name: glowhome-api
     env: node
     buildCommand: npm install && npx prisma generate && npm run build
     startCommand: npm run start

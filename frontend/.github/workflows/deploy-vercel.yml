@@ -1,4 +1,4 @@
-name: NexServe Vercel CD Deployment
+name: GlowHome Vercel CD Deployment
 
 on:
   push:

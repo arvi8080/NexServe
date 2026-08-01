@@ -14,6 +14,10 @@ declare global {
   }
 }
 
+import { normalizeRole } from "../constants/roleHierarchy";
+
+const normalizeRequestRole = (role?: string): string => normalizeRole(role);
+
 export const authenticate = (
   req: Request,
   _res: Response,
@@ -33,11 +37,11 @@ export const authenticate = (
     req.user = {
       id: payload.id,
       email: payload.email,
-      role: payload.role,
+      role: normalizeRequestRole(payload.role),
     };
 
     next();
   } catch {
-    next(new AppError("Invalid or expired token", 401));
+    next(new AppError("Unauthorized", 401));
   }
 };

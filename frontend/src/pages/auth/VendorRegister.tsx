@@ -71,7 +71,7 @@ export const VendorRegister: React.FC = () => {
         address: formData.address,
       });
 
-      showToast('Partner Onboarding Submitted!', 'Welcome to NexServe Partner Network.', 'success');
+      showToast('Partner Onboarding Submitted!', 'Welcome to GlowHome Partner Network.', 'success');
       navigate('/vendor/dashboard');
     } catch {
       showToast('Registration Failed', 'Could not complete partner registration.', 'error');
@@ -123,7 +123,7 @@ export const VendorRegister: React.FC = () => {
 
         {/* Form Header */}
         <div className="text-center space-y-1">
-          <h2 className="text-2xl font-extrabold text-slate-900">Become a NexServe Partner</h2>
+          <h2 className="text-2xl font-extrabold text-slate-900">Become a GlowHome Partner</h2>
           <p className="text-xs text-slate-500 font-medium">Register your beauty studio, independent practice, or spa</p>
         </div>
 
@@ -326,7 +326,7 @@ export const VendorRegister: React.FC = () => {
 
           {/* 8. Urban Company Style Partner Benefits Grid */}
           <div className="pt-4 border-t border-slate-100 space-y-3">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">NexServe Partner Guarantee</span>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">GlowHome Partner Guarantee</span>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs font-semibold text-slate-700">
               <div className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> 85% Earning Payout</div>
               <div className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Weekly Payouts</div>

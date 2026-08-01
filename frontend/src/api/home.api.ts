@@ -44,8 +44,8 @@ export interface HomeDataResponse {
 export const homeApi = {
   getHomeData: async (): Promise<HomeDataResponse> => {
     try {
-      const response = await apiClient.get<HomeDataResponse>('/home');
-      return response.data;
+      const response = await apiClient.get<{ success: boolean; data: HomeDataResponse }>('/home');
+      return response.data.data;
     } catch {
       // Fallback mock data returned dynamically if endpoint is not connected
       return {

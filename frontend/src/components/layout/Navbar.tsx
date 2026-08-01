@@ -31,15 +31,15 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
         {/* Brand Logo (Left) */}
         <Link to="/" className="flex items-center gap-2.5 sm:gap-3.5 group shrink-0">
-          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-[#FF2E7E] to-[#FF5CA8] flex items-center justify-center shadow-lg shadow-[#FF2E7E]/25 group-hover:scale-105 transition-transform">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-linear-to-tr from-[#FF2E7E] to-[#FF5CA8] flex items-center justify-center shadow-lg shadow-[#FF2E7E]/25 group-hover:scale-105 transition-transform">
             <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
           </div>
           <div className="flex flex-col">
             <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#111827]">
-              Nex<span className="gradient-text">Serve</span>
+              Glow<span className="gradient-text">Home</span>
             </span>
             <span className="text-[9px] sm:text-[10px] tracking-widest uppercase font-bold text-slate-400 hidden xs:inline-block">
-              Luxury Doorstep Beauty & Wellness
+              Premium Beauty, Cleaning & Home Services
             </span>
           </div>
         </Link>
@@ -52,10 +52,10 @@ export const Navbar: React.FC = () => {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`px-5 py-2 rounded-full text-xs font-bold transition-all ${
+                className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
                   isActive
-                    ? 'bg-[#FF2E7E] text-white shadow-md shadow-[#FF2E7E]/20'
-                    : 'text-slate-600 hover:text-[#111827] hover:bg-slate-200/60'
+                    ? 'bg-gradient-to-r from-[#FF2E7E] to-[#FF5CA8] text-white shadow-md shadow-[#FF2E7E]/20'
+                    : 'text-slate-600 hover:text-[#111827] hover:bg-slate-200/50'
                 }`}
               >
                 {link.name}
@@ -64,60 +64,61 @@ export const Navbar: React.FC = () => {
           })}
         </nav>
 
-        {/* Right Action Icons, Country Flag Selector & Profile */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        {/* Action Controls (Right) */}
+        <div className="flex items-center gap-2.5 sm:gap-4">
           <CountrySelectorModal />
+          <NotificationBell />
 
-          <Link
-            to="/search"
-            className="p-2 sm:p-2.5 text-slate-500 hover:text-[#111827] rounded-full hover:bg-pink-50 transition-all touch-manipulation"
-          >
-            <Search className="w-5 h-5" />
-          </Link>
-
-          {user && <NotificationBell />}
-
-          <div className="hidden sm:block">
+          {user ? (
             <ProfileMenu />
-          </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Link to="/login">
+                <button className="h-10 sm:h-11 px-4 sm:px-5 rounded-2xl text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors">
+                  Sign In
+                </button>
+              </Link>
+              <Link to="/register">
+                <button className="h-10 sm:h-11 px-4 sm:px-5 rounded-2xl text-xs font-bold bg-gradient-to-r from-[#FF2E7E] to-[#FF5CA8] text-white shadow-lg shadow-[#FF2E7E]/20 hover:opacity-95 transition-opacity">
+                  Get Started
+                </button>
+              </Link>
+            </div>
+          )}
 
-          {/* Mobile/Tablet Menu Hamburger Button */}
+          {/* Mobile Menu Trigger */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-[#111827] transition-all lg:hidden touch-manipulation cursor-pointer"
-            aria-label="Toggle navigation menu"
+            className="lg:hidden p-2.5 rounded-2xl bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors cursor-pointer"
+            aria-label="Toggle Navigation Menu"
           >
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Slide-Down Menu Overlay */}
+      {/* Mobile Menu Drawer */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="lg:hidden border-b border-[#ECECEC] bg-white overflow-hidden"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="lg:hidden bg-white border-b border-[#ECECEC] px-6 py-6 space-y-4 shadow-xl"
           >
-            <div className="px-6 py-6 space-y-4">
-              <div className="flex flex-col space-y-2">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="px-4 py-3 rounded-2xl text-sm font-bold text-[#111827] hover:bg-pink-50 transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                ))}
-              </div>
-
-              <div className="pt-4 border-t border-[#ECECEC]">
-                <ProfileMenu />
-              </div>
+            <div className="flex flex-col space-y-2">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`px-4 py-3 rounded-2xl text-sm font-bold transition-all ${
+                    location.pathname === link.path ? 'bg-pink-50 text-[#FF2E7E]' : 'text-slate-700 hover:bg-slate-50'
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              ))}
             </div>
           </motion.div>
         )}

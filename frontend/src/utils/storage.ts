@@ -1,5 +1,6 @@
-const TOKEN_KEY = 'nexserve_auth_token';
-const USER_KEY = 'nexserve_user';
+const TOKEN_KEY = 'glowhome_auth_token';
+const REFRESH_TOKEN_KEY = 'glowhome_refresh_token';
+const USER_KEY = 'glowhome_user';
 
 export const getStoredToken = (): string | null => {
   return localStorage.getItem(TOKEN_KEY);
@@ -11,6 +12,18 @@ export const setStoredToken = (token: string): void => {
 
 export const removeStoredToken = (): void => {
   localStorage.removeItem(TOKEN_KEY);
+};
+
+export const getStoredRefreshToken = (): string | null => {
+  return localStorage.getItem(REFRESH_TOKEN_KEY);
+};
+
+export const setStoredRefreshToken = (token: string): void => {
+  localStorage.setItem(REFRESH_TOKEN_KEY, token);
+};
+
+export const removeStoredRefreshToken = (): void => {
+  localStorage.removeItem(REFRESH_TOKEN_KEY);
 };
 
 export const getStoredUser = (): any | null => {
@@ -33,5 +46,6 @@ export const removeStoredUser = (): void => {
 
 export const clearAuthStorage = (): void => {
   removeStoredToken();
+  removeStoredRefreshToken();
   removeStoredUser();
 };

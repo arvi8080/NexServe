@@ -25,7 +25,7 @@ export const Register: React.FC = () => {
 
     try {
       await register(formData);
-      showToast('Registration Successful!', 'Welcome to NexServe.', 'success');
+      showToast('Registration Successful!', 'Welcome to GlowHome.', 'success');
       navigate('/customer/dashboard');
     } catch {
       showToast('Registration Failed', 'Could not complete account creation.', 'error');
@@ -38,7 +38,7 @@ export const Register: React.FC = () => {
     <div className="space-y-6">
       <div>
         <h3 className="text-xl font-bold text-slate-900">Create Customer Account</h3>
-        <p className="text-xs text-slate-500 mt-1">Join NexServe for doorstep luxury beauty treatments</p>
+        <p className="text-xs text-slate-500 mt-1">Join GlowHome for doorstep luxury beauty treatments</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">

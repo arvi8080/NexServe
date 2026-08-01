@@ -17,7 +17,7 @@ export const userApi = {
       return {
         user: {
           id: 'u_90812',
-          email: 'customer@nexserve.com',
+          email: 'customer@glowhome.com',
           firstName: 'Arvind',
           lastName: 'Kumar',
           phone: '+91 98765 43210',

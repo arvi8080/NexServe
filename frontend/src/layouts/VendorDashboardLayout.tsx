@@ -12,7 +12,7 @@ export const VendorDashboardLayout: React.FC<{ children?: ReactNode }> = ({ chil
 
       <Navbar />
       <div className="flex flex-1 max-w-7xl w-full mx-auto relative z-10 py-6">
-        <Sidebar role="VENDOR_OWNER" />
+        <Sidebar role="VENDOR" />
         <main className="flex-1 p-6 md:p-8 overflow-y-auto">
           {children || <Outlet />}
         </main>

@@ -15,11 +15,25 @@ export interface RegisterData {
   address?: string;
 }
 
+// Backend returns `{ success, data: { user, accessToken, refreshToken } }`.
+// Normalize to the frontend AuthResponse shape (`{ user, token, accessToken, refreshToken }`).
+const normalizeAuthResponse = (payload: any): AuthResponse => {
+  if (!payload) return payload;
+  const inner = payload.data && typeof payload.data === 'object' ? payload.data : payload;
+  return {
+    user: inner.user,
+    token: inner.token || inner.accessToken || (typeof payload.token === 'string' ? payload.token : undefined),
+    accessToken: inner.accessToken || inner.token,
+    refreshToken: inner.refreshToken || payload.refreshToken,
+    expiresIn: inner.expiresIn || payload.expiresIn,
+  };
+};
+
 export const authApi = {
   login: async (credentials: { email: string; password: string; role?: string }): Promise<AuthResponse> => {
     try {
       const response = await axiosInstance.post(API_ENDPOINTS.AUTH.LOGIN, credentials);
-      return response.data;
+      return normalizeAuthResponse(response.data);
     } catch {
       // Mock Fallback
       const targetUser = MOCK_USERS.find(
@@ -34,6 +48,7 @@ export const authApi = {
       return {
         user: targetUser,
         token: `mock_jwt_token_${Date.now()}`,
+        refreshToken: `mock_refresh_token_${Date.now()}`,
       };
     }
   },
@@ -41,7 +56,7 @@ export const authApi = {
   register: async (data: RegisterData): Promise<AuthResponse> => {
     try {
       const response = await axiosInstance.post(API_ENDPOINTS.AUTH.REGISTER, data);
-      return response.data;
+      return normalizeAuthResponse(response.data);
     } catch {
       const newUser: User = {
         id: `user_${Date.now()}`,
@@ -54,6 +69,7 @@ export const authApi = {
       return {
         user: newUser,
         token: `mock_jwt_token_${Date.now()}`,
+        refreshToken: `mock_refresh_token_${Date.now()}`,
       };
     }
   },
@@ -65,7 +81,7 @@ export const authApi = {
     } catch {
       // Check if email exists in system database
       const exists = MOCK_USERS.some((u) => u.email.toLowerCase() === email.toLowerCase());
-      if (!exists && !email.toLowerCase().includes('nexserve.com')) {
+      if (!exists && !email.toLowerCase().includes('glowhome.com')) {
         throw new Error('No account found registered with this email address.');
       }
       return true;
@@ -83,7 +99,8 @@ export const authApi = {
 
   logout: async (): Promise<void> => {
     try {
-      await axiosInstance.post(API_ENDPOINTS.AUTH.LOGOUT);
+      const refreshToken = localStorage.getItem('glowhome_refresh_token');
+      await axiosInstance.post(API_ENDPOINTS.AUTH.LOGOUT, refreshToken ? { refreshToken } : {});
     } catch {
       // Silent catch
     }
@@ -92,7 +109,7 @@ export const authApi = {
   getMe: async (): Promise<User> => {
     try {
       const response = await axiosInstance.get(API_ENDPOINTS.AUTH.ME);
-      return response.data;
+      return response.data?.user ?? response.data?.data ?? response.data;
     } catch {
       return MOCK_USERS[0];
     }

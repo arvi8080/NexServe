@@ -19,7 +19,7 @@ export const CountryProvider: React.FC<{ children: ReactNode }> = ({ children })
   const { showToast } = useToast();
   const [countries, setCountries] = useState<Country[]>(MOCK_COUNTRIES);
   const [selectedCountry, setSelectedCountry] = useState<Country>(() => {
-    const savedCode = localStorage.getItem('nexserve_country_code');
+    const savedCode = localStorage.getItem('glowhome_country_code');
     const matched = MOCK_COUNTRIES.find((c) => c.code === savedCode);
     return matched || MOCK_COUNTRIES[0]; // Default India (IN)
   });
@@ -52,7 +52,7 @@ export const CountryProvider: React.FC<{ children: ReactNode }> = ({ children })
     const matched = countries.find((c) => c.code === countryCode);
     if (matched) {
       setSelectedCountry(matched);
-      localStorage.setItem('nexserve_country_code', countryCode);
+      localStorage.setItem('glowhome_country_code', countryCode);
       showToast(
         `Region Switch: ${matched.name} ${matched.flag}`,
         `Currency updated to ${matched.currency} (${matched.currencySymbol}) with ${matched.taxName} (${matched.taxRate}%).`,

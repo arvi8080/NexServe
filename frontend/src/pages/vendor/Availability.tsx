@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import { Clock, Calendar, MapPin, CheckCircle2, Save } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '@/context/ToastContext';
+import { useAuth } from '@/context/AuthContext';
+import { isVendorBusinessLocked } from '@/middleware/rbacMiddleware';
 
 export const Availability: React.FC = () => {
   const { showToast } = useToast();
+  const { user } = useAuth();
+  const isPendingVendor = isVendorBusinessLocked(user);
   const [radius, setRadius] = useState('10');
   const [isOnline, setIsOnline] = useState(true);
 
@@ -25,6 +29,10 @@ export const Availability: React.FC = () => {
   };
 
   const handleSave = () => {
+    if (isPendingVendor) {
+      showToast('Access Restricted', 'Your account must be approved before using this feature.', 'error');
+      return;
+    }
     showToast('Schedule Saved!', 'Your weekly availability and service radius have been updated.', 'success');
   };
 
@@ -36,7 +44,7 @@ export const Availability: React.FC = () => {
           <h1 className="text-3xl font-extrabold text-[#111827]">Availability & Radius</h1>
           <p className="text-xs text-[#64748B] font-medium mt-1">Configure operating days, daily working hours, and city service radius</p>
         </div>
-        <Button variant="primary" onClick={handleSave} leftIcon={<Save size={16} />} className="h-11 px-5 rounded-2xl text-xs font-bold">
+        <Button variant="primary" onClick={handleSave} leftIcon={<Save size={16} />} disabled={isPendingVendor} title={isPendingVendor ? 'Your account must be approved before using this feature.' : undefined} className="h-11 px-5 rounded-2xl text-xs font-bold">
           Save Settings
         </Button>
       </div>
@@ -54,9 +62,17 @@ export const Availability: React.FC = () => {
         </div>
 
         <button
-          onClick={() => setIsOnline(!isOnline)}
-          className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-            isOnline ? 'bg-emerald-500 text-white shadow-md' : 'bg-slate-200 text-slate-700'
+          onClick={() => {
+            if (isPendingVendor) {
+              showToast('Access Restricted', 'Your account must be approved before using this feature.', 'error');
+              return;
+            }
+            setIsOnline(!isOnline);
+          }}
+          disabled={isPendingVendor}
+          title={isPendingVendor ? 'Your account must be approved before using this feature.' : undefined}
+          className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all ${isPendingVendor ? 'bg-slate-300 text-slate-600 cursor-not-allowed' : 'cursor-pointer'} ${
+            isOnline && !isPendingVendor ? 'bg-emerald-500 text-white shadow-md' : 'bg-slate-200 text-slate-700'
           }`}
         >
           {isOnline ? 'ONLINE' : 'OFFLINE'}

@@ -1,4 +1,4 @@
-// Prisma Schema for NexServe Marketplace Platform (PostgreSQL on Neon Cloud)
+// Prisma Schema for GlowHome Marketplace Platform (PostgreSQL on Neon Cloud)
 
 datasource db {
   provider = "postgresql"
@@ -293,15 +293,15 @@ model Vendor {
 model VendorVerification {
   id                        String             @id @default(uuid())
   vendorId                  String             @unique
-  govtIdType                String             @default("AADHAAR") // AADHAAR, PAN, CITIZENSHIP_NEPAL, PASSPORT, DRIVING_LICENSE
+  govtIdType                String             @default("AADHAAR")
   govtIdNumberEncrypted     String
   policeVerificationDoc     String?
   skillCertificateDoc       String?
   bankAccountHolder         String
   bankAccountNumberEncrypted String
   bankIfscOrBranchCode      String
-  bankPayoutPreference      String             @default("UPI") // UPI, RAZORPAY, ESEWA, KHALTI
-  trustScore                Int                @default(98) // 0 - 100
+  bankPayoutPreference      String             @default("UPI")
+  trustScore                Int                @default(98)
   status                    VerificationStatus @default(VERIFIED)
   verificationBadges        String[]           @default(["VERIFIED_IDENTITY", "TOP_RATED", "ELITE_PARTNER"])
   reviewedBy                String?
@@ -332,17 +332,21 @@ model VendorCoverage {
   @@map("vendor_coverages")
 }
 
+// Master Global Catalog Definition (Admin Managed Only)
 model Service {
-  id          String          @id @default(uuid())
-  categoryId  String
-  name        String
-  description String
-  image       String?
-  icon        String?
-  slug        String          @unique
-  isActive    Boolean         @default(true)
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  id              String          @id @default(uuid())
+  categoryId      String
+  name            String
+  description     String
+  image           String?
+  icon            String?
+  slug            String          @unique
+  defaultDuration Int             @default(45) // in minutes
+  minPrice        Float           @default(300.0) // Admin Min Price Cap
+  maxPrice        Float           @default(1500.0) // Admin Max Price Cap
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 
   vendorServices VendorService[]
   bookings       Booking[]
@@ -350,21 +354,28 @@ model Service {
   @@map("services")
 }
 
+// Vendor Offering Definition (Vendor Pricing & Locality Managed)
 model VendorService {
   id                  String               @id @default(uuid())
   vendorId            String
   serviceId           String
+  country             String               @default("IN") // IN, NP
+  state               String               @default("Karnataka")
+  city                String               @default("Bengaluru")
+  area                String               @default("Indiranagar")
   price               Float
   discountPrice       Float?
   discountPercentage  Int?                 @default(0)
   duration            Int
+  availableSlots      String[]             @default(["10:00 AM", "02:00 PM", "05:00 PM"])
+  genderPreference    String               @default("UNISEX") // FEMALE_ONLY, MALE_ONLY, UNISEX
   experienceYears     Int                  @default(5)
   available           Boolean              @default(true)
   instantBooking      Boolean              @default(true)
   homeService         Boolean              @default(true)
   serviceRadius       Int                  @default(10)
   maxBookingsPerDay   Int                  @default(6)
-  status              String               @default("ACTIVE")
+  status              String               @default("ACTIVE") // ACTIVE, INACTIVE
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 

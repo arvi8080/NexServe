@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authenticate } from "../../common/middleware/auth.middleware";
+import { authorize } from "../../common/middleware/authorize.middleware";
 import { validate } from "../../common/middleware/validate";
 import { vendorController } from "./vendor.controller";
 import { 
@@ -141,6 +142,7 @@ const router = Router();
 router.post(
   "/register",
   authenticate,
+  authorize("CUSTOMER", "SUPER_ADMIN"),
   validate(vendorRegisterSchema),
   asyncHandler(vendorController.register)
 );
@@ -148,6 +150,7 @@ router.post(
 router.get(
   "/profile",
   authenticate,
+  authorize("VENDOR", "SUPER_ADMIN"),
   asyncHandler(vendorController.getVendorProfile)
 );
 
@@ -155,6 +158,7 @@ router.get(
 router.put(
   "/profile",
   authenticate,
+  authorize("VENDOR", "SUPER_ADMIN"),
   validate(updateVendorSchema),
   asyncHandler(vendorController.updateProfile)
 );

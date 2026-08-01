@@ -44,7 +44,7 @@ export const Contact: React.FC = () => {
                 <div className="p-3 rounded-2xl bg-pink-50 text-[#FF2E7A]"><Mail size={18} /></div>
                 <div>
                   <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Email Support</span>
-                  <span className="text-sm font-bold text-[#111827]">support@nexserve.com</span>
+                  <span className="text-sm font-bold text-[#111827]">glowhome.help@gmail.com</span>
                 </div>
               </div>
 

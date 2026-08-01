@@ -90,7 +90,7 @@ export const AIConciergePage: React.FC = () => {
 
   const handleOneFlowBooking = async () => {
     if (!isAuthenticated) {
-      showToast('Sign In Required', 'Please log in to your NexServe account to continue booking.', 'info');
+      showToast('Sign In Required', 'Please log in to your GlowHome account to continue booking.', 'info');
       navigate('/login');
       return;
     }

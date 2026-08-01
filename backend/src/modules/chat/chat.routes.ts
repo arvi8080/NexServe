@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authenticate } from "../../common/middleware/auth.middleware";
+import { authorize } from "../../common/middleware/authorize.middleware";
 import { validate } from "../../common/middleware/validate";
 import { chatController } from "./chat.controller";
 import { sendMessageSchema } from "./chat.validation";
@@ -73,6 +74,7 @@ const router = Router();
 router.post(
   "/:bookingId/messages",
   authenticate,
+  authorize("CUSTOMER", "VENDOR", "SUPER_ADMIN"),
   validate(sendMessageSchema),
   asyncHandler(chatController.sendMessage)
 );
@@ -80,6 +82,7 @@ router.post(
 router.get(
   "/:bookingId/messages",
   authenticate,
+  authorize("CUSTOMER", "VENDOR", "SUPER_ADMIN"),
   asyncHandler(chatController.getMessages)
 );
 

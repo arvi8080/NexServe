@@ -32,7 +32,7 @@ export const bookingApi = {
   getMyBookings: async (): Promise<Booking[]> => {
     try {
       const response = await axiosInstance.get(API_ENDPOINTS.BOOKING.MY);
-      return response.data;
+      return response.data?.data ?? response.data;
     } catch {
       return MOCK_BOOKINGS;
     }
@@ -41,7 +41,7 @@ export const bookingApi = {
   getVendorBookings: async (): Promise<Booking[]> => {
     try {
       const response = await axiosInstance.get(API_ENDPOINTS.BOOKING.VENDOR);
-      return response.data;
+      return response.data?.data ?? response.data;
     } catch {
       return MOCK_BOOKINGS;
     }
@@ -50,7 +50,7 @@ export const bookingApi = {
   getBookingById: async (id: string): Promise<Booking> => {
     try {
       const response = await axiosInstance.get(API_ENDPOINTS.BOOKING.BY_ID(id));
-      return response.data;
+      return response.data?.data ?? response.data;
     } catch {
       const booking = MOCK_BOOKINGS.find((b) => b.id === id);
       if (!booking) throw new Error('Booking not found');
@@ -61,7 +61,7 @@ export const bookingApi = {
   updateBookingStatus: async (id: string, status: string): Promise<Booking> => {
     try {
       const response = await axiosInstance.patch(API_ENDPOINTS.BOOKING.STATUS(id), { status });
-      return response.data;
+      return response.data?.data ?? response.data;
     } catch {
       const booking = MOCK_BOOKINGS.find((b) => b.id === id);
       if (booking) booking.status = status as any;

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authenticate } from "../../common/middleware/auth.middleware";
+import { authorize } from "../../common/middleware/authorize.middleware";
 import { invoiceController } from "./invoice.controller";
 import { asyncHandler } from "../../common/utils/asyncHandler";
 
@@ -89,18 +90,21 @@ const router = Router();
 router.get(
   "/",
   authenticate,
+  authorize("ADMIN", "SUPER_ADMIN"),
   asyncHandler(invoiceController.getAllInvoices)
 );
 
 router.post(
   "/:bookingId",
   authenticate,
+  authorize("VENDOR", "SUPER_ADMIN"),
   asyncHandler(invoiceController.createInvoice)
 );
 
 router.get(
   "/:bookingId",
   authenticate,
+  authorize("CUSTOMER", "VENDOR", "ADMIN", "SUPER_ADMIN"),
   asyncHandler(invoiceController.getInvoice)
 );
 

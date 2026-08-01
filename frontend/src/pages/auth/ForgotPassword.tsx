@@ -78,7 +78,7 @@ export const ForgotPassword: React.FC = () => {
                   setEmail(e.target.value);
                   if (errorMessage) setErrorMessage(null);
                 }}
-                placeholder="customer@nexserve.com"
+                placeholder="customer@glowhome.com"
                 className={`w-full h-12 pl-12 pr-4 rounded-2xl bg-slate-50 border text-xs font-bold text-slate-900 focus:outline-none transition-all ${
                   errorMessage ? 'border-rose-400 focus:border-rose-500 bg-rose-50/20' : 'border-[#ECECEC] focus:border-[#FF2E7E]'
                 }`}

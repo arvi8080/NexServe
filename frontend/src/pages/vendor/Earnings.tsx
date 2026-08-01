@@ -3,9 +3,13 @@ import { DollarSign, Wallet, TrendingUp, Calendar, ArrowUpRight, ShieldCheck, Cr
 import { formatCurrency } from '@/utils/formatters';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '@/context/ToastContext';
+import { useAuth } from '@/context/AuthContext';
+import { isVendorBusinessLocked } from '@/middleware/rbacMiddleware';
 
 export const Earnings: React.FC = () => {
   const { showToast } = useToast();
+  const { user } = useAuth();
+  const isPendingVendor = isVendorBusinessLocked(user);
 
   const transactions = [
     { id: 't1', service: 'Diamond Hydra-Glow Facial', date: 'Jul 26, 2026', amount: 1499, status: 'COMPLETED' },
@@ -14,6 +18,10 @@ export const Earnings: React.FC = () => {
   ];
 
   const handleWithdraw = () => {
+    if (isPendingVendor) {
+      showToast('Access Restricted', 'Your account must be approved before using this feature.', 'error');
+      return;
+    }
     showToast('Payout Initiated!', '₹12,400 will be deposited into your bank account within 24 hours.', 'success');
   };
 
@@ -25,7 +33,7 @@ export const Earnings: React.FC = () => {
           <h1 className="text-3xl font-extrabold text-[#111827]">Earnings & Bank Payouts</h1>
           <p className="text-xs text-[#64748B] font-medium mt-1">Track net treatment revenue, weekly automatic bank transfers, and payouts</p>
         </div>
-        <Button variant="primary" onClick={handleWithdraw} leftIcon={<ArrowUpRight size={18} />} className="h-11 px-5 rounded-2xl text-xs font-bold">
+        <Button variant="primary" onClick={handleWithdraw} leftIcon={<ArrowUpRight size={18} />} disabled={isPendingVendor} title={isPendingVendor ? 'Your account must be approved before using this feature.' : undefined} className="h-11 px-5 rounded-2xl text-xs font-bold">
           Withdraw Payout
         </Button>
       </div>

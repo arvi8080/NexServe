@@ -11,7 +11,7 @@ export const Unauthorized: React.FC = () => {
       </div>
       <h1 className="text-3xl font-extrabold text-white">401 - Authentication Required</h1>
       <p className="text-xs text-slate-400 max-w-sm leading-relaxed">
-        Please sign in to access your NexServe customer or partner dashboard.
+        Please sign in to access your GlowHome customer or partner dashboard.
       </p>
       <Link to="/login">
         <Button variant="primary" leftIcon={<LogIn size={14} />}>

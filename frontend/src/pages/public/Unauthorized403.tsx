@@ -12,7 +12,7 @@ export const Unauthorized403: React.FC = () => {
     if (!user) return '/login';
     if (user.role === 'SUPER_ADMIN') return '/admin/erp';
     if (user.role === 'ADMIN') return '/admin/dashboard';
-    if (user.role === 'VENDOR_OWNER' || user.role === 'PROFESSIONAL') return '/vendor/dashboard';
+    if (user.role === 'VENDOR' || user.role === 'VENDOR_OWNER' || user.role === 'PROFESSIONAL') return '/vendor/dashboard';
     return '/customer/dashboard';
   };
 

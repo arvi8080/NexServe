@@ -69,7 +69,7 @@ export const countryApi = {
   getCountries: async (): Promise<Country[]> => {
     try {
       const response = await axiosInstance.get('/countries');
-      return response.data;
+      return response.data?.data ?? response.data;
     } catch {
       return MOCK_COUNTRIES;
     }
@@ -78,7 +78,7 @@ export const countryApi = {
   getStatesByCountry: async (countryId: string): Promise<State[]> => {
     try {
       const response = await axiosInstance.get(`/states?countryId=${countryId}`);
-      return response.data;
+      return response.data?.data ?? response.data;
     } catch {
       return MOCK_STATES.filter((s) => s.countryId === countryId);
     }
@@ -87,7 +87,7 @@ export const countryApi = {
   getCitiesByCountry: async (countryId: string): Promise<City[]> => {
     try {
       const response = await axiosInstance.get(`/cities?countryId=${countryId}`);
-      return response.data;
+      return response.data?.data ?? response.data;
     } catch {
       return MOCK_CITIES.filter((c) => c.countryId === countryId);
     }
@@ -96,7 +96,7 @@ export const countryApi = {
   getPaymentGatewaysByCountry: async (countryId: string): Promise<PaymentGatewayConfig[]> => {
     try {
       const response = await axiosInstance.get(`/payment-gateways?countryId=${countryId}`);
-      return response.data;
+      return response.data?.data ?? response.data;
     } catch {
       return MOCK_GATEWAYS.filter((g) => g.countryId === countryId);
     }

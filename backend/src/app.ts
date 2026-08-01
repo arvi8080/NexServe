@@ -11,6 +11,14 @@ import { errorHandler } from "./common/middleware/error.middleware";
 
 const app = express();
 
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+].filter(Boolean) as string[];
+
 // Razorpay webhook
 app.use(
   "/api/payments/webhook",
@@ -21,7 +29,21 @@ app.use(
 
 // Middlewares
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error(`Origin ${origin} not allowed by CORS`));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
@@ -63,7 +85,7 @@ app.use("/api/v1", routes);
 app.get("/health", (_req, res) => {
   res.json({
     success: true,
-    message: "NexServe Backend Running Successfully",
+    message: "GlowHome Backend Running Successfully",
   });
 });
 

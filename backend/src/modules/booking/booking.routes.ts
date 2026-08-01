@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authenticate } from "../../common/middleware/auth.middleware";
+import { authorize } from "../../common/middleware/authorize.middleware";
 import { validate, validateQuery } from "../../common/middleware/validate";
 import { bookingController } from "./booking.controller";
 import {
@@ -204,50 +205,55 @@ import { asyncHandler } from "../../common/utils/asyncHandler";
  */
 const router = Router();
 
-// Create Booking
+// Create Booking (Customers only)
 router.post(
   "/",
   authenticate,
+  authorize("CUSTOMER", "SUPER_ADMIN"),
   validate(createBookingSchema),
   asyncHandler(bookingController.create)
 );
 
-// Customer Bookings
+// Customer Bookings (Own bookings)
 router.get(
   "/my",
   authenticate,
+  authorize("CUSTOMER", "SUPER_ADMIN"),
   validateQuery(bookingQuerySchema),
   asyncHandler(bookingController.getMyBookings)
 );
 
-// Vendor Bookings
+// Vendor Bookings (Vendor's assigned bookings)
 router.get(
   "/vendor",
   authenticate,
+  authorize("VENDOR", "SUPER_ADMIN"),
   validateQuery(bookingQuerySchema),
   asyncHandler(bookingController.getVendorBookings)
 );
 
-// Update Booking Status
+// Update Booking Status (Vendors only)
 router.patch(
   "/:id/status",
   authenticate,
+  authorize("VENDOR", "SUPER_ADMIN"),
   validate(updateBookingStatusSchema),
   asyncHandler(bookingController.updateStatus)
 );
 
-
-
+// Cancel Booking (Customers only - own bookings)
 router.patch(
     "/:id/cancel",
     authenticate,
+    authorize("CUSTOMER", "SUPER_ADMIN"),
     asyncHandler(bookingController.cancelBooking)
 );
 
-
+// Reschedule Booking (Customers only - own bookings)
 router.patch(
   "/:id/reschedule",
   authenticate,
+  authorize("CUSTOMER", "SUPER_ADMIN"),
   validate(rescheduleBookingSchema),
   asyncHandler(bookingController.reschedule)
 );

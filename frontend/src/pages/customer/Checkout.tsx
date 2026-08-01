@@ -76,7 +76,7 @@ export const Checkout: React.FC = () => {
           key: razorpayKey,
           amount: Math.round(booking.totalAmount * 100),
           currency: 'INR',
-          name: 'NexServe Beauty Platform',
+          name: 'GlowHome Beauty & Home Platform',
           description: `Payment for ${booking.service?.title || 'Doorstep Service'}`,
           order_id: order.orderId,
           prefill: {

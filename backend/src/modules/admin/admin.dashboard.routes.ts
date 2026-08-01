@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authenticate } from "../../common/middleware/auth.middleware";
+import { authorize } from "../../common/middleware/authorize.middleware";
 import { adminDashboardController } from "./admin.dashboard.controller";
 import { asyncHandler } from "../../common/utils/asyncHandler";
 
@@ -105,6 +106,6 @@ import { asyncHandler } from "../../common/utils/asyncHandler";
  */
 const router = Router();
 
-router.get("/dashboard", authenticate, asyncHandler(adminDashboardController.getStats));
+router.get("/dashboard", authenticate, authorize("ADMIN", "SUPER_ADMIN"), asyncHandler(adminDashboardController.getStats));
 
 export default router;

@@ -11,23 +11,39 @@ import { useToast } from '@/context/ToastContext';
 import { useCountry } from '@/context/CountryContext';
 import { AddressManagerModal } from '@/components/common/AddressManagerModal';
 import { SkeletonLoader } from '@/components/common/SkeletonLoader';
-import { MapPin, Calendar, Clock, CreditCard, ShieldCheck, Tag, Sparkles, Navigation, ArrowRight, CheckCircle2, Globe } from 'lucide-react';
+import { MapPin, Calendar, Clock, CreditCard, ShieldCheck, Tag, Sparkles, Navigation, ArrowRight, CheckCircle2, Globe, Info, Wallet } from 'lucide-react';
 
 export const BookingCheckout: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const { selectedCountry, paymentGateways, formatPrice } = useCountry();
+  const { selectedCountry, formatPrice } = useCountry();
 
   const [service, setService] = useState<Service | null>(null);
   const [savedAddresses, setSavedAddresses] = useState<CustomerAddress[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<CustomerAddress | null>(null);
   const [addressModalOpen, setAddressModalOpen] = useState(false);
-  const [selectedGateway, setSelectedGateway] = useState<string>('RAZORPAY');
+
+  // Direct Vendor Payment Methods for MVP Launch
+  const indiaDirectMethods = [
+    { id: 'Cash', label: 'Cash on Arrival', desc: 'Pay Cash after service completion' },
+    { id: 'PhonePe', label: 'PhonePe (Vendor UPI)', desc: 'Scan vendor PhonePe QR' },
+    { id: 'GPay', label: 'Google Pay (Vendor UPI)', desc: 'Pay via vendor GPay UPI' },
+    { id: 'Paytm', label: 'Paytm (Vendor UPI)', desc: 'Pay via vendor Paytm UPI' },
+  ];
+
+  const nepalDirectMethods = [
+    { id: 'Cash', label: 'Cash on Arrival', desc: 'Pay Cash after service completion' },
+    { id: 'eSewa', label: 'eSewa (Vendor Wallet)', desc: 'Transfer to vendor eSewa ID' },
+    { id: 'Khalti', label: 'Khalti (Vendor Wallet)', desc: 'Transfer to vendor Khalti ID' },
+    { id: 'Fonepay', label: 'Fonepay (Vendor QR)', desc: 'Scan vendor Fonepay QR' },
+  ];
+
+  const currentDirectMethods = selectedCountry.code === 'NP' ? nepalDirectMethods : indiaDirectMethods;
+  const [selectedDirectMethod, setSelectedDirectMethod] = useState<string>(currentDirectMethods[0].id);
 
   const [bookingDate, setBookingDate] = useState('2026-07-28');
   const [selectedSlot, setSelectedSlot] = useState('10:00 AM');
-  const [promoCode, setPromoCode] = useState('LUXURY25');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -53,10 +69,10 @@ export const BookingCheckout: React.FC = () => {
   }, [id]);
 
   useEffect(() => {
-    if (paymentGateways && paymentGateways.length > 0) {
-      setSelectedGateway(paymentGateways[0].gatewayName);
+    if (currentDirectMethods.length > 0) {
+      setSelectedDirectMethod(currentDirectMethods[0].id);
     }
-  }, [paymentGateways]);
+  }, [selectedCountry]);
 
   // Compute Distance & Fees
   const customerLat = selectedAddress?.latitude || 12.971598;
@@ -91,10 +107,14 @@ export const BookingCheckout: React.FC = () => {
         serviceId: service?.id || 'service_1',
         bookingDate,
         address: `${selectedAddress.addressLine1}, ${selectedAddress.city}`,
-        notes: `Selected Slot: ${selectedSlot} • Region: ${selectedCountry.name} (${selectedCountry.currency}) • Gateway: ${selectedGateway}`,
+        notes: `Direct Vendor Payment: ${selectedDirectMethod} • Slot: ${selectedSlot} • Region: ${selectedCountry.name}`,
       });
 
-      showToast('Booking Created!', `Redirecting to ${selectedGateway} payment gateway...`, 'success');
+      showToast(
+        'Booking Confirmed!',
+        `Your doorstep session is booked. Pay ${selectedDirectMethod} directly to the service provider.`,
+        'success'
+      );
       setTimeout(() => {
         navigate(`/customer/bookings/${createdBooking.id}`);
       }, 800);
@@ -120,11 +140,22 @@ export const BookingCheckout: React.FC = () => {
         <div className="flex items-center gap-2 mb-1">
           <span className="text-xl">{selectedCountry.flag}</span>
           <span className="text-xs font-bold text-[#FF2E7E] uppercase font-mono tracking-wider">
-            {selectedCountry.name} Region Marketplace
+            {selectedCountry.name} MVP Direct Vendor Payments
           </span>
         </div>
-        <h1 className="text-3xl font-extrabold text-[#111827]">Doorstep Booking & Location Checkout</h1>
+        <h1 className="text-3xl font-extrabold text-[#111827]">Doorstep Booking & Checkout</h1>
         <p className="text-xs text-[#64748B] font-semibold mt-1">Review treatment details, select saved address, and confirm doorstep appointment</p>
+      </div>
+
+      {/* MVP DIRECT VENDOR PAYMENT NOTICE DISCLAIMER BANNER */}
+      <div className="p-5 rounded-2xl bg-amber-50/90 border border-amber-200 text-amber-900 text-xs font-medium space-y-1.5 flex items-start gap-3 shadow-sm">
+        <Info size={20} className="text-amber-600 shrink-0 mt-0.5" />
+        <div>
+          <h4 className="font-extrabold text-amber-900 text-sm">Direct Vendor Payment Notice</h4>
+          <p className="text-amber-800 leading-relaxed font-medium">
+            Payments are currently made directly to the service provider using Cash or their preferred UPI/Wallet account upon session completion. Platform-based online payments will be available in a future update.
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -177,32 +208,32 @@ export const BookingCheckout: React.FC = () => {
             )}
           </div>
 
-          {/* 2. REGION PAYMENT GATEWAYS */}
+          {/* 2. DIRECT VENDOR PAYMENT SELECTOR */}
           <div className="p-8 rounded-[36px] bg-white border border-[#ECECEC] shadow-xl space-y-4">
             <h3 className="text-sm font-extrabold text-[#111827] uppercase tracking-wider flex items-center gap-2 border-b border-[#ECECEC] pb-3">
-              <CreditCard size={18} className="text-[#FF2E7E]" />
-              <span>Supported Payment Gateways ({selectedCountry.name})</span>
+              <Wallet size={18} className="text-[#FF2E7E]" />
+              <span>Select Direct Payment Method ({selectedCountry.name})</span>
             </h3>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {paymentGateways.map((gw) => {
-                const isSelected = selectedGateway === gw.gatewayName;
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {currentDirectMethods.map((m) => {
+                const isSelected = selectedDirectMethod === m.id;
                 return (
-                  <button
-                    key={gw.id}
-                    type="button"
-                    onClick={() => setSelectedGateway(gw.gatewayName)}
-                    className={`p-3.5 rounded-2xl border text-center transition-all cursor-pointer space-y-1 ${
+                  <div
+                    key={m.id}
+                    onClick={() => setSelectedDirectMethod(m.id)}
+                    className={`p-4 rounded-2xl border transition-all cursor-pointer space-y-1 ${
                       isSelected
-                        ? 'bg-[#FF2E7E] text-white border-transparent shadow-md'
-                        : 'bg-slate-50 border-[#ECECEC] text-slate-700 hover:bg-slate-100'
+                        ? 'bg-white border-[#FF2E7E] shadow-xl ring-2 ring-[#FF2E7E]/20'
+                        : 'bg-slate-50 border-[#ECECEC] text-slate-700 hover:bg-white'
                     }`}
                   >
-                    <span className="text-xs font-extrabold block">{gw.gatewayName}</span>
-                    <span className="text-[9px] opacity-80 block font-mono">
-                      {gw.gatewayName === 'CASH' ? 'Pay After Service' : 'Instant Online'}
-                    </span>
-                  </button>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-extrabold text-[#111827]">{m.label}</span>
+                      {isSelected && <CheckCircle2 size={16} className="text-[#FF2E7E]" />}
+                    </div>
+                    <span className="text-[11px] text-slate-500 font-medium block">{m.desc}</span>
+                  </div>
                 );
               })}
             </div>
@@ -257,7 +288,7 @@ export const BookingCheckout: React.FC = () => {
               </div>
 
               <div className="pt-3 border-t border-[#ECECEC] flex items-center justify-between text-lg font-extrabold text-[#111827]">
-                <span>To Pay</span>
+                <span>Total Amount</span>
                 <span className="text-2xl text-[#FF2E7E]">{formatPrice(finalTotal)}</span>
               </div>
             </div>
@@ -266,10 +297,10 @@ export const BookingCheckout: React.FC = () => {
               variant="primary"
               onClick={handleConfirmBooking}
               isLoading={isSubmitting}
-              leftIcon={<CreditCard size={18} />}
+              leftIcon={<CheckCircle2 size={18} />}
               className="w-full h-14 rounded-2xl text-xs font-bold shadow-xl"
             >
-              Pay with {selectedGateway} ({formatPrice(finalTotal)})
+              Confirm Doorstep Booking ({formatPrice(finalTotal)})
             </Button>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authenticate } from "../../common/middleware/auth.middleware";
+import { authorize } from "../../common/middleware/authorize.middleware";
 import { validateQuery } from "../../common/middleware/validate";
 import { notificationController } from "./notification.controller";
 import { notificationsQuerySchema } from "./notification.validation";

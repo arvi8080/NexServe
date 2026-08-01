@@ -1,4 +1,4 @@
-name: NexServe Backend Render / Railway CD
+name: GlowHome Backend Render / Railway CD
 
 on:
   push:

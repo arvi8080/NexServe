@@ -56,7 +56,7 @@ export const Membership: React.FC = () => {
   ];
 
   const handleSubscribe = (tierName: string) => {
-    showToast('Subscription Activated!', `Welcome to NexServe ${tierName}! Benefits unlocked.`, 'success');
+    showToast('Subscription Activated!', `Welcome to GlowHome ${tierName}! Benefits unlocked.`, 'success');
   };
 
   return (
@@ -65,7 +65,7 @@ export const Membership: React.FC = () => {
       <div className="p-8 md:p-12 rounded-[32px] bg-gradient-to-br from-pink-50 via-purple-50 to-white border border-pink-200 shadow-2xl text-center space-y-4">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-pink-200 text-[#FF2E7E] text-xs font-bold shadow-xs">
           <Crown size={16} />
-          <span>NexServe Premium Membership</span>
+          <span>GlowHome Premium Membership</span>
         </div>
         <h1 className="text-4xl sm:text-5xl font-extrabold text-[#111827] tracking-tight">
           Unlock VIP Beauty Privileges

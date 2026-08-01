@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { adminController } from "./admin.controller";
 import { authenticate } from "../../common/middleware/auth.middleware";
+import { authorize } from "../../common/middleware/authorize.middleware";
 
 import { validate, validateQuery } from "../../common/middleware/validate";
 import { updateVendorStatusSchema, pendingVendorsQuerySchema } from "./admin.validation";
@@ -87,6 +88,7 @@ const router = Router();
 router.get(
 "/vendors/pending",
 authenticate,
+authorize("ADMIN", "SUPER_ADMIN"),
 validateQuery(pendingVendorsQuerySchema),
 asyncHandler(adminController.getPendingVendors)
 );
@@ -96,6 +98,7 @@ asyncHandler(adminController.getPendingVendors)
 router.patch(
   "/vendors/:vendorId/status",
   authenticate,
+  authorize("ADMIN", "SUPER_ADMIN"),
   validate(updateVendorStatusSchema),
   asyncHandler(adminController.updateVendorStatus)
 );

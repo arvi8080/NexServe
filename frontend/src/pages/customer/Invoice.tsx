@@ -48,7 +48,7 @@ export const Invoice: React.FC = () => {
               <Sparkles className="w-6 h-6" />
             </div>
             <div>
-              <span className="text-2xl font-extrabold text-[#111827] block">NexServe Technologies</span>
+              <span className="text-2xl font-extrabold text-[#111827] block">GlowHome Technologies</span>
               <span className="text-[11px] text-[#64748B] font-semibold">GSTIN: 29AAACN1234F1Z9 • Luxury Doorstep Beauty</span>
             </div>
           </div>

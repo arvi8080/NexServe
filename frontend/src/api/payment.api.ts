@@ -24,7 +24,7 @@ export const paymentApi = {
         orderId: `order_${Date.now()}`,
         amount,
         currency: 'INR',
-        keyId: 'rzp_test_nexserve2026',
+        keyId: 'rzp_test_glowhome2026',
       };
     }
   },

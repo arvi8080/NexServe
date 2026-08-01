@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authenticate } from "../../common/middleware/auth.middleware";
+import { authorize } from "../../common/middleware/authorize.middleware";
 import { validate, validateQuery } from "../../common/middleware/validate";
 import {
   createServiceSchema,
@@ -260,6 +261,7 @@ const router = Router();
 router.post(
   "/",
   authenticate,
+  authorize("VENDOR", "SUPER_ADMIN"),
   validate(createServiceSchema),
   asyncHandler(serviceController.create)
 );
@@ -267,6 +269,7 @@ router.post(
 router.get(
   "/my",
   authenticate,
+  authorize("VENDOR", "SUPER_ADMIN"),
   asyncHandler(serviceController.getMyServices)
 );
 
@@ -290,6 +293,7 @@ router.get(
 router.put(
   "/:id",
   authenticate,
+  authorize("VENDOR", "SUPER_ADMIN"),
   validate(updateServiceSchema),
   asyncHandler(serviceController.update)
 );
@@ -298,6 +302,7 @@ router.put(
 router.delete(
   "/:id",
   authenticate,
+  authorize("VENDOR", "SUPER_ADMIN"),
   asyncHandler(serviceController.delete)
 );
 

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getStoredToken, setStoredToken, clearAuthStorage } from '@/utils/storage';
+import { getStoredToken, setStoredToken, getStoredRefreshToken, clearAuthStorage } from '@/utils/storage';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/v1';
 
@@ -63,7 +63,7 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const storedRefreshToken = localStorage.getItem('nexserve_refresh_token');
+        const storedRefreshToken = getStoredRefreshToken();
         if (!storedRefreshToken) {
           throw new Error('No refresh token');
         }
@@ -72,7 +72,14 @@ axiosInstance.interceptors.response.use(
           refreshToken: storedRefreshToken,
         });
 
-        const newAccessToken = res.data.accessToken || res.data.data?.accessToken || res.data.token;
+        const newAccessToken =
+          res.data?.data?.accessToken ||
+          res.data?.data?.token ||
+          res.data?.accessToken ||
+          res.data?.token;
+        if (!newAccessToken) {
+          throw new Error('Refresh response missing access token');
+        }
         setStoredToken(newAccessToken);
 
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;

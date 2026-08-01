@@ -5,10 +5,10 @@ const options: swaggerJsdoc.Options = {
   definition: {
     openapi: "3.0.3",
     info: {
-      title: "NexServe API",
+      title: "GlowHome API",
       version: "1.0.0",
       description:
-        "REST API documentation for NexServe - On Demand Home Services Platform",
+        "REST API documentation for GlowHome - On Demand Home Services Platform",
       contact: {
         name: "Arvind Prajapati",
         email: "your-email@example.com",

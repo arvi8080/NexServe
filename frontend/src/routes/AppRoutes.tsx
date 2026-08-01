@@ -41,6 +41,11 @@ import { Invoice } from '@/pages/customer/Invoice';
 import { Profile } from '@/pages/customer/Profile';
 import { Membership } from '@/pages/customer/Membership';
 import { Referral } from '@/pages/customer/Referral';
+import { Wishlist } from '@/pages/customer/Wishlist';
+import { CustomerReviews } from '@/pages/customer/CustomerReviews';
+import { AddressesPage } from '@/pages/customer/AddressesPage';
+import { Support } from '@/pages/customer/Support';
+import { CustomerSettings } from '@/pages/customer/CustomerSettings';
 
 // Vendor Pages
 import { VendorDashboard } from '@/pages/vendor/Dashboard';
@@ -51,6 +56,8 @@ import { Earnings } from '@/pages/vendor/Earnings';
 import { VendorProfile } from '@/pages/vendor/VendorProfile';
 import { EnterpriseSalonChain } from '@/pages/vendor/EnterpriseSalonChain';
 import { VerificationCenter } from '@/pages/vendor/VerificationCenter';
+import { VendorPendingVerification } from '@/pages/vendor/VendorPendingVerification';
+import { VendorAccountRejected } from '@/pages/vendor/VendorAccountRejected';
 
 // Admin Pages
 import { AdminDashboard } from '@/pages/admin/Dashboard';
@@ -62,6 +69,7 @@ import { BranchManager } from '@/pages/admin/BranchManager';
 
 // Guard
 import { ProtectedRoute } from './ProtectedRoute';
+import { VerificationGuard } from './VerificationGuard';
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -110,6 +118,11 @@ export const AppRoutes: React.FC = () => {
         <Route path="/customer/wallet" element={<Wallet />} />
         <Route path="/customer/invoice/:bookingId" element={<Invoice />} />
         <Route path="/customer/profile" element={<Profile />} />
+        <Route path="/customer/wishlist" element={<Wishlist />} />
+        <Route path="/customer/reviews" element={<CustomerReviews />} />
+        <Route path="/customer/addresses" element={<AddressesPage />} />
+        <Route path="/customer/support" element={<Support />} />
+        <Route path="/customer/settings" element={<CustomerSettings />} />
         <Route path="/customer/membership" element={<Membership />} />
         <Route path="/customer/referral" element={<Referral />} />
       </Route>
@@ -117,8 +130,10 @@ export const AppRoutes: React.FC = () => {
       {/* Vendor Protected Layout */}
       <Route
         element={
-          <ProtectedRoute allowedRoles={['VENDOR_OWNER', 'PROFESSIONAL', 'SUPER_ADMIN']}>
-            <VendorDashboardLayout />
+          <ProtectedRoute allowedRoles={['VENDOR', 'SUPER_ADMIN']}>
+            <VerificationGuard allowedPaths={['/vendor/verification', '/vendor/profile', '/vendor/support', '/vendor/pending-verification']}>
+              <VendorDashboardLayout />
+            </VerificationGuard>
           </ProtectedRoute>
         }
       >
@@ -130,6 +145,8 @@ export const AppRoutes: React.FC = () => {
         <Route path="/vendor/profile" element={<VendorProfile />} />
         <Route path="/vendor/enterprise" element={<EnterpriseSalonChain />} />
         <Route path="/vendor/verification" element={<VerificationCenter />} />
+        <Route path="/vendor/pending-verification" element={<VendorPendingVerification />} />
+        <Route path="/vendor/account-rejected" element={<VendorAccountRejected />} />
       </Route>
 
       {/* Admin Protected Layout */}

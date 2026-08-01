@@ -9,7 +9,7 @@ interface LoaderProps {
 
 export const Loader: React.FC<LoaderProps> = ({
   fullScreen = false,
-  message = 'Loading NexServe...',
+  message = 'Loading GlowHome...',
   size = 'md',
 }) => {
   const sizes = {

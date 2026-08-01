@@ -28,7 +28,7 @@ export const Referral: React.FC = () => {
       <div className="p-8 md:p-12 rounded-[32px] bg-gradient-to-br from-pink-50 via-purple-50 to-white border border-pink-200 shadow-2xl text-center space-y-4">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-pink-200 text-[#FF2E7E] text-xs font-bold shadow-xs">
           <Gift size={16} />
-          <span>NexServe Community Rewards</span>
+          <span>GlowHome Community Rewards</span>
         </div>
         <h1 className="text-4xl sm:text-5xl font-extrabold text-[#111827] tracking-tight">
           Invite Friends — Earn ₹200 Every Time

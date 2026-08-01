@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authenticate } from "../../common/middleware/auth.middleware";
+import { authorize, checkOwnership } from "../../common/middleware/authorize.middleware";
 import { userController } from "./user.controller";
 import { validate } from "../../common/middleware/validate";
 import { updateProfileSchema } from "./user.validation";
@@ -118,11 +119,19 @@ import { asyncHandler } from "../../common/utils/asyncHandler";
  */
 const router = Router();
 
-router.get("/profile", authenticate, asyncHandler(userController.getProfile));
+router.get(
+  "/profile",
+  authenticate,
+  authorize("CUSTOMER", "VENDOR", "ADMIN", "SUPER_ADMIN"),
+  checkOwnership((req) => req.user?.id),
+  asyncHandler(userController.getProfile)
+);
 
 router.put(
   "/profile",
   authenticate,
+  authorize("CUSTOMER", "VENDOR", "ADMIN", "SUPER_ADMIN"),
+  checkOwnership((req) => req.user?.id),
   validate(updateProfileSchema),
   asyncHandler(userController.updateProfile)
 );
@@ -131,6 +140,8 @@ router.put(
 router.patch(
   "/change-password",
   authenticate,
+  authorize("CUSTOMER", "VENDOR", "ADMIN", "SUPER_ADMIN"),
+  checkOwnership((req) => req.user?.id),
   validate(changePasswordSchema),
   asyncHandler(userController.changePassword)
 );
@@ -139,6 +150,8 @@ router.patch(
 router.delete(
   "/account",
   authenticate,
+  authorize("CUSTOMER", "VENDOR", "ADMIN", "SUPER_ADMIN"),
+  checkOwnership((req) => req.user?.id),
   asyncHandler(userController.deleteAccount)
 );
 export default router;

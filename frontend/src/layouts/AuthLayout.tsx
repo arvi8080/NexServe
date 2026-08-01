@@ -31,7 +31,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
             </div>
             <div className="flex flex-col">
               <span className="text-2xl font-extrabold tracking-tight text-slate-900">
-                Nex<span className="gradient-text">Serve</span>
+                Glow<span className="gradient-text">Home</span>
               </span>
               <span className="text-[10px] tracking-widest uppercase font-bold text-[#FF2E7A]">
                 Luxury Doorstep Beauty & Wellness
@@ -42,7 +42,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
           <div className="space-y-3 pt-4">
             <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
               Welcome Back to <br />
-              <span className="gradient-text">NexServe</span>
+              <span className="gradient-text">GlowHome</span>
             </h1>
             <p className="text-sm text-slate-600 max-w-md leading-relaxed font-normal">
               Sign in to continue your beauty journey with India's premium doorstep beauty & spa platform.
@@ -72,7 +72,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
             <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#FF2E7A] p-0.5 shrink-0 shadow-md">
               <img
                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80"
-                alt="Happy NexServe Customer"
+                alt="Happy GlowHome Customer"
                 className="w-full h-full object-cover rounded-full"
               />
             </div>

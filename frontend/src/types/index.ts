@@ -1,4 +1,10 @@
-export type Role = 'SUPER_ADMIN' | 'ADMIN' | 'CUSTOMER' | 'VENDOR_OWNER' | 'PROFESSIONAL';
+export type Role = 'SUPER_ADMIN' | 'ADMIN' | 'CUSTOMER' | 'VENDOR' | 'VENDOR_OWNER' | 'PROFESSIONAL';
+
+export const normalizeRole = (role?: string): Role => {
+  if (role === 'VENDOR_OWNER' || role === 'PROFESSIONAL') return 'VENDOR';
+  if (role === 'SUPER_ADMIN' || role === 'ADMIN' || role === 'CUSTOMER' || role === 'VENDOR') return role as Role;
+  return 'CUSTOMER';
+};
 
 export type VendorStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
@@ -163,6 +169,7 @@ export interface AuthResponse {
   user: User;
   token?: string;
   accessToken?: string;
+  refreshToken?: string;
   expiresIn?: number;
 }
 
@@ -225,7 +232,7 @@ export interface Vendor {
   createdAt?: string;
 }
 
-// Master Global Service (WHAT is offered - Global Catalog Definition)
+// Master Global Service (WHAT is offered - Global Catalog Definition Managed by Admin)
 export interface Service {
   id: string;
   vendorId?: string;
@@ -233,23 +240,32 @@ export interface Service {
   title: string;
   description: string;
   category: BeautyCategory;
-  price: number; // Suggested base price
+  price: number; // Base price
+  minPrice?: number; // Admin Min Price Cap
+  maxPrice?: number; // Admin Max Price Cap
   duration: number; // in minutes
+  defaultDuration?: number;
   image?: string;
   isActive: boolean;
   vendor?: Vendor;
   createdAt?: string;
 }
 
-// VendorService Offering (WHO offers it and under WHAT conditions)
+// VendorService Offering (WHO offers it and under WHAT dynamic price)
 export interface VendorService {
   id: string;
   vendorId: string;
   serviceId: string;
+  country?: string; // IN, NP
+  state?: string;
+  city?: string;
+  area?: string;
   price: number;
   discountPrice?: number;
   discountPercentage?: number;
   duration: number; // in minutes
+  availableSlots?: string[];
+  genderPreference?: 'UNISEX' | 'FEMALE_ONLY' | 'MALE_ONLY';
   experienceYears: number;
   available: boolean;
   instantBooking: boolean;

@@ -19,3 +19,4 @@ export * from './security.api';
 export * from './country.api';
 export * from './branch.api';
 export * from './verification.api';
+export * from './customer.api';

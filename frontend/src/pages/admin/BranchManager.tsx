@@ -268,7 +268,7 @@ export const BranchManager: React.FC = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="manager@nexserve.com"
+                placeholder="manager@glowhome.com"
                 className="w-full h-12 px-4 rounded-2xl bg-slate-50 border border-[#ECECEC] text-xs font-bold text-slate-900 focus:outline-none focus:border-[#FF2E7E]"
               />
             </div>

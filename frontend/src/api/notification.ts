@@ -31,7 +31,7 @@ const SEEDED_NOTIFICATIONS: Notification[] = [
     id: 'n_3',
     userId: 'user_cust_1',
     title: 'Cashback Credit Received',
-    message: '₹250 cashback credited to your NexServe Wallet for your recent review.',
+    message: '₹250 cashback credited to your GlowHome Wallet for your recent review.',
     type: 'SUCCESS',
     category: 'WALLET',
     priority: 'NORMAL',
@@ -57,7 +57,7 @@ export const notificationApi = {
   getNotifications: async (): Promise<Notification[]> => {
     try {
       const response = await axiosInstance.get(API_ENDPOINTS.NOTIFICATION.BASE);
-      return response.data;
+      return response.data?.data ?? response.data;
     } catch {
       return SEEDED_NOTIFICATIONS;
     }
@@ -65,8 +65,9 @@ export const notificationApi = {
 
   getUnreadCount: async (): Promise<number> => {
     try {
-      const response = await axiosInstance.get('/notifications/unread-count');
-      return response.data.count;
+      const response = await axiosInstance.get(API_ENDPOINTS.NOTIFICATION.BASE + '/unread-count');
+      const body = response.data?.data ?? response.data;
+      return body?.unread ?? body?.count ?? 0;
     } catch {
       return SEEDED_NOTIFICATIONS.filter((n) => !n.isRead).length;
     }
@@ -83,7 +84,7 @@ export const notificationApi = {
   markAsRead: async (id: string): Promise<Notification> => {
     try {
       const response = await axiosInstance.patch(API_ENDPOINTS.NOTIFICATION.READ_BY_ID(id));
-      return response.data;
+      return response.data?.data ?? response.data;
     } catch {
       const notif = SEEDED_NOTIFICATIONS.find((n) => n.id === id);
       if (notif) notif.isRead = true;
@@ -102,7 +103,7 @@ export const notificationApi = {
 
   clearAll: async (): Promise<void> => {
     try {
-      await axiosInstance.delete('/notifications');
+      await axiosInstance.delete(API_ENDPOINTS.NOTIFICATION.BASE);
     } catch {
       SEEDED_NOTIFICATIONS.length = 0;
     }
@@ -110,7 +111,7 @@ export const notificationApi = {
 
   sendAdminAnnouncement: async (data: { title: string; message: string; category?: string }): Promise<boolean> => {
     try {
-      await axiosInstance.post('/notifications/send', data);
+      await axiosInstance.post(API_ENDPOINTS.NOTIFICATION.BASE + '/send', data);
       return true;
     } catch {
       SEEDED_NOTIFICATIONS.unshift({

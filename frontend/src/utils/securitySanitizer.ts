@@ -1,5 +1,5 @@
 /**
- * NexServe Security Sanitizer & Input Protection Utilities
+ * GlowHome Security Sanitizer & Input Protection Utilities
  * (OWASP Top 10 Standard)
  */
 

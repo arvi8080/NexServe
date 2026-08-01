@@ -31,7 +31,7 @@ export const BecomeProfessional: React.FC = () => {
     {
       icon: ShieldCheck,
       title: 'Verified Platform & Supply',
-      desc: 'Get branded NexServe uniforms, mono-dose product supply discounts, background verification, and safety gear upon approval.',
+      desc: 'Get branded GlowHome uniforms, mono-dose product supply discounts, background verification, and safety gear upon approval.',
       color: 'text-purple-500',
       bg: 'bg-purple-50',
     },
@@ -51,7 +51,7 @@ export const BecomeProfessional: React.FC = () => {
       city: 'Bengaluru',
       role: 'Hydra-Facial & Makeup Artist',
       earnings: '₹85,000/mo',
-      quote: 'I doubled my monthly income within 3 months of joining NexServe. The weekly direct bank deposits and respectful clients are amazing!',
+      quote: 'I doubled my monthly income within 3 months of joining GlowHome. The weekly direct bank deposits and respectful clients are amazing!',
       image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&q=80',
     },
     {
@@ -59,7 +59,7 @@ export const BecomeProfessional: React.FC = () => {
       city: 'Mumbai',
       role: 'Hair Styling Specialist',
       earnings: '₹72,000/mo',
-      quote: 'Flexible working hours allow me to manage my family while earning a great income. NexServe handles client acquisition completely.',
+      quote: 'Flexible working hours allow me to manage my family while earning a great income. GlowHome handles client acquisition completely.',
       image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=300&q=80',
     },
     {
@@ -67,15 +67,15 @@ export const BecomeProfessional: React.FC = () => {
       city: 'Delhi NCR',
       role: 'Bridal Makeover Expert',
       earnings: '₹90,000/mo',
-      quote: 'The mono-dose product kits and client trust make NexServe superior. Booking volume is continuous throughout the year.',
+      quote: 'The mono-dose product kits and client trust make GlowHome superior. Booking volume is continuous throughout the year.',
       image: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&w=300&q=80',
     },
   ];
 
   const faqs = [
     {
-      q: 'How much commission does NexServe charge?',
-      a: 'NexServe operates on a fair 15% platform commission. You keep 85% of every completed service booking price.',
+      q: 'How much commission does GlowHome charge?',
+      a: 'GlowHome operates on a fair 15% platform commission. You keep 85% of every completed service booking price.',
     },
     {
       q: 'When and how do I get paid?',
@@ -118,7 +118,7 @@ export const BecomeProfessional: React.FC = () => {
 
             <h1 className="text-4xl sm:text-5xl md:text-[60px] font-extrabold tracking-tight text-[#111827] leading-[1.1]">
               Grow Your Salon Business With <br />
-              <span className="gradient-text">NexServe Partner Network</span>
+              <span className="gradient-text">GlowHome Partner Network</span>
             </h1>
 
             <p className="text-[#6B7280] text-base md:text-lg max-w-[580px] leading-relaxed font-normal">
@@ -153,7 +153,7 @@ export const BecomeProfessional: React.FC = () => {
             <div className="relative rounded-[32px] overflow-hidden border-4 border-white shadow-2xl shadow-[#FF2E7A]/15 max-w-md">
               <img
                 src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80"
-                alt="NexServe Verified Beauty Professional"
+                alt="GlowHome Verified Beauty Professional"
                 className="w-full h-[420px] object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent" />
@@ -197,7 +197,7 @@ export const BecomeProfessional: React.FC = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <h2 className="text-3xl sm:text-4xl font-bold text-[#111827] tracking-tight">
-            Why Partner With NexServe?
+            Why Partner With GlowHome?
           </h2>
           <p className="text-sm text-[#6B7280]">
             We provide everything you need to scale your salon revenue and client reach.
@@ -254,7 +254,7 @@ export const BecomeProfessional: React.FC = () => {
           <h2 className="text-3xl sm:text-4xl font-bold text-[#111827] tracking-tight">
             Partner Success Stories
           </h2>
-          <p className="text-sm text-[#6B7280]">Hear from real independent beauticians thriving on NexServe.</p>
+          <p className="text-sm text-[#6B7280]">Hear from real independent beauticians thriving on GlowHome.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

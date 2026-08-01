@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authenticate } from "../../common/middleware/auth.middleware";
+import { authorize } from "../../common/middleware/authorize.middleware";
 import { validate } from "../../common/middleware/validate";
 import { reviewController } from "./review.controller";
 import { createReviewSchema } from "./review.validation";
@@ -75,6 +76,7 @@ const router = Router();
 router.post(
   "/",
   authenticate,
+  authorize("CUSTOMER", "SUPER_ADMIN"),
   validate(createReviewSchema),
   asyncHandler(reviewController.create)
 );

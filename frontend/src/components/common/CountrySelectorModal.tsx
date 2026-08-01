@@ -27,7 +27,7 @@ export const CountrySelectorModal: React.FC = () => {
           <div className="p-4 rounded-2xl bg-pink-50/60 border border-pink-200 text-xs font-medium text-slate-700 leading-relaxed flex items-start gap-3">
             <Globe className="text-[#FF2E7E] w-5 h-5 shrink-0 mt-0.5" />
             <span>
-              NexServe dynamically loads local currency pricing, city coverage, tax rules, and local payment methods (Razorpay in India vs eSewa/Khalti in Nepal) based on your selected region.
+              GlowHome dynamically loads local currency pricing, city coverage, tax rules, and local payment methods (Razorpay in India vs eSewa/Khalti in Nepal) based on your selected region.
             </span>
           </div>
 

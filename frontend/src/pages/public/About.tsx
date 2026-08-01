@@ -13,7 +13,7 @@ export const About: React.FC = () => {
         </div>
         <h1 className="text-4xl md:text-5xl font-extrabold text-[#111827]">Redefining Doorstep Beauty in India</h1>
         <p className="text-sm text-[#6B7280] leading-relaxed font-normal">
-          NexServe was founded with a single mission: to deliver luxury salon & wellness experiences straight to your personal sanctuary with 100% sealed mono-dose hygiene kits and certified top 1% professionals.
+          GlowHome was founded with a single mission: to deliver luxury salon, cleaning, repairs & wellness experiences straight to your personal sanctuary with 100% sealed mono-dose hygiene kits and certified top 1% professionals.
         </p>
       </div>
 

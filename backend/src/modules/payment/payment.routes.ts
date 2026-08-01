@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import { authenticate } from "../../common/middleware/auth.middleware";
+import { authorize } from "../../common/middleware/authorize.middleware";
 import { validate } from "../../common/middleware/validate";
 
 import { paymentController } from "./payment.controller";
@@ -174,6 +175,7 @@ router.post(
 router.post(
   "/create-order",
   authenticate,
+  authorize("CUSTOMER", "SUPER_ADMIN"),
   validate(createOrderSchema),
   paymentController.createOrder
 );
@@ -181,6 +183,7 @@ router.post(
 router.post(
   "/verify",
   authenticate,
+  authorize("CUSTOMER", "SUPER_ADMIN"),
   validate(verifyPaymentSchema),
   paymentController.verifyPayment
 );
@@ -188,6 +191,7 @@ router.post(
 router.post(
   "/refund",
   authenticate,
+  authorize("ADMIN", "SUPER_ADMIN"),
   validate(refundPaymentSchema),
   paymentController.refundPayment
 );
@@ -195,6 +199,7 @@ router.post(
 router.get(
   "/:bookingId",
   authenticate,
+  authorize("CUSTOMER", "VENDOR", "ADMIN", "SUPER_ADMIN"),
   paymentController.getPayment
 );
 
