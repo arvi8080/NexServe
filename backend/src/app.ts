@@ -13,11 +13,25 @@ const app = express();
 
 const allowedOrigins = [
   process.env.FRONTEND_URL,
+  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined,
+  process.env.VERCEL_BRANCH_URL ? `https://${process.env.VERCEL_BRANCH_URL}` : undefined,
   "http://localhost:3000",
   "http://127.0.0.1:3000",
   "http://localhost:5173",
   "http://127.0.0.1:5173",
 ].filter(Boolean) as string[];
+
+const isAllowedOrigin = (origin: string | undefined) => {
+  if (!origin) {
+    return true;
+  }
+
+  return (
+    allowedOrigins.includes(origin) ||
+    /\.vercel\.app$/i.test(origin) ||
+    /\.now\.sh$/i.test(origin)
+  );
+};
 
 // Razorpay webhook
 app.use(
@@ -32,7 +46,7 @@ app.use(helmet());
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (isAllowedOrigin(origin)) {
         callback(null, true);
         return;
       }
