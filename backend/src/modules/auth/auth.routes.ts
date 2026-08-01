@@ -1,141 +1,11 @@
 import { Router } from "express";
 import { authController } from "./auth.controller";
 import { validate } from "../../common/middleware/validate";
-import {
-  registerSchema,
-  loginSchema,
-} from "./auth.validation";
+import { registerSchema, loginSchema } from "./auth.validation";
 import { authenticate } from "../../common/middleware/auth.middleware";
 import { authorize } from "../../common/middleware/authorize.middleware";
 import { asyncHandler } from "../../common/utils/asyncHandler";
 
-/**
- * @openapi
- * /api/v1/auth/me:
- *   get:
- *     summary: Get authenticated user
- *     tags: [Auth]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Authenticated user returned successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 user:
- *                   type: object
- * /api/v1/auth/register:
- *   post:
- *     summary: Register a new user
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - firstName
- *               - email
- *               - password
- *             properties:
- *               firstName:
- *                 type: string
- *                 minLength: 2
- *               lastName:
- *                 type: string
- *               email:
- *                 type: string
- *                 format: email
- *               password:
- *                 type: string
- *                 minLength: 8
- *     responses:
- *       201:
- *         description: User registered successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   type: object
- * /api/v1/auth/login:
- *   post:
- *     summary: Login a user
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *               password:
- *                 type: string
- *                 minLength: 8
- *     responses:
- *       200:
- *         description: Login successful
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 token:
- *                   type: string
- *                 user:
- *                   type: object
- * /api/v1/auth/logout:
- *   post:
- *     summary: Logout a user
- *     tags: [Auth]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Logout successful
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 message:
- *                   type: string
- * /api/v1/auth/refresh:
- *   post:
- *     summary: Refresh auth tokens
- *     tags: [Auth]
- *     responses:
- *       200:
- *         description: Tokens refreshed successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 token:
- *                   type: string
- */
 const router = Router();
 
 router.get(
@@ -150,6 +20,28 @@ router.get(
   }
 );
 
+// GET info handler for GET /api/v1/auth/register
+router.get("/register", (_req, res) => {
+  res.json({
+    success: true,
+    message: "GlowHome User Account Registration API Endpoint",
+    methodRequired: "POST",
+    endpoint: "/api/v1/auth/register",
+    requiredFields: ["firstName", "lastName", "email", "password", "phone", "role"]
+  });
+});
+
+// GET info handler for GET /api/v1/auth/login
+router.get("/login", (_req, res) => {
+  res.json({
+    success: true,
+    message: "GlowHome Authentication Login API Endpoint",
+    methodRequired: "POST",
+    endpoint: "/api/v1/auth/login",
+    requiredFields: ["email", "password"]
+  });
+});
+
 router.post(
   "/register",
   validate(registerSchema),
@@ -162,7 +54,6 @@ router.post(
   asyncHandler(authController.login)
 );
 
-
 router.post(
   "/logout",
   authenticate,
@@ -174,4 +65,5 @@ router.post(
   "/refresh",
   asyncHandler(authController.refresh)
 );
+
 export default router;
