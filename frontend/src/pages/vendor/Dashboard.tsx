@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { vendorApi } from '@/api/vendor';
 import { bookingApi } from '@/api/booking';
-import { Vendor, Booking } from '@/types';
+import { Vendor, Booking, BookingStatus } from '@/types';
 import {
   DollarSign,
   Calendar as CalendarIcon,
@@ -70,7 +70,7 @@ export const VendorDashboard: React.FC = () => {
       .finally(() => setIsLoading(false));
   }, []);
 
-  const handleUpdateStatus = async (bookingId: string, status: 'ACCEPTED' | 'ONGOING' | 'COMPLETED' | 'CANCELLED') => {
+  const handleUpdateStatus = async (bookingId: string, status: BookingStatus) => {
     try {
       await bookingApi.updateBookingStatus(bookingId, status);
       setBookings((prev) => prev.map((b) => (b.id === bookingId ? { ...b, status } : b)));
@@ -80,11 +80,32 @@ export const VendorDashboard: React.FC = () => {
     }
   };
 
+  const advanceBookingStatus = async (booking: Booking) => {
+    const nextStatusMap: Record<BookingStatus, BookingStatus> = {
+      PENDING: 'ACCEPTED',
+      ACCEPTED: 'ON_THE_WAY',
+      ON_THE_WAY: 'SERVICE_STARTED',
+      SERVICE_STARTED: 'ONGOING',
+      ONGOING: 'COMPLETED',
+      COMPLETED: 'COMPLETED',
+      PAYMENT_CONFIRMED: 'PAYMENT_CONFIRMED',
+      CANCELLED: 'CANCELLED',
+    };
+
+    const nextStatus = nextStatusMap[booking.status];
+    if (nextStatus === booking.status) {
+      showToast('No further update', 'This booking is already at the final vendor milestone.', 'info');
+      return;
+    }
+
+    await handleUpdateStatus(booking.id, nextStatus);
+  };
+
   if (isLoading) return <Loader message="Loading authenticated partner operations telemetry..." />;
 
   // Real Computed Database Stats
-  const todayBookings = bookings.filter((b) => b.status === 'ACCEPTED' || b.status === 'ONGOING' || b.status === 'PENDING');
-  const completedBookings = bookings.filter((b) => b.status === 'COMPLETED');
+  const todayBookings = bookings.filter((b) => ['PENDING', 'ACCEPTED', 'ON_THE_WAY', 'SERVICE_STARTED', 'ONGOING'].includes(b.status));
+  const completedBookings = bookings.filter((b) => b.status === 'COMPLETED' || b.status === 'PAYMENT_CONFIRMED');
   const totalEarningsAmount = completedBookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
 
   const kpis = [
@@ -254,14 +275,24 @@ export const VendorDashboard: React.FC = () => {
 
                   <div className="flex items-center gap-3">
                     <span className="text-lg font-extrabold text-[#FF2E7E]">{formatPrice(booking.totalAmount)}</span>
-                    <Button
-                      size="sm"
-                      variant="primary"
-                      onClick={() => handleUpdateStatus(booking.id, 'COMPLETED')}
-                      className="h-9 px-4 text-xs font-bold rounded-xl"
-                    >
-                      Mark Completed
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => handleUpdateStatus(booking.id, 'CANCELLED')}
+                        className="h-9 px-4 text-xs font-bold rounded-xl"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="primary"
+                        onClick={() => advanceBookingStatus(booking)}
+                        className="h-9 px-4 text-xs font-bold rounded-xl"
+                      >
+                        {booking.status === 'COMPLETED' || booking.status === 'PAYMENT_CONFIRMED' ? 'Completed' : 'Advance'}
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>

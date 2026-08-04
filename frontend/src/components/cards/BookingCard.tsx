@@ -14,8 +14,11 @@ export const BookingCard: React.FC<BookingCardProps> = ({ booking }) => {
   const statusVariants: Record<string, 'warning' | 'info' | 'purple' | 'success' | 'danger'> = {
     PENDING: 'warning',
     ACCEPTED: 'info',
+    ON_THE_WAY: 'info',
+    SERVICE_STARTED: 'purple',
     ONGOING: 'purple',
     COMPLETED: 'success',
+    PAYMENT_CONFIRMED: 'success',
     CANCELLED: 'danger',
   };
 
@@ -58,7 +61,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({ booking }) => {
         </div>
 
         <div className="flex items-center gap-2">
-          {booking.status === 'ONGOING' || booking.status === 'ACCEPTED' ? (
+          {['ACCEPTED', 'ON_THE_WAY', 'SERVICE_STARTED', 'ONGOING', 'PAYMENT_CONFIRMED'].includes(booking.status) ? (
             <Link to={`/customer/bookings/${booking.id}`}>
               <Button size="sm" variant="primary" leftIcon={<Navigation className="w-4 h-4" />}>
                 Track Live

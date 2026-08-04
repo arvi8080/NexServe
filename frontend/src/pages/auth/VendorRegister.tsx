@@ -71,8 +71,8 @@ export const VendorRegister: React.FC = () => {
         address: formData.address,
       });
 
-      showToast('Partner Onboarding Submitted!', 'Welcome to GlowHome Partner Network.', 'success');
-      navigate('/vendor/dashboard');
+      showToast('Partner Onboarding Submitted!', 'Your account is now pending admin approval. We will notify you once verified.', 'success');
+      navigate('/vendor/pending-verification');
     } catch {
       showToast('Registration Failed', 'Could not complete partner registration.', 'error');
     } finally {

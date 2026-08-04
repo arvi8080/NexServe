@@ -33,7 +33,7 @@ export type BeautyCategory =
   | 'PARTY_MAKEUP'
   | 'BRIDAL_MAKEUP';
 
-export type BookingStatus = 'PENDING' | 'ACCEPTED' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
+export type BookingStatus = 'PENDING' | 'ACCEPTED' | 'ON_THE_WAY' | 'SERVICE_STARTED' | 'ONGOING' | 'COMPLETED' | 'PAYMENT_CONFIRMED' | 'CANCELLED';
 
 export type AvailabilityStatus = 'OFFLINE' | 'ONLINE' | 'BUSY';
 
@@ -155,6 +155,7 @@ export interface User {
   phone?: string;
   profileImage?: string;
   role: Role;
+  verificationStatus?: VerificationStatus;
   countryId?: string;
   stateId?: string;
   cityId?: string;

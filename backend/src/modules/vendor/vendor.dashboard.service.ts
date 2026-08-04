@@ -1,6 +1,7 @@
 import prisma from "../../config/prisma";
 import { AppError } from "../../common/errors/AppError";
 import bcrypt from "bcrypt";
+import { BookingStatus } from "@prisma/client";
 
 export class VendorDashboardService {
   async getDashboardStats(userId: string) {
@@ -14,6 +15,16 @@ export class VendorDashboardService {
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const activeBookingStatuses = [
+      "PENDING",
+      "ACCEPTED",
+      "ON_THE_WAY",
+      "SERVICE_STARTED",
+      "ONGOING",
+    ] as BookingStatus[];
+
+    const completedBookingStatuses = ["COMPLETED", "PAYMENT_CONFIRMED"] as BookingStatus[];
 
     const [
       todayBookings,
@@ -30,8 +41,8 @@ export class VendorDashboardService {
       earningsGraph,
     ] = await Promise.all([
       prisma.booking.count({ where: { vendorId: vendor.id, bookingDate: { gte: today, lt: tomorrow } } }),
-      prisma.booking.count({ where: { vendorId: vendor.id, bookingDate: { gte: today }, status: { in: ["PENDING", "ACCEPTED"] } } }),
-      prisma.booking.count({ where: { vendorId: vendor.id, status: "COMPLETED" } }),
+      prisma.booking.count({ where: { vendorId: vendor.id, bookingDate: { gte: today }, status: { in: activeBookingStatuses } } }),
+      prisma.booking.count({ where: { vendorId: vendor.id, status: { in: completedBookingStatuses } } }),
       prisma.payment.aggregate({
         _sum: { amount: true },
         where: { booking: { vendorId: vendor.id }, status: "SUCCESS", createdAt: { gte: new Date(today.getFullYear(), today.getMonth(), 1) } },
@@ -50,7 +61,7 @@ export class VendorDashboardService {
         include: { customer: { select: { id: true, firstName: true, lastName: true, profileImage: true } }, service: { select: { id: true, title: true, category: true } } },
       }),
       prisma.booking.findMany({
-        where: { vendorId: vendor.id, bookingDate: { gte: today }, status: { in: ["PENDING", "ACCEPTED", "ONGOING"] } },
+        where: { vendorId: vendor.id, bookingDate: { gte: today }, status: { in: activeBookingStatuses } },
         orderBy: { bookingDate: "asc" },
         take: 5,
         include: { customer: { select: { id: true, firstName: true, lastName: true, profileImage: true } }, service: { select: { id: true, title: true, duration: true } } },

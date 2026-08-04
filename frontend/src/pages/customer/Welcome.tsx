@@ -64,7 +64,7 @@ export const CustomerWelcome: React.FC = () => {
 
   if (isLoading) return <Loader message="Hydrating customer command center telemetry..." />;
 
-  const upcomingBooking = bookings.find((b) => b.status === 'ACCEPTED' || b.status === 'ONGOING' || b.status === 'PENDING');
+  const upcomingBooking = bookings.find((b) => ['PENDING', 'ACCEPTED', 'ON_THE_WAY', 'SERVICE_STARTED', 'ONGOING', 'PAYMENT_CONFIRMED'].includes(b.status));
 
   const statCards = [
     { title: 'Upcoming Bookings', value: stats?.upcomingBookingsCount || 0, icon: Calendar, color: 'text-pink-600', bg: 'bg-pink-50' },

@@ -20,13 +20,17 @@ export const BookingHistory: React.FC = () => {
 
   const tabs = [
     { id: 'ALL', label: 'All Bookings', count: bookings.length },
-    { id: 'UPCOMING', label: 'Upcoming', count: bookings.filter((b) => b.status === 'PENDING' || b.status === 'ACCEPTED' || b.status === 'ONGOING').length },
+    {
+      id: 'UPCOMING',
+      label: 'In Progress',
+      count: bookings.filter((b) => ['PENDING', 'ACCEPTED', 'ON_THE_WAY', 'SERVICE_STARTED', 'ONGOING', 'PAYMENT_CONFIRMED'].includes(b.status)).length,
+    },
     { id: 'COMPLETED', label: 'Completed', count: bookings.filter((b) => b.status === 'COMPLETED').length },
     { id: 'CANCELLED', label: 'Cancelled', count: bookings.filter((b) => b.status === 'CANCELLED').length },
   ];
 
   const filteredBookings = bookings.filter((b) => {
-    if (activeTab === 'UPCOMING') return b.status === 'PENDING' || b.status === 'ACCEPTED' || b.status === 'ONGOING';
+    if (activeTab === 'UPCOMING') return ['PENDING', 'ACCEPTED', 'ON_THE_WAY', 'SERVICE_STARTED', 'ONGOING', 'PAYMENT_CONFIRMED'].includes(b.status);
     if (activeTab === 'COMPLETED') return b.status === 'COMPLETED';
     if (activeTab === 'CANCELLED') return b.status === 'CANCELLED';
     return true;
