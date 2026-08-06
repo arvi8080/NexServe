@@ -40,6 +40,18 @@ export class ServiceRepository {
       where: {
         id,
       },
+      include: {
+        vendor: {
+          select: {
+            id: true,
+            businessName: true,
+            address: true,
+            city: true,
+            state: true,
+            averageRating: true,
+          },
+        },
+      },
     });
   }
 
@@ -73,6 +85,7 @@ export class ServiceRepository {
           select: {
             id: true,
             businessName: true,
+            address: true,
             city: true,
             state: true,
             averageRating: true,
@@ -84,102 +97,70 @@ export class ServiceRepository {
       },
     });
   }
+
   async searchServices(filters: {
-  search?: string;
-  category?: any;
-  city?: string;
-  minPrice?: number;
-  maxPrice?: number;
-}) {
+    search?: string;
+    category?: any;
+    city?: string;
+    minPrice?: number;
+    maxPrice?: number;
+  }) {
+    const { search, category, city, minPrice, maxPrice } = filters;
 
-  const {
-    search,
-    category,
-    city,
-    minPrice,
-    maxPrice,
-  } = filters;
-
-
-  return prisma.service.findMany({
-
-    where: {
-
-      isActive: true,
-
-      vendor: {
-        status: "APPROVED",
-
-        ...(city && {
-          city: {
-            contains: city,
-            mode: "insensitive",
-          },
+    return prisma.service.findMany({
+      where: {
+        isActive: true,
+        vendor: {
+          status: "APPROVED",
+          ...(city && {
+            city: {
+              contains: city,
+              mode: "insensitive",
+            },
+          }),
+        },
+        ...(category && {
+          category,
+        }),
+        ...(minPrice || maxPrice
+          ? {
+              price: {
+                ...(minPrice && { gte: minPrice }),
+                ...(maxPrice && { lte: maxPrice }),
+              },
+            }
+          : {}),
+        ...(search && {
+          OR: [
+            {
+              title: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+            {
+              description: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+          ],
         }),
       },
-
-
-      ...(category && {
-        category,
-      }),
-
-
-      ...(minPrice || maxPrice
-        ? {
-            price: {
-              ...(minPrice && {
-                gte: minPrice,
-              }),
-
-              ...(maxPrice && {
-                lte: maxPrice,
-              }),
-            },
-          }
-        : {}),
-
-
-      ...(search && {
-        OR: [
-          {
-            title: {
-              contains: search,
-              mode: "insensitive",
-            },
+      include: {
+        vendor: {
+          select: {
+            id: true,
+            businessName: true,
+            address: true,
+            city: true,
+            averageRating: true,
           },
-          {
-            description: {
-              contains: search,
-              mode: "insensitive",
-            },
-          },
-        ],
-      }),
-
-    },
-
-
-    include: {
-      vendor: {
-        select: {
-          id: true,
-          businessName: true,
-          city: true,
-          averageRating: true,
         },
       },
-    },
-
-
-    orderBy: {
-      createdAt: "desc",
-    },
-
-  });
-
-}
-
-
-
-  
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }
 }

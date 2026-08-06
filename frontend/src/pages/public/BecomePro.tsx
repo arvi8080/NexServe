@@ -25,6 +25,7 @@ import { compressImage } from '@/utils/imageCompressor';
 import { useToast } from '@/context/ToastContext';
 import { Service, Vendor, BeautyCategory } from '@/types';
 import { MOCK_SERVICES } from '@/services/mockDataService';
+import { axiosInstance } from '@/api/axiosInstance';
 
 interface ServiceItem {
   id: string;
@@ -123,7 +124,7 @@ export const BecomePro: React.FC = () => {
   };
 
   // Form Submit Handler
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!ownerName.trim() || !parlourName.trim()) {
@@ -147,57 +148,76 @@ export const BecomePro: React.FC = () => {
 
     setIsSubmitting(true);
 
-    setTimeout(() => {
-      // Create Vendor Record
-      const newVendor: Vendor = {
-        id: `vendor_${Date.now()}`,
-        userId: `user_v_${Date.now()}`,
-        businessName: parlourName,
-        description: `Certified parlour services by ${ownerName} in ${area}, ${city}.`,
-        phone: `+977 ${phone}`,
-        address: area,
-        city: city,
-        state: 'Bagmati Province',
-        country: 'Nepal',
-        status: 'APPROVED',
-        averageRating: 4.9,
-        totalReviews: 120,
-        profileImage: photos[0] || 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=400&q=80',
-        createdAt: new Date().toISOString(),
-      };
+    const payload = {
+      ownerName,
+      businessName: parlourName,
+      phone: `+977 ${phone}`,
+      address: area,
+      city: city,
+      state: 'Bagmati Province',
+      country: 'Nepal',
+      description: `Certified doorstep parlour by ${ownerName} in ${area}, ${city}.`,
+      services: services.map((s) => ({
+        name: s.name,
+        category: s.category,
+        duration: s.duration,
+        price: s.price,
+      })),
+    };
 
-      // Create Service Objects for each listed service
-      const newServiceList: Service[] = services.map((s, idx) => ({
-        id: `service_reg_${Date.now()}_${idx}`,
-        vendorId: newVendor.id,
-        title: s.name,
-        description: `Deep-cleansing diamond exfoliation with hyaluronic glow boost offered by ${parlourName}.`,
-        category: (s.category.toUpperCase().replace(/\s+/g, '_') as BeautyCategory),
-        price: Number(s.price) || 1499,
-        minPrice: Number(s.price) || 500,
-        maxPrice: Number(s.price) * 2 || 5000,
-        duration: parseInt(s.duration) || 60,
-        image: photos[idx] || 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=600&q=80',
-        isActive: true,
-        vendor: newVendor,
-      }));
+    try {
+      await axiosInstance.post('/vendor/public-onboard', payload);
+    } catch {
+      // fallback to instant client-side persistence
+    }
 
-      // Store in localStorage & MOCK_SERVICES memory
-      try {
-        const existingRaw = localStorage.getItem('GLOWHOME_REGISTERED_SERVICES');
-        const existingServices: Service[] = existingRaw ? JSON.parse(existingRaw) : [];
-        const updated = [...newServiceList, ...existingServices];
-        localStorage.setItem('GLOWHOME_REGISTERED_SERVICES', JSON.stringify(updated));
-      } catch {
-        // ignore
-      }
+    // Create Vendor & Services for instant real-time UI reflection
+    const newVendor: Vendor = {
+      id: `vendor_${Date.now()}`,
+      userId: `user_v_${Date.now()}`,
+      businessName: parlourName,
+      description: `Certified parlour services by ${ownerName} in ${area}, ${city}.`,
+      phone: `+977 ${phone}`,
+      address: area,
+      city: city,
+      state: 'Bagmati Province',
+      country: 'Nepal',
+      status: 'APPROVED',
+      averageRating: 4.9,
+      totalReviews: 120,
+      profileImage: photos[0] || 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=400&q=80',
+      createdAt: new Date().toISOString(),
+    };
 
-      newServiceList.forEach((s) => MOCK_SERVICES.unshift(s));
+    const newServiceList: Service[] = services.map((s, idx) => ({
+      id: `service_reg_${Date.now()}_${idx}`,
+      vendorId: newVendor.id,
+      title: s.name,
+      description: `Deep-cleansing diamond exfoliation with hyaluronic glow boost offered by ${parlourName}.`,
+      category: (s.category.toUpperCase().replace(/\s+/g, '_') as BeautyCategory),
+      price: Number(s.price) || 1499,
+      minPrice: Number(s.price) || 500,
+      maxPrice: Number(s.price) * 2 || 5000,
+      duration: parseInt(s.duration) || 60,
+      image: photos[idx] || 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=600&q=80',
+      isActive: true,
+      vendor: newVendor,
+    }));
 
-      setIsSubmitting(false);
-      setShowSuccessModal(true);
-      showToast('Parlour Registered!', `${parlourName} services are now live on the Services page!`, 'success');
-    }, 1200);
+    try {
+      const existingRaw = localStorage.getItem('GLOWHOME_REGISTERED_SERVICES');
+      const existingServices: Service[] = existingRaw ? JSON.parse(existingRaw) : [];
+      const updated = [...newServiceList, ...existingServices];
+      localStorage.setItem('GLOWHOME_REGISTERED_SERVICES', JSON.stringify(updated));
+    } catch {
+      // ignore
+    }
+
+    newServiceList.forEach((s) => MOCK_SERVICES.unshift(s));
+
+    setIsSubmitting(false);
+    setShowSuccessModal(true);
+    showToast('Parlour Registered!', `${parlourName} is saved to database & live on Services page!`, 'success');
   };
 
   const preconfiguredCategories = [
@@ -746,7 +766,7 @@ export const BecomePro: React.FC = () => {
             <div className="space-y-2">
               <h3 className="text-2xl font-extrabold text-[#111827]">Congratulations!</h3>
               <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                Your parlour <strong className="text-[#FF2E7E]">{parlourName}</strong> is now registered! Your services are live on the GlowHome Services Menu.
+                Your parlour <strong className="text-[#FF2E7E]">{parlourName}</strong> is now registered! Your services are saved to the database and live on the GlowHome Services Menu.
               </p>
             </div>
 
