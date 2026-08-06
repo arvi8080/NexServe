@@ -1,7 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-import { AIBeautyAssistant } from '@/components/ai/AIBeautyAssistant';
 import { Outlet } from 'react-router-dom';
 
 export const MainLayout: React.FC<{ children?: ReactNode }> = ({ children }) => {
@@ -16,7 +15,6 @@ export const MainLayout: React.FC<{ children?: ReactNode }> = ({ children }) => 
         {children || <Outlet />}
       </main>
       <Footer />
-      <AIBeautyAssistant />
     </div>
   );
 };
