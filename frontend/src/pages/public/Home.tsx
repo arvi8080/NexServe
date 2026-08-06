@@ -110,7 +110,10 @@ export const Home: React.FC = () => {
           <div className="relative z-10 w-full max-w-md shrink-0">
             <img
               src={homeData.heroBanner.backgroundImage}
-              alt="Luxury Beauty Spa"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=80';
+              }}
+              alt="Luxury Vibrant Beauty Parlour"
               className="rounded-3xl shadow-2xl border-4 border-white/20 object-cover aspect-4/3 w-full"
             />
           </div>

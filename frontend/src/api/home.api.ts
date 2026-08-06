@@ -47,13 +47,13 @@ export const homeApi = {
       const response = await apiClient.get<{ success: boolean; data: HomeDataResponse }>('/home');
       return response.data.data;
     } catch {
-      // 100% Nepal Fallback mock data
+      // 100% Nepal Fallback mock data with vibrant luxury beauty parlour image
       return {
         heroBanner: {
           title: "Nepal's #1 Doorstep Beauty & Home Services Sanctuary",
           subtitle: 'Certified professionals bringing single-use sealed mono-dose salon treatments right to your doorstep in Kathmandu, Pokhara & Lalitpur.',
           ctaText: 'Explore Treatments',
-          backgroundImage: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=80',
+          backgroundImage: '/images/beauty_parlour_hero.jpg',
         },
         categories: MOCK_CATEGORIES,
         featuredServices: MOCK_SERVICES.slice(0, 4),
