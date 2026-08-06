@@ -24,17 +24,17 @@ export const AddressManagerModal: React.FC<AddressManagerModalProps> = ({
   const { showToast } = useToast();
   const [isAddingNew, setIsAddingNew] = useState(false);
 
-  // Form State for Manual Selection (Country -> State -> City -> Area)
-  const [country, setCountry] = useState('India');
-  const [state, setState] = useState('Karnataka');
-  const [city, setCity] = useState('Bengaluru');
-  const [area, setArea] = useState('Indiranagar');
+  // 100% Nepal Default Form State (Country -> State -> City -> Area)
+  const [country, setCountry] = useState('Nepal');
+  const [state, setState] = useState('Bagmati Province');
+  const [city, setCity] = useState('Kathmandu');
+  const [area, setArea] = useState('Durbar Marg');
   const [label, setLabel] = useState<'Home' | 'Office' | 'Other'>('Home');
-  const [fullName, setFullName] = useState('Arvind Kumar');
-  const [phoneNumber, setPhoneNumber] = useState('+91 98765 43210');
-  const [addressLine1, setAddressLine1] = useState('10th Main Road, Suite 402');
-  const [landmark, setLandmark] = useState('Near Metro Station');
-  const [postalCode, setPostalCode] = useState('560038');
+  const [fullName, setFullName] = useState('Aarav Sharma');
+  const [phoneNumber, setPhoneNumber] = useState('+977 98012 34567');
+  const [addressLine1, setAddressLine1] = useState('Building 42, Durbar Marg');
+  const [landmark, setLandmark] = useState('Near Annapurna Hotel');
+  const [postalCode, setPostalCode] = useState('44600');
 
   if (!isOpen) return null;
 
@@ -55,8 +55,8 @@ export const AddressManagerModal: React.FC<AddressManagerModalProps> = ({
       state,
       country,
       postalCode,
-      latitude: 12.971598,
-      longitude: 77.641151,
+      latitude: 27.7172,
+      longitude: 85.324,
       isDefault: savedAddresses.length === 0,
     };
 
@@ -141,8 +141,8 @@ export const AddressManagerModal: React.FC<AddressManagerModalProps> = ({
                   onChange={(e) => setCountry(e.target.value)}
                   className="w-full h-11 px-3 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-bold text-slate-900"
                 >
-                  <option value="India">🇮🇳 India</option>
                   <option value="Nepal">🇳🇵 Nepal</option>
+                  <option value="India">🇮🇳 India</option>
                 </select>
               </div>
 
@@ -153,11 +153,11 @@ export const AddressManagerModal: React.FC<AddressManagerModalProps> = ({
                   onChange={(e) => setState(e.target.value)}
                   className="w-full h-11 px-3 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-bold text-slate-900"
                 >
+                  <option value="Bagmati Province">Bagmati Province</option>
+                  <option value="Gandaki Province">Gandaki Province</option>
+                  <option value="Koshi Province">Koshi Province</option>
+                  <option value="Lumbini Province">Lumbini Province</option>
                   <option value="Karnataka">Karnataka</option>
-                  <option value="Maharashtra">Maharashtra</option>
-                  <option value="Delhi">Delhi</option>
-                  <option value="Bagmati">Bagmati (Nepal)</option>
-                  <option value="Gandaki">Gandaki (Nepal)</option>
                 </select>
               </div>
             </div>
@@ -171,67 +171,76 @@ export const AddressManagerModal: React.FC<AddressManagerModalProps> = ({
                   onChange={(e) => setCity(e.target.value)}
                   className="w-full h-11 px-3 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-bold text-slate-900"
                 >
-                  <option value="Bengaluru">Bengaluru</option>
-                  <option value="Mumbai">Mumbai</option>
-                  <option value="New Delhi">New Delhi</option>
                   <option value="Kathmandu">Kathmandu</option>
                   <option value="Pokhara">Pokhara</option>
+                  <option value="Lalitpur (Patan)">Lalitpur (Patan)</option>
+                  <option value="Bhaktapur">Bhaktapur</option>
+                  <option value="Biratnagar">Biratnagar</option>
+                  <option value="Butwal">Butwal</option>
+                  <option value="Bengaluru">Bengaluru</option>
                 </select>
               </div>
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 block">Area / Locality</label>
+                <select
+                  value={area}
+                  onChange={(e) => setArea(e.target.value)}
+                  className="w-full h-11 px-3 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-bold text-slate-900"
+                >
+                  <option value="Durbar Marg">Durbar Marg</option>
+                  <option value="Thamel">Thamel</option>
+                  <option value="New Baneshwor">New Baneshwor</option>
+                  <option value="Jhamsikhel">Jhamsikhel</option>
+                  <option value="Lazimpat">Lazimpat</option>
+                  <option value="Maharajgunj">Maharajgunj</option>
+                  <option value="Bhatbhateni">Bhatbhateni</option>
+                  <option value="Koteshwor">Koteshwor</option>
+                  <option value="Lakeside Pokhara">Lakeside Pokhara</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Full Name & Phone */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 block">Full Name</label>
                 <input
                   type="text"
                   required
-                  value={area}
-                  onChange={(e) => setArea(e.target.value)}
-                  placeholder="e.g. Indiranagar / Durbar Marg"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="w-full h-11 px-3 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-bold text-slate-900"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 block">Phone Number</label>
+                <input
+                  type="text"
+                  required
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
                   className="w-full h-11 px-3 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-bold text-slate-900"
                 />
               </div>
             </div>
 
-            {/* Address Line 1 & Landmark */}
+            {/* House / Building Address & Landmark */}
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-700 block">Street Address / House No.</label>
+              <label className="text-xs font-bold text-slate-700 block">Flat / House / Street Address</label>
               <input
                 type="text"
                 required
                 value={addressLine1}
                 onChange={(e) => setAddressLine1(e.target.value)}
-                placeholder="Flat 402, 10th Main Road"
+                placeholder="e.g. House 14, Durbar Marg"
                 className="w-full h-11 px-3 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-bold text-slate-900"
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700 block">Landmark</label>
-                <input
-                  type="text"
-                  value={landmark}
-                  onChange={(e) => setLandmark(e.target.value)}
-                  placeholder="Near Metro Station"
-                  className="w-full h-11 px-3 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-bold text-slate-900"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700 block">Postal Code</label>
-                <input
-                  type="text"
-                  required
-                  value={postalCode}
-                  onChange={(e) => setPostalCode(e.target.value)}
-                  placeholder="560038"
-                  className="w-full h-11 px-3 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-bold text-slate-900"
-                />
-              </div>
-            </div>
-
             <Button type="submit" variant="primary" className="w-full h-12 rounded-2xl text-xs font-bold shadow-xl">
-              Save Doorstep Location
+              Save Doorstep Address
             </Button>
           </form>
         )}

@@ -47,11 +47,11 @@ export const homeApi = {
       const response = await apiClient.get<{ success: boolean; data: HomeDataResponse }>('/home');
       return response.data.data;
     } catch {
-      // Fallback mock data returned dynamically if endpoint is not connected
+      // 100% Nepal Fallback mock data
       return {
         heroBanner: {
-          title: 'Luxury Doorstep Beauty & Spa Sanctuary',
-          subtitle: 'Certified professionals bringing single-use sealed mono-dose salon treatments right to your living room.',
+          title: "Nepal's #1 Doorstep Beauty & Home Services Sanctuary",
+          subtitle: 'Certified professionals bringing single-use sealed mono-dose salon treatments right to your doorstep in Kathmandu, Pokhara & Lalitpur.',
           ctaText: 'Explore Treatments',
           backgroundImage: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=80',
         },
@@ -62,46 +62,46 @@ export const homeApi = {
         customerReviews: [
           {
             id: 'rev_1',
-            name: 'Ananya Rao',
+            name: 'Ananda Shrestha (Kathmandu)',
             rating: 5,
-            comment: 'The Diamond Hydra-Facial beautician was extremely professional. Single-use sachet opened live in front of me!',
+            comment: 'The Diamond Hydra-Facial beautician in Durbar Marg was extremely professional. Single-use sachet opened live in front of me!',
             serviceName: 'Diamond Hydra-Glow Facial',
             image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-            date: 'July 24, 2026',
+            date: 'August 4, 2026',
           },
           {
             id: 'rev_2',
-            name: 'Sneha Verma',
+            name: 'Sneha Gurung (Lalitpur)',
             rating: 5,
-            comment: 'Hair Spa session at home saved so much travel time. Complete floor cleanup done afterwards!',
+            comment: 'Hair Spa session at home in Jhamsikhel saved so much travel time. Complete floor cleanup done afterwards!',
             serviceName: 'Herbal Keratin Hair Spa',
             image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80',
-            date: 'July 22, 2026',
+            date: 'August 2, 2026',
           },
         ],
         statistics: {
-          happyCustomers: '50,000+',
-          verifiedBeauticians: '1,200+',
-          completedBookings: '150,000+',
+          happyCustomers: '25,000+',
+          verifiedBeauticians: '650+',
+          completedBookings: '85,000+',
           averageRating: '4.9★',
         },
         offers: [
           {
             id: 'off_1',
-            code: 'LUXURY25',
-            title: '25% OFF Festival Radiance',
-            description: 'Valid on all certified hydra-facial & hair spa packages.',
+            code: 'NEPAL25',
+            title: '25% OFF Festival Radiance in Nepal',
+            description: 'Valid on all certified hydra-facial & hair spa packages in Kathmandu & Pokhara.',
             discountPercent: 25,
           },
         ],
         faqs: [
           {
-            question: 'How do you guarantee 100% hygiene at home?',
+            question: 'How do you guarantee 100% hygiene at home in Nepal?',
             answer: 'Every beautician carries a sealed mono-dose single-use kit containing sanitized tools, bedsheets, and sachets opened exclusively in front of you.',
           },
           {
-            question: 'What if I need to cancel or reschedule?',
-            answer: 'Free cancellation or rescheduling is available up to 2 hours before your scheduled appointment time.',
+            question: 'What digital payment methods do you accept in Nepal?',
+            answer: 'You can pay directly via eSewa, Khalti, Fonepay, IME Pay, ConnectIPS, or Cash on service completion.',
           },
         ],
       };

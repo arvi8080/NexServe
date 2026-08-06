@@ -3,13 +3,15 @@ import { API_ENDPOINTS } from '@/constants/apiEndpoints';
 import { ChatMessage } from '@/types';
 import { MOCK_CHAT_MESSAGES, MOCK_USERS } from '@/services/mockDataService';
 
+const mockChatStore: Record<string, ChatMessage[]> = {};
+
 export const chatApi = {
   getMessages: async (bookingId: string): Promise<ChatMessage[]> => {
     try {
       const response = await axiosInstance.get(API_ENDPOINTS.CHAT.MESSAGES(bookingId));
       return response.data;
     } catch {
-      return MOCK_CHAT_MESSAGES[bookingId] || [];
+      return mockChatStore[bookingId] || MOCK_CHAT_MESSAGES;
     }
   },
 
@@ -26,10 +28,10 @@ export const chatApi = {
         sender: MOCK_USERS.find((u) => u.id === senderId) || MOCK_USERS[0],
         createdAt: new Date().toISOString(),
       };
-      if (!MOCK_CHAT_MESSAGES[bookingId]) {
-        MOCK_CHAT_MESSAGES[bookingId] = [];
+      if (!mockChatStore[bookingId]) {
+        mockChatStore[bookingId] = [];
       }
-      MOCK_CHAT_MESSAGES[bookingId].push(newMsg);
+      mockChatStore[bookingId].push(newMsg);
       return newMsg;
     }
   },

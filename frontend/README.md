@@ -1,32 +1,40 @@
-# React + TypeScript + Vite
+# 🌸 GlowHome — Frontend Marketplace & Dashboard Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+The React 19 + TypeScript + Vite + TailwindCSS frontend application for **GlowHome**, providing luxury doorstep salon, spa, cleaning, and maintenance service booking.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🌐 Live Production Application
+- **Frontend App**: [https://glowhome.vercel.app/](https://glowhome.vercel.app/)
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Tech Stack & Architecture
+- **Framework**: React 19, Vite 8, TypeScript 5.9
+- **Styling**: TailwindCSS, Glassmorphism, CSS Custom Tokens
+- **Icons & Motion**: Lucide React, Framer Motion
+- **HTTP Client**: Axios with JWT Interceptors (`axiosInstance.ts`)
+- **State & Context**: AuthContext, ToastContext, CountryContext (INR ₹ vs NPR रु), ThemeContext
 
-## Expanding the Oxlint configuration
+---
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## 🚀 Running Locally
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+---
+
+## 🔒 Client-Side RBAC & Authorization
+- **`GUEST`**: Treatment catalog, Home, Services, About, Contact.
+- **`CUSTOMER`**: Customer Portal Overview, Bookings, Wishlist, Wallet, Notifications, Reviews, Address Book, Profile, Support, Settings.
+- **`VENDOR`**: Vendor Operations Center, My Services, Availability, Earnings, Vendor Profile, Verification Hub.
+- **`ADMIN`**: Admin Analytics, Vendor Approvals, Branch Manager, ERP, Security Matrix.

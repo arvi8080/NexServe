@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import { Role } from "@prisma/client";
 import { AuthRepository } from "./auth.repository";
 import { AppError } from "../../common/errors/AppError";
 import {
@@ -27,6 +28,7 @@ export class AuthService {
     const user = await this.authRepository.createUser({
       ...data,
       password: hashedPassword,
+      role: Role.CUSTOMER,
     });
 
     const { password, ...safeUser } = user;

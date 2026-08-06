@@ -37,8 +37,11 @@ enum BeautyCategory {
 enum BookingStatus {
   PENDING
   ACCEPTED
+  ON_THE_WAY
+  SERVICE_STARTED
   ONGOING
   COMPLETED
+  PAYMENT_CONFIRMED
   CANCELLED
 }
 

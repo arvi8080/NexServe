@@ -32,10 +32,14 @@ export class VendorService {
     }
 
 
-    return this.vendorRepository.createVendor({
+    const vendor = await this.vendorRepository.createVendor({
       userId,
       ...data,
     });
+
+    await this.vendorRepository.assignVendorRole(userId);
+
+    return vendor;
 
   }
 

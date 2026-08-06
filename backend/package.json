@@ -12,7 +12,8 @@
     "format": "prettier --write .",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "seed:super-admin": "tsx scripts/seed-super-admin.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

@@ -20,8 +20,8 @@ export const CountryProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [countries, setCountries] = useState<Country[]>(MOCK_COUNTRIES);
   const [selectedCountry, setSelectedCountry] = useState<Country>(() => {
     const savedCode = localStorage.getItem('glowhome_country_code');
-    const matched = MOCK_COUNTRIES.find((c) => c.code === savedCode);
-    return matched || MOCK_COUNTRIES[0]; // Default India (IN)
+    const matched = MOCK_COUNTRIES.find((c) => c.code === (savedCode || 'NP'));
+    return matched || MOCK_COUNTRIES[0]; // Default 100% Nepal (NP)
   });
   const [availableCities, setAvailableCities] = useState<City[]>([]);
   const [paymentGateways, setPaymentGateways] = useState<PaymentGatewayConfig[]>([]);
@@ -62,11 +62,8 @@ export const CountryProvider: React.FC<{ children: ReactNode }> = ({ children })
   };
 
   const formatPrice = (amount: number): string => {
-    const symbol = selectedCountry?.currencySymbol || '₹';
-    if (selectedCountry?.code === 'NP') {
-      return `रु ${new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(amount)}`;
-    }
-    return `${symbol}${new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(amount)}`;
+    const symbol = selectedCountry?.currencySymbol || 'रु';
+    return `${symbol} ${new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(amount)}`;
   };
 
   return (

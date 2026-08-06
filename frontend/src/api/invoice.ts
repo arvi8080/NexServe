@@ -9,7 +9,7 @@ export const invoiceApi = {
       const response = await axiosInstance.get(API_ENDPOINTS.INVOICE.BY_BOOKING(bookingId));
       return response.data;
     } catch {
-      return MOCK_INVOICES.find((inv) => inv.bookingId === bookingId) || MOCK_INVOICES[0];
+      return MOCK_INVOICES.find((inv: Invoice) => inv.bookingId === bookingId) || ({} as Invoice);
     }
   },
 };

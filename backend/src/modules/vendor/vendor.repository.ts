@@ -30,6 +30,15 @@ export class VendorRepository {
 
   }
 
+  async assignVendorRole(userId: string) {
+    return prisma.user.update({
+      where: { id: userId },
+      data: {
+        role: "VENDOR_OWNER",
+      },
+    });
+  }
+
   async getVendorProfile(userId: string) {
 
   return prisma.vendor.findUnique({

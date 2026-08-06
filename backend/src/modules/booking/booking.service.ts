@@ -267,7 +267,8 @@ return booking;
 
   if (
     status === BookingStatus.COMPLETED ||
-status === BookingStatus.CANCELLED
+    status === BookingStatus.PAYMENT_CONFIRMED ||
+    status === BookingStatus.CANCELLED
   ) {
     await this.repository.updateProfessionalStatus(
       vendor.id,

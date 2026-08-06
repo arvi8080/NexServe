@@ -13,8 +13,11 @@ export const createBookingSchema = z.object({
 export const updateBookingStatusSchema = z.object({
   status: z.enum([
     "ACCEPTED",
+    "ON_THE_WAY",
+    "SERVICE_STARTED",
     "ONGOING",
     "COMPLETED",
+    "PAYMENT_CONFIRMED",
     "CANCELLED",
   ]),
 });
@@ -25,7 +28,7 @@ export const rescheduleBookingSchema = z.object({
 
 export const bookingQuerySchema = z.object({
   status: z
-    .enum(["PENDING", "ACCEPTED", "ONGOING", "COMPLETED", "CANCELLED"])
+    .enum(["PENDING", "ACCEPTED", "ON_THE_WAY", "SERVICE_STARTED", "ONGOING", "COMPLETED", "PAYMENT_CONFIRMED", "CANCELLED"])
     .optional(),
   page: z
     .string()

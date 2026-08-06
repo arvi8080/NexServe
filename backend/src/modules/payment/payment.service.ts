@@ -182,14 +182,17 @@ export class PaymentService {
 
       );
 
-    // Optional:
-    // If you later add a payment status to Booking,
-    // update it here.
-
     const booking =
       await this.bookingRepository.getBookingById(
         payment.bookingId
       );
+
+    if (booking) {
+      await this.bookingRepository.updateBookingStatus(
+        booking.id,
+        "PAYMENT_CONFIRMED"
+      );
+    }
 
     if (booking) {
 
