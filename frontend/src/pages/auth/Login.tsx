@@ -11,8 +11,8 @@ export const Login: React.FC = () => {
   const { showToast } = useToast();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState('customer@glowhome.com');
-  const [password, setPassword] = useState('password123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -57,7 +57,7 @@ export const Login: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full h-13 pl-12 pr-4 rounded-2xl bg-white border border-[#ECECEC] text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#FF2E7A] focus:ring-4 focus:ring-[#FF2E7A]/10 font-medium transition-all"
-              placeholder="customer@glowhome.com"
+              placeholder="your.email@example.com"
             />
           </div>
         </div>

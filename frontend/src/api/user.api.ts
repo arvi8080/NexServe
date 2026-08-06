@@ -17,10 +17,10 @@ export const userApi = {
       return {
         user: {
           id: 'u_90812',
-          email: 'customer@glowhome.com',
-          firstName: 'Arvind',
-          lastName: 'Kumar',
-          phone: '+91 98765 43210',
+          email: 'aarav.shrestha@glowhome.np',
+          firstName: 'Aarav',
+          lastName: 'Shrestha',
+          phone: '+977 98012 34567',
           role: 'CUSTOMER',
         },
         walletBalance: 2450,

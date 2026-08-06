@@ -6,7 +6,7 @@ export const MOCK_USERS: User[] = [
     id: 'user_cust_1',
     firstName: 'Aarav',
     lastName: 'Sharma',
-    email: 'customer@glowhome.com',
+    email: 'aarav.shrestha@glowhome.np',
     phone: '+977 98012 34567',
     profileImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
     role: 'CUSTOMER',

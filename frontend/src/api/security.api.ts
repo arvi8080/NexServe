@@ -25,7 +25,7 @@ export const MOCK_SECURITY_LOGS: AuditLogItem[] = [
   {
     id: 'log_01',
     userId: 'user_cust_1',
-    userEmail: 'customer@glowhome.com',
+    userEmail: 'aarav.shrestha@glowhome.np',
     action: 'AUTH_LOGIN_SUCCESS (JWT 256-Bit Validated)',
     ipAddress: '106.51.72.18',
     userAgent: 'Chrome 126.0 / Windows 11',
@@ -35,7 +35,7 @@ export const MOCK_SECURITY_LOGS: AuditLogItem[] = [
   {
     id: 'log_02',
     userId: 'user_cust_1',
-    userEmail: 'customer@glowhome.com',
+    userEmail: 'aarav.shrestha@glowhome.np',
     action: 'IDOR_ATTEMPT_PREVENTED (Blocked access to vendor_2 earnings)',
     ipAddress: '106.51.72.18',
     userAgent: 'Chrome 126.0 / Windows 11',
