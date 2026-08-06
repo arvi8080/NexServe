@@ -15,7 +15,7 @@ import { ServiceDetails } from '@/pages/public/ServiceDetails';
 import { SearchResults } from '@/pages/public/SearchResults';
 import { About } from '@/pages/public/About';
 import { Contact } from '@/pages/public/Contact';
-import { BecomeProfessional } from '@/pages/public/BecomeProfessional';
+import { BecomePro } from '@/pages/public/BecomePro';
 import { AIConciergePage } from '@/pages/public/AIConciergePage';
 import { NotFound } from '@/pages/public/NotFound';
 import { Unauthorized403 } from '@/pages/public/Unauthorized403';
@@ -49,23 +49,15 @@ import { CustomerSettings } from '@/pages/customer/CustomerSettings';
 
 // Vendor Pages
 import { VendorDashboard } from '@/pages/vendor/Dashboard';
-import { MyServices } from '@/pages/vendor/MyServices';
-import { Availability } from '@/pages/vendor/Availability';
-import { VendorReviews } from '@/pages/vendor/Reviews';
-import { Earnings } from '@/pages/vendor/Earnings';
-import { VendorProfile } from '@/pages/vendor/VendorProfile';
-import { EnterpriseSalonChain } from '@/pages/vendor/EnterpriseSalonChain';
-import { VerificationCenter } from '@/pages/vendor/VerificationCenter';
 import { VendorPendingVerification } from '@/pages/vendor/VendorPendingVerification';
 import { VendorAccountRejected } from '@/pages/vendor/VendorAccountRejected';
+import { VerificationCenter } from '@/pages/vendor/VerificationCenter';
+import { MyServices } from '@/pages/vendor/MyServices';
 
 // Admin Pages
 import { AdminDashboard } from '@/pages/admin/Dashboard';
 import { VendorApproval } from '@/pages/admin/VendorApproval';
-import { Analytics } from '@/pages/admin/Analytics';
 import { CompanyERP } from '@/pages/admin/CompanyERP';
-import { SecurityMatrix } from '@/pages/admin/SecurityMatrix';
-import { BranchManager } from '@/pages/admin/BranchManager';
 
 // Guard
 import { ProtectedRoute } from './ProtectedRoute';
@@ -82,7 +74,7 @@ export const AppRoutes: React.FC = () => {
         <Route path="/search" element={<SearchResults />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/become-pro" element={<BecomeProfessional />} />
+        <Route path="/become-pro" element={<BecomePro />} />
         <Route path="/ai-concierge" element={<AIConciergePage />} />
 
         {/* RBAC 403 & Error Pages */}
@@ -109,44 +101,41 @@ export const AppRoutes: React.FC = () => {
         }
       >
         <Route path="/customer/dashboard" element={<CustomerWelcome />} />
-        <Route path="/customer/book/:serviceId" element={<BookService />} />
-        <Route path="/customer/checkout/:bookingId" element={<Checkout />} />
+        <Route path="/customer/book/:id" element={<BookService />} />
+        <Route path="/customer/checkout" element={<Checkout />} />
         <Route path="/customer/bookings" element={<BookingHistory />} />
         <Route path="/customer/bookings/:id" element={<BookingTracking />} />
-        <Route path="/customer/chat/:bookingId" element={<Chat />} />
+        <Route path="/customer/chat/:id" element={<Chat />} />
         <Route path="/customer/notifications" element={<Notifications />} />
         <Route path="/customer/wallet" element={<Wallet />} />
-        <Route path="/customer/invoice/:bookingId" element={<Invoice />} />
+        <Route path="/customer/invoice/:id" element={<Invoice />} />
         <Route path="/customer/profile" element={<Profile />} />
+        <Route path="/customer/membership" element={<Membership />} />
+        <Route path="/customer/referral" element={<Referral />} />
         <Route path="/customer/wishlist" element={<Wishlist />} />
         <Route path="/customer/reviews" element={<CustomerReviews />} />
         <Route path="/customer/addresses" element={<AddressesPage />} />
         <Route path="/customer/support" element={<Support />} />
         <Route path="/customer/settings" element={<CustomerSettings />} />
-        <Route path="/customer/membership" element={<Membership />} />
-        <Route path="/customer/referral" element={<Referral />} />
       </Route>
 
-      {/* Vendor Protected Layout */}
+      {/* Vendor Gateways & Verification Views */}
+      <Route path="/vendor/pending-verification" element={<VendorPendingVerification />} />
+      <Route path="/vendor/account-rejected" element={<VendorAccountRejected />} />
+
+      {/* Vendor Protected Layout (With Verification Gate) */}
       <Route
         element={
-          <ProtectedRoute allowedRoles={['VENDOR', 'SUPER_ADMIN']}>
-            <VerificationGuard allowedPaths={['/vendor/verification', '/vendor/profile', '/vendor/support', '/vendor/pending-verification']}>
+          <ProtectedRoute allowedRoles={['VENDOR_OWNER', 'SUPER_ADMIN']}>
+            <VerificationGuard>
               <VendorDashboardLayout />
             </VerificationGuard>
           </ProtectedRoute>
         }
       >
         <Route path="/vendor/dashboard" element={<VendorDashboard />} />
-        <Route path="/vendor/services" element={<MyServices />} />
-        <Route path="/vendor/availability" element={<Availability />} />
-        <Route path="/vendor/reviews" element={<VendorReviews />} />
-        <Route path="/vendor/earnings" element={<Earnings />} />
-        <Route path="/vendor/profile" element={<VendorProfile />} />
-        <Route path="/vendor/enterprise" element={<EnterpriseSalonChain />} />
         <Route path="/vendor/verification" element={<VerificationCenter />} />
-        <Route path="/vendor/pending-verification" element={<VendorPendingVerification />} />
-        <Route path="/vendor/account-rejected" element={<VendorAccountRejected />} />
+        <Route path="/vendor/services" element={<MyServices />} />
       </Route>
 
       {/* Admin Protected Layout */}
@@ -158,14 +147,11 @@ export const AppRoutes: React.FC = () => {
         }
       >
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/vendors/pending" element={<VendorApproval />} />
-        <Route path="/admin/analytics" element={<Analytics />} />
-        <Route path="/admin/erp" element={<CompanyERP />} />
-        <Route path="/admin/security" element={<SecurityMatrix />} />
-        <Route path="/admin/branches" element={<BranchManager />} />
+        <Route path="/admin/vendors" element={<VendorApproval />} />
+        <Route path="/admin/services" element={<CompanyERP />} />
       </Route>
 
-      {/* Wildcard Fallback */}
+      {/* Fallback Catch-all Route */}
       <Route path="*" element={<Navigate to="/404" replace />} />
     </Routes>
   );
