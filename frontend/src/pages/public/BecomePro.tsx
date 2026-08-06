@@ -22,7 +22,6 @@ import {
   Check,
   Send,
   Loader2,
-  Camera,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { compressImage } from '@/utils/imageCompressor';
@@ -35,14 +34,6 @@ interface ServiceItem {
   duration: string;
   price: string;
 }
-
-const InstagramIcon: React.FC<{ size?: number; className?: string }> = ({ size = 16, className = '' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-  </svg>
-);
 
 export const BecomePro: React.FC = () => {
   const { showToast } = useToast();
@@ -194,7 +185,7 @@ export const BecomePro: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-20 pb-24 bg-[#FFFDFE] text-[#111827]">
+    <div className="space-y-20 pb-20 bg-[#FFFDFE] text-[#111827]">
       {/* 1. HERO & VALUE PROPOSITION */}
       <section className="relative pt-8 max-w-7xl mx-auto px-4">
         <div className="p-8 md:p-16 rounded-[40px] bg-gradient-to-br from-[#FF2E7E] via-[#E01F68] to-purple-900 text-white shadow-2xl relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-12">
@@ -693,47 +684,6 @@ export const BecomePro: React.FC = () => {
               </div>
             );
           })}
-        </div>
-      </section>
-
-      {/* 6. CONTACT FOOTER */}
-      <section className="max-w-7xl mx-auto px-4 pt-10">
-        <div className="p-8 md:p-12 rounded-[36px] bg-slate-900 text-white grid grid-cols-1 md:grid-cols-3 gap-8 shadow-2xl relative overflow-hidden">
-          <div className="space-y-3">
-            <h3 className="text-xl font-extrabold flex items-center gap-2">
-              <Sparkles size={20} className="text-[#FF2E7E]" />
-              <span>GlowHome Nepal</span>
-            </h3>
-            <p className="text-xs text-slate-400 leading-relaxed font-medium">
-              Nepal's premier doorstep beauty, cleaning, and home maintenance platform connecting verified beauticians with customers in Kathmandu, Pokhara & Lalitpur.
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            <span className="text-xs font-bold text-pink-400 uppercase tracking-widest block">Direct Contact Desk</span>
-            <div className="space-y-2 text-xs text-slate-300 font-medium">
-              <a href="tel:+9779808422407" className="flex items-center gap-3 hover:text-pink-300 transition-colors">
-                <Phone size={16} className="text-[#FF2E7E]" />
-                <span>+977 9808422407</span>
-              </a>
-              <a href="mailto:glowhomeofficial123@gmail.com" className="flex items-center gap-3 hover:text-pink-300 transition-colors">
-                <Mail size={16} className="text-[#FF2E7E]" />
-                <span>glowhomeofficial123@gmail.com</span>
-              </a>
-              <a href="https://instagram.com/glowhome_nepal" target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:text-pink-300 transition-colors">
-                <InstagramIcon size={16} className="text-[#FF2E7E]" />
-                <span>@glowhome_nepal</span>
-              </a>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <span className="text-xs font-bold text-pink-400 uppercase tracking-widest block">Headquarters</span>
-            <div className="flex items-start gap-3 text-xs text-slate-300 font-medium">
-              <MapPin size={16} className="text-[#FF2E7E] shrink-0 mt-0.5" />
-              <span>Durbar Marg & Jhamsikhel, Kathmandu Valley, Nepal 🇳🇵</span>
-            </div>
-          </div>
         </div>
       </section>
 

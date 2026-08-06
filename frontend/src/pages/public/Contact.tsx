@@ -3,6 +3,14 @@ import { Mail, Phone, MapPin, Send, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '@/context/ToastContext';
 
+const InstagramIcon: React.FC<{ size?: number; className?: string }> = ({ size = 16, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+  </svg>
+);
+
 export const Contact: React.FC = () => {
   const { showToast } = useToast();
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
@@ -12,7 +20,7 @@ export const Contact: React.FC = () => {
     e.preventDefault();
     setIsSubmitting(true);
     setTimeout(() => {
-      showToast('Message Sent!', 'Our 24/7 concierge team will respond shortly.', 'success');
+      showToast('Message Sent!', 'Our 24/7 GlowHome Nepal concierge team will respond shortly.', 'success');
       setFormData({ name: '', email: '', subject: '', message: '' });
       setIsSubmitting(false);
     }, 1000);
@@ -21,38 +29,46 @@ export const Contact: React.FC = () => {
   return (
     <div className="space-y-12 pb-16 bg-[#FFF8FB] text-[#111827]">
       <div className="p-8 md:p-12 rounded-[32px] bg-gradient-to-br from-[#FFF5F8] via-pink-50/50 to-white border border-[#ECECEC] shadow-xl text-center max-w-2xl mx-auto space-y-3">
-        <h1 className="text-4xl font-extrabold text-[#111827]">24/7 Support Concierge</h1>
-        <p className="text-sm text-[#6B7280]">Have questions about your booking or doorstep service? We are here to help.</p>
+        <h1 className="text-4xl font-extrabold text-[#111827]">GlowHome Nepal Support Desk</h1>
+        <p className="text-sm text-[#6B7280]">Have questions about your doorstep booking or parlour registration? We are here to help.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-6xl mx-auto px-4">
         {/* Contact Info */}
         <div className="lg:col-span-5 space-y-6">
           <div className="p-8 rounded-[32px] bg-white border border-[#ECECEC] shadow-xl space-y-6">
-            <h3 className="text-xl font-bold text-[#111827]">Direct Contact</h3>
+            <h3 className="text-xl font-bold text-[#111827]">Direct Contact Desk</h3>
 
             <div className="space-y-4 text-xs font-semibold text-[#6B7280]">
               <div className="flex items-center gap-3">
-                <div className="p-3 rounded-2xl bg-pink-50 text-[#FF2E7A]"><Phone size={18} /></div>
+                <div className="p-3 rounded-2xl bg-pink-50 text-[#FF2E7E]"><Phone size={18} /></div>
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Call Toll-Free</span>
-                  <span className="text-sm font-bold text-[#111827]">+91 1800 200 8899</span>
+                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Call Direct Desk</span>
+                  <a href="tel:+9779808422407" className="text-sm font-bold text-[#111827] hover:text-[#FF2E7E] transition-colors">+977 9808422407</a>
                 </div>
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="p-3 rounded-2xl bg-pink-50 text-[#FF2E7A]"><Mail size={18} /></div>
+                <div className="p-3 rounded-2xl bg-pink-50 text-[#FF2E7E]"><Mail size={18} /></div>
                 <div>
                   <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Email Support</span>
-                  <span className="text-sm font-bold text-[#111827]">glowhome.help@gmail.com</span>
+                  <a href="mailto:glowhomeofficial123@gmail.com" className="text-sm font-bold text-[#111827] hover:text-[#FF2E7E] transition-colors">glowhomeofficial123@gmail.com</a>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-2xl bg-pink-50 text-[#FF2E7E]"><InstagramIcon size={18} /></div>
+                <div>
+                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Instagram DM</span>
+                  <a href="https://instagram.com/glowhome_nepal" target="_blank" rel="noreferrer" className="text-sm font-bold text-[#111827] hover:text-[#FF2E7E] transition-colors">@glowhome_nepal</a>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
-                <div className="p-3 rounded-2xl bg-pink-50 text-[#FF2E7A] mt-0.5"><MapPin size={18} /></div>
+                <div className="p-3 rounded-2xl bg-pink-50 text-[#FF2E7E] mt-0.5"><MapPin size={18} /></div>
                 <div>
                   <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Headquarters</span>
-                  <span className="text-sm font-bold text-[#111827]">100 Feet Road, Indiranagar, Bengaluru</span>
+                  <span className="text-sm font-bold text-[#111827]">Durbar Marg & Jhamsikhel, Kathmandu Valley, Nepal 🇳🇵</span>
                 </div>
               </div>
             </div>
@@ -73,8 +89,8 @@ export const Contact: React.FC = () => {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full h-12 px-4 rounded-2xl bg-white border border-[#ECECEC] text-xs text-[#111827] focus:outline-none focus:border-[#FF2E7A]"
-                    placeholder="Ananya Rao"
+                    className="w-full h-12 px-4 rounded-2xl bg-white border border-[#ECECEC] text-xs text-[#111827] focus:outline-none focus:border-[#FF2E7E]"
+                    placeholder="Priya Shrestha"
                   />
                 </div>
 
@@ -85,8 +101,8 @@ export const Contact: React.FC = () => {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full h-12 px-4 rounded-2xl bg-white border border-[#ECECEC] text-xs text-[#111827] focus:outline-none focus:border-[#FF2E7A]"
-                    placeholder="ananya@example.com"
+                    className="w-full h-12 px-4 rounded-2xl bg-white border border-[#ECECEC] text-xs text-[#111827] focus:outline-none focus:border-[#FF2E7E]"
+                    placeholder="priya@example.com"
                   />
                 </div>
               </div>
@@ -98,8 +114,8 @@ export const Contact: React.FC = () => {
                   required
                   value={formData.subject}
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  className="w-full h-12 px-4 rounded-2xl bg-white border border-[#ECECEC] text-xs text-[#111827] focus:outline-none focus:border-[#FF2E7A]"
-                  placeholder="Query regarding Hydra-Facial booking"
+                  className="w-full h-12 px-4 rounded-2xl bg-white border border-[#ECECEC] text-xs text-[#111827] focus:outline-none focus:border-[#FF2E7E]"
+                  placeholder="Query regarding doorstep parlour booking in Kathmandu"
                 />
               </div>
 
@@ -110,7 +126,7 @@ export const Contact: React.FC = () => {
                   rows={4}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full p-4 rounded-2xl bg-white border border-[#ECECEC] text-xs text-[#111827] focus:outline-none focus:border-[#FF2E7A]"
+                  className="w-full p-4 rounded-2xl bg-white border border-[#ECECEC] text-xs text-[#111827] focus:outline-none focus:border-[#FF2E7E]"
                   placeholder="How can we assist you?"
                 />
               </div>
@@ -118,7 +134,7 @@ export const Contact: React.FC = () => {
               <Button
                 type="submit"
                 variant="primary"
-                className="w-full h-12 rounded-2xl text-xs font-bold shadow-md shadow-[#FF2E7A]/20"
+                className="w-full h-12 rounded-2xl text-xs font-bold shadow-md shadow-[#FF2E7E]/20"
                 isLoading={isSubmitting}
                 leftIcon={<Send size={16} />}
               >
