@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, Globe } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, Globe, AlertCircle, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { normalizeRole } from '@/types';
 
@@ -16,10 +16,12 @@ export const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrorMessage(null);
 
     try {
       const user = await login({ email, password });
@@ -30,8 +32,10 @@ export const Login: React.FC = () => {
       else if (role === 'ADMIN') navigate('/admin/dashboard');
       else if (role === 'VENDOR') navigate('/vendor/dashboard');
       else navigate('/customer/dashboard');
-    } catch {
-      showToast('Login Failed', 'Invalid credentials provided', 'error');
+    } catch (err: any) {
+      const message = err?.message || 'Invalid credentials or user does not exist.';
+      setErrorMessage(message);
+      showToast('Login Failed', message, 'error');
     } finally {
       setIsLoading(false);
     }
@@ -45,6 +49,29 @@ export const Login: React.FC = () => {
         <p className="text-xs text-[#6B7280] font-medium">Access your customer dashboard securely.</p>
       </div>
 
+      {/* Account Error Alert Banner */}
+      {errorMessage && (
+        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 space-y-3">
+          <div className="flex items-start gap-3">
+            <AlertCircle size={18} className="text-rose-600 shrink-0 mt-0.5" />
+            <div className="space-y-1 text-left">
+              <h4 className="text-xs font-bold text-rose-900">Account Error</h4>
+              <p className="text-xs text-rose-700 font-medium leading-relaxed">{errorMessage}</p>
+            </div>
+          </div>
+          <Link to="/register" className="block">
+            <Button
+              variant="outline"
+              size="sm"
+              leftIcon={<UserPlus size={14} />}
+              className="w-full h-9 rounded-xl border-rose-300 text-rose-700 hover:bg-rose-100 text-xs font-bold"
+            >
+              Create New Account Now
+            </Button>
+          </Link>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Email Field */}
         <div className="space-y-1.5">
@@ -55,7 +82,10 @@ export const Login: React.FC = () => {
               type="email"
               required
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (errorMessage) setErrorMessage(null);
+              }}
               className="w-full h-13 pl-12 pr-4 rounded-2xl bg-white border border-[#ECECEC] text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#FF2E7A] focus:ring-4 focus:ring-[#FF2E7A]/10 font-medium transition-all"
               placeholder="your.email@example.com"
             />
@@ -71,7 +101,10 @@ export const Login: React.FC = () => {
               type={showPassword ? 'text' : 'password'}
               required
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (errorMessage) setErrorMessage(null);
+              }}
               className="w-full h-13 pl-12 pr-12 rounded-2xl bg-white border border-[#ECECEC] text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#FF2E7A] focus:ring-4 focus:ring-[#FF2E7A]/10 font-medium transition-all"
               placeholder="••••••••"
             />

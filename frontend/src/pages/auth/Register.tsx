@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
-import { Mail, Lock, Phone, UserPlus } from 'lucide-react';
+import { Mail, Lock, Phone, UserPlus, AlertCircle, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 export const Register: React.FC = () => {
@@ -18,17 +18,21 @@ export const Register: React.FC = () => {
     password: '',
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrorMessage(null);
 
     try {
       await register(formData);
       showToast('Registration Successful!', 'Welcome to GlowHome.', 'success');
       navigate('/customer/dashboard');
-    } catch {
-      showToast('Registration Failed', 'Could not complete account creation.', 'error');
+    } catch (err: any) {
+      const message = err?.message || 'Could not complete account creation.';
+      setErrorMessage(message);
+      showToast('Registration Failed', message, 'error');
     } finally {
       setIsLoading(false);
     }
@@ -41,6 +45,28 @@ export const Register: React.FC = () => {
         <p className="text-xs text-slate-500 mt-1">Join GlowHome for doorstep luxury beauty treatments</p>
       </div>
 
+      {errorMessage && (
+        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 space-y-3 text-left">
+          <div className="flex items-start gap-3">
+            <AlertCircle size={18} className="text-rose-600 shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <h4 className="text-xs font-bold text-rose-900">Registration Notice</h4>
+              <p className="text-xs text-rose-700 font-medium leading-relaxed">{errorMessage}</p>
+            </div>
+          </div>
+          <Link to="/login" className="block">
+            <Button
+              variant="outline"
+              size="sm"
+              leftIcon={<LogIn size={14} />}
+              className="w-full h-9 rounded-xl border-rose-300 text-rose-700 hover:bg-rose-100 text-xs font-bold"
+            >
+              Sign In Instead
+            </Button>
+          </Link>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-2 gap-3">
           <div>
@@ -49,7 +75,10 @@ export const Register: React.FC = () => {
               type="text"
               required
               value={formData.firstName}
-              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, firstName: e.target.value });
+                if (errorMessage) setErrorMessage(null);
+              }}
               className="w-full h-12 px-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20"
               placeholder="Aarav"
             />
@@ -59,7 +88,10 @@ export const Register: React.FC = () => {
             <input
               type="text"
               value={formData.lastName}
-              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, lastName: e.target.value });
+                if (errorMessage) setErrorMessage(null);
+              }}
               className="w-full h-12 px-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20"
               placeholder="Sharma"
             />
@@ -74,7 +106,10 @@ export const Register: React.FC = () => {
               type="email"
               required
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, email: e.target.value });
+                if (errorMessage) setErrorMessage(null);
+              }}
               className="w-full h-12 pl-10 pr-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20"
               placeholder="aarav@example.com"
             />
@@ -89,9 +124,12 @@ export const Register: React.FC = () => {
               type="tel"
               required
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, phone: e.target.value });
+                if (errorMessage) setErrorMessage(null);
+              }}
               className="w-full h-12 pl-10 pr-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20"
-              placeholder="+91 98765 43210"
+              placeholder="+977 9808422407"
             />
           </div>
         </div>
@@ -104,7 +142,10 @@ export const Register: React.FC = () => {
               type="password"
               required
               value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, password: e.target.value });
+                if (errorMessage) setErrorMessage(null);
+              }}
               className="w-full h-12 pl-10 pr-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20"
               placeholder="••••••••"
             />
