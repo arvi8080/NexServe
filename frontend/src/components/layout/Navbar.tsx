@@ -4,7 +4,6 @@ import { Sparkles, Menu, X, Search, User, Bot } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProfileMenu } from './ProfileMenu';
 import { NotificationBell } from './NotificationBell';
-import { CountrySelectorModal } from '@/components/common/CountrySelectorModal';
 import { useAuth } from '@/context/AuthContext';
 
 export const Navbar: React.FC = () => {
@@ -39,7 +38,7 @@ export const Navbar: React.FC = () => {
               Glow<span className="gradient-text">Home</span>
             </span>
             <span className="text-[9px] sm:text-[10px] tracking-widest uppercase font-bold text-slate-400 hidden xs:inline-block">
-              Premium Beauty, Cleaning & Home Services
+              Nepal's Doorstep Beauty & Home Services
             </span>
           </div>
         </Link>
@@ -66,7 +65,6 @@ export const Navbar: React.FC = () => {
 
         {/* Action Controls (Right) */}
         <div className="flex items-center gap-2.5 sm:gap-4">
-          <CountrySelectorModal />
           <NotificationBell />
 
           {user ? (

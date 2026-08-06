@@ -4,8 +4,6 @@ import { CustomerAddress } from '@/types';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '@/context/ToastContext';
 
-// TODO: Enable Google Maps, Nearby Search, Live GPS Tracking, and Distance Calculation after reaching ~100 active users by setting ENABLE_GOOGLE_MAPS=true
-
 interface AddressManagerModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -24,8 +22,8 @@ export const AddressManagerModal: React.FC<AddressManagerModalProps> = ({
   const { showToast } = useToast();
   const [isAddingNew, setIsAddingNew] = useState(false);
 
-  // 100% Nepal Default Form State (Country -> State -> City -> Area)
-  const [country, setCountry] = useState('Nepal');
+  // 100% Locked Nepal Form State
+  const country = 'Nepal';
   const [state, setState] = useState('Bagmati Province');
   const [city, setCity] = useState('Kathmandu');
   const [area, setArea] = useState('Durbar Marg');
@@ -72,7 +70,7 @@ export const AddressManagerModal: React.FC<AddressManagerModalProps> = ({
         <div className="flex items-center justify-between border-b border-[#ECECEC] pb-4">
           <div>
             <span className="text-[10px] font-bold text-[#FF2E7E] uppercase font-mono tracking-wider block">
-              MVP MANUAL ADDRESS SELECTION
+              DOORSTEP ADDRESS MANAGER
             </span>
             <h3 className="text-xl font-extrabold text-[#111827]">Doorstep Location Book</h3>
           </div>
@@ -126,24 +124,20 @@ export const AddressManagerModal: React.FC<AddressManagerModalProps> = ({
         ) : (
           <form onSubmit={handleSaveAddress} className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-[#FF2E7E] uppercase font-mono">NEW MANUAL ADDRESS</span>
+              <span className="text-xs font-bold text-[#FF2E7E] uppercase font-mono">NEW SERVICE LOCATION</span>
               <button type="button" onClick={() => setIsAddingNew(false)} className="text-xs text-slate-400 hover:underline">
                 Back to saved
               </button>
             </div>
 
-            {/* Country -> State Dropdowns */}
+            {/* Locked Country & State Dropdowns */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700 block">Country</label>
-                <select
-                  value={country}
-                  onChange={(e) => setCountry(e.target.value)}
-                  className="w-full h-11 px-3 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-bold text-slate-900"
-                >
-                  <option value="Nepal">🇳🇵 Nepal</option>
-                  <option value="India">🇮🇳 India</option>
-                </select>
+                <div className="w-full h-11 px-3 rounded-xl bg-slate-100 border border-[#ECECEC] text-xs font-bold text-slate-900 flex items-center gap-2">
+                  <span>🇳🇵</span>
+                  <span>Nepal</span>
+                </div>
               </div>
 
               <div className="space-y-1">
@@ -157,7 +151,6 @@ export const AddressManagerModal: React.FC<AddressManagerModalProps> = ({
                   <option value="Gandaki Province">Gandaki Province</option>
                   <option value="Koshi Province">Koshi Province</option>
                   <option value="Lumbini Province">Lumbini Province</option>
-                  <option value="Karnataka">Karnataka</option>
                 </select>
               </div>
             </div>
@@ -177,7 +170,6 @@ export const AddressManagerModal: React.FC<AddressManagerModalProps> = ({
                   <option value="Bhaktapur">Bhaktapur</option>
                   <option value="Biratnagar">Biratnagar</option>
                   <option value="Butwal">Butwal</option>
-                  <option value="Bengaluru">Bengaluru</option>
                 </select>
               </div>
 

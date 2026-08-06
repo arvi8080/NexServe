@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Country, City, PaymentGatewayConfig } from '@/types';
 import { countryApi, MOCK_COUNTRIES } from '@/api/country.api';
-import { useToast } from '@/context/ToastContext';
 
 interface CountryContextType {
   countries: Country[];
@@ -16,27 +15,14 @@ interface CountryContextType {
 const CountryContext = createContext<CountryContextType | undefined>(undefined);
 
 export const CountryProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { showToast } = useToast();
-  const [countries, setCountries] = useState<Country[]>(MOCK_COUNTRIES);
-  const [selectedCountry, setSelectedCountry] = useState<Country>(() => {
-    const savedCode = localStorage.getItem('glowhome_country_code');
-    const matched = MOCK_COUNTRIES.find((c) => c.code === (savedCode || 'NP'));
-    return matched || MOCK_COUNTRIES[0]; // Default 100% Nepal (NP)
-  });
+  const [countries] = useState<Country[]>(MOCK_COUNTRIES);
+  const [selectedCountry] = useState<Country>(MOCK_COUNTRIES[0]); // Statically locked to 🇳🇵 Nepal
   const [availableCities, setAvailableCities] = useState<City[]>([]);
   const [paymentGateways, setPaymentGateways] = useState<PaymentGatewayConfig[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    countryApi.getCountries().then((data) => {
-      setCountries(data);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!selectedCountry) return;
     setIsLoading(true);
-
     Promise.all([
       countryApi.getCitiesByCountry(selectedCountry.id),
       countryApi.getPaymentGatewaysByCountry(selectedCountry.id),
@@ -48,22 +34,11 @@ export const CountryProvider: React.FC<{ children: ReactNode }> = ({ children })
       .finally(() => setIsLoading(false));
   }, [selectedCountry]);
 
-  const selectCountry = (countryCode: string) => {
-    const matched = countries.find((c) => c.code === countryCode);
-    if (matched) {
-      setSelectedCountry(matched);
-      localStorage.setItem('glowhome_country_code', countryCode);
-      showToast(
-        `Region Switch: ${matched.name} ${matched.flag}`,
-        `Currency updated to ${matched.currency} (${matched.currencySymbol}) with ${matched.taxName} (${matched.taxRate}%).`,
-        'success'
-      );
-    }
-  };
+  // No-op for country switcher since website is locked 100% to Nepal
+  const selectCountry = (_countryCode: string) => {};
 
   const formatPrice = (amount: number): string => {
-    const symbol = selectedCountry?.currencySymbol || 'रु';
-    return `${symbol} ${new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(amount)}`;
+    return `रु ${new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(amount)}`;
   };
 
   return (
