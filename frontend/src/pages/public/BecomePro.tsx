@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import {
   Sparkles,
   ShieldCheck,
@@ -9,14 +10,10 @@ import {
   Plus,
   Trash2,
   Upload,
-  Image as ImageIcon,
   ChevronDown,
   Phone,
   Mail,
   MapPin,
-  Calendar,
-  Users,
-  Award,
   ArrowRight,
   X,
   Check,
@@ -26,6 +23,8 @@ import {
 import { Button } from '@/components/ui/Button';
 import { compressImage } from '@/utils/imageCompressor';
 import { useToast } from '@/context/ToastContext';
+import { Service, Vendor, BeautyCategory } from '@/types';
+import { MOCK_SERVICES } from '@/services/mockDataService';
 
 interface ServiceItem {
   id: string;
@@ -37,6 +36,7 @@ interface ServiceItem {
 
 export const BecomePro: React.FC = () => {
   const { showToast } = useToast();
+  const navigate = useNavigate();
 
   // Form State
   const [ownerName, setOwnerName] = useState('');
@@ -48,7 +48,7 @@ export const BecomePro: React.FC = () => {
   
   // Dynamic Services State
   const [services, setServices] = useState<ServiceItem[]>([
-    { id: '1', name: 'Diamond Hydra-Glow Facial', category: 'Facial', duration: '1 hr', price: '2500' },
+    { id: '1', name: 'Diamond Hydra-Glow Facial', category: 'Facial', duration: '60 min', price: '1499' },
     { id: '2', name: 'Trending Layered Haircut & Blowdry', category: 'Haircut', duration: '45 min', price: '1500' },
   ]);
 
@@ -69,7 +69,7 @@ export const BecomePro: React.FC = () => {
       id: Date.now().toString(),
       name: '',
       category: 'Facial',
-      duration: '1 hr',
+      duration: '60 min',
       price: '',
     };
     setServices([...services, newService]);
@@ -147,11 +147,57 @@ export const BecomePro: React.FC = () => {
 
     setIsSubmitting(true);
 
-    // Simulate API registration delay
     setTimeout(() => {
+      // Create Vendor Record
+      const newVendor: Vendor = {
+        id: `vendor_${Date.now()}`,
+        userId: `user_v_${Date.now()}`,
+        businessName: parlourName,
+        description: `Certified parlour services by ${ownerName} in ${area}, ${city}.`,
+        phone: `+977 ${phone}`,
+        address: area,
+        city: city,
+        state: 'Bagmati Province',
+        country: 'Nepal',
+        status: 'APPROVED',
+        averageRating: 4.9,
+        totalReviews: 120,
+        profileImage: photos[0] || 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=400&q=80',
+        createdAt: new Date().toISOString(),
+      };
+
+      // Create Service Objects for each listed service
+      const newServiceList: Service[] = services.map((s, idx) => ({
+        id: `service_reg_${Date.now()}_${idx}`,
+        vendorId: newVendor.id,
+        title: s.name,
+        description: `Deep-cleansing diamond exfoliation with hyaluronic glow boost offered by ${parlourName}.`,
+        category: (s.category.toUpperCase().replace(/\s+/g, '_') as BeautyCategory),
+        price: Number(s.price) || 1499,
+        minPrice: Number(s.price) || 500,
+        maxPrice: Number(s.price) * 2 || 5000,
+        duration: parseInt(s.duration) || 60,
+        image: photos[idx] || 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=600&q=80',
+        isActive: true,
+        vendor: newVendor,
+      }));
+
+      // Store in localStorage & MOCK_SERVICES memory
+      try {
+        const existingRaw = localStorage.getItem('GLOWHOME_REGISTERED_SERVICES');
+        const existingServices: Service[] = existingRaw ? JSON.parse(existingRaw) : [];
+        const updated = [...newServiceList, ...existingServices];
+        localStorage.setItem('GLOWHOME_REGISTERED_SERVICES', JSON.stringify(updated));
+      } catch {
+        // ignore
+      }
+
+      newServiceList.forEach((s) => MOCK_SERVICES.unshift(s));
+
       setIsSubmitting(false);
       setShowSuccessModal(true);
-    }, 1500);
+      showToast('Parlour Registered!', `${parlourName} services are now live on the Services page!`, 'success');
+    }, 1200);
   };
 
   const preconfiguredCategories = [
@@ -189,9 +235,6 @@ export const BecomePro: React.FC = () => {
       {/* 1. HERO & VALUE PROPOSITION */}
       <section className="relative pt-8 max-w-7xl mx-auto px-4">
         <div className="p-8 md:p-16 rounded-[40px] bg-gradient-to-br from-[#FF2E7E] via-[#E01F68] to-purple-900 text-white shadow-2xl relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-12">
-          {/* Ambient Glow Effects */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-pink-400/20 rounded-full blur-3xl pointer-events-none" />
-
           <div className="space-y-6 max-w-2xl text-center lg:text-left z-10">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-bold shadow-xs">
               <Sparkles size={16} />
@@ -414,7 +457,7 @@ export const BecomePro: React.FC = () => {
                     required
                     value={parlourName}
                     onChange={(e) => setParlourName(e.target.value)}
-                    placeholder="e.g. Glow & Grace Beauty Studio"
+                    placeholder="e.g. Glow & Grace Studio"
                     className="w-full h-12 px-4 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-bold text-slate-900 focus:outline-none focus:border-[#FF2E7E]"
                   />
                 </div>
@@ -455,6 +498,7 @@ export const BecomePro: React.FC = () => {
                     className="w-full h-12 px-4 rounded-xl bg-slate-50 border border-[#ECECEC] text-xs font-bold text-slate-900 focus:outline-none"
                   >
                     <option value="Durbar Marg">Durbar Marg</option>
+                    <option value="Koramangala">Koramangala</option>
                     <option value="Thamel">Thamel</option>
                     <option value="New Baneshwor">New Baneshwor</option>
                     <option value="Jhamsikhel">Jhamsikhel</option>
@@ -498,7 +542,7 @@ export const BecomePro: React.FC = () => {
                         type="text"
                         value={srv.name}
                         onChange={(e) => handleUpdateService(srv.id, 'name', e.target.value)}
-                        placeholder="e.g. Hydra-Facial Cleanup"
+                        placeholder="e.g. Diamond Hydra-Glow Facial"
                         className="w-full h-10 px-3 rounded-lg bg-white border border-[#ECECEC] text-xs font-bold text-slate-900"
                       />
                     </div>
@@ -531,7 +575,7 @@ export const BecomePro: React.FC = () => {
                       >
                         <option value="30 min">30 min</option>
                         <option value="45 min">45 min</option>
-                        <option value="1 hr">1 hr</option>
+                        <option value="60 min">60 min</option>
                         <option value="1.5 hr">1.5 hr</option>
                         <option value="2 hr">2 hr</option>
                         <option value="3+ hr">3+ hr</option>
@@ -544,7 +588,7 @@ export const BecomePro: React.FC = () => {
                         type="number"
                         value={srv.price}
                         onChange={(e) => handleUpdateService(srv.id, 'price', e.target.value)}
-                        placeholder="2500"
+                        placeholder="1499"
                         className="w-full h-10 px-3 rounded-lg bg-white border border-[#ECECEC] text-xs font-bold text-slate-900"
                       />
                     </div>
@@ -700,26 +744,41 @@ export const BecomePro: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-2xl font-extrabold text-[#111827]">Thank You!</h3>
+              <h3 className="text-2xl font-extrabold text-[#111827]">Congratulations!</h3>
               <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                Your parlour <strong className="text-[#FF2E7E]">{parlourName}</strong> has been registered for GlowHome Kathmandu Launch!
+                Your parlour <strong className="text-[#FF2E7E]">{parlourName}</strong> is now registered! Your services are live on the GlowHome Services Menu.
               </p>
             </div>
 
             <div className="p-4 rounded-2xl bg-pink-50 border border-pink-100 text-xs text-slate-700 space-y-1 text-left">
+              <p><strong>Parlour:</strong> {parlourName}</p>
               <p><strong>Owner:</strong> {ownerName}</p>
               <p><strong>Phone:</strong> +977 {phone}</p>
               <p><strong>Location:</strong> {area}, {city}</p>
-              <p><strong>Services Listed:</strong> {services.length} Treatments</p>
+              <p><strong>Services Live:</strong> {services.length} Treatments</p>
             </div>
 
-            <Button
-              variant="primary"
-              onClick={() => setShowSuccessModal(false)}
-              className="w-full h-12 rounded-xl text-xs font-bold"
-            >
-              Done & Close
-            </Button>
+            <div className="space-y-2">
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  navigate('/services');
+                }}
+                className="w-full h-12 rounded-xl text-xs font-bold shadow-lg shadow-[#FF2E7E]/20"
+                rightIcon={<ArrowRight size={16} />}
+              >
+                View My Parlour Services on Menu
+              </Button>
+
+              <Button
+                variant="outline"
+                onClick={() => setShowSuccessModal(false)}
+                className="w-full h-10 rounded-xl text-xs font-bold text-slate-600"
+              >
+                Close
+              </Button>
+            </div>
           </motion.div>
         </div>
       )}
