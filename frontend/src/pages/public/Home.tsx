@@ -98,11 +98,11 @@ export const Home: React.FC = () => {
                 <ArrowRight size={18} />
               </Link>
               <Link
-                to="/ai-concierge"
+                to="/become-pro"
                 className="w-full sm:w-auto h-[58px] px-8 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-md text-sm font-extrabold flex items-center justify-center gap-2"
               >
-                <Sparkles size={18} />
-                <span>Ask AI Beauty Concierge</span>
+                <span>Register Your Parlour</span>
+                <ArrowRight size={18} />
               </Link>
             </div>
           </div>
@@ -110,130 +110,60 @@ export const Home: React.FC = () => {
           <div className="relative z-10 w-full max-w-md shrink-0">
             <img
               src={homeData.heroBanner.backgroundImage}
-              alt="Hero Sanctuary"
-              className="w-full h-80 sm:h-96 rounded-[32px] object-cover border-4 border-white/30 shadow-2xl"
+              alt="Luxury Beauty Spa"
+              className="rounded-3xl shadow-2xl border-4 border-white/20 object-cover aspect-4/3 w-full"
             />
           </div>
         </div>
       </section>
 
-      {/* 2. DYNAMIC PLATFORM STATISTICS BAR */}
-      <section className="max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="p-6 rounded-[32px] bg-white border border-[#ECECEC] shadow-xl text-center space-y-2">
-            <h3 className="text-3xl font-extrabold text-[#FF2E7E]">{homeData.statistics.happyCustomers}</h3>
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Happy Customers</span>
-          </div>
-
-          <div className="p-6 rounded-[32px] bg-white border border-[#ECECEC] shadow-xl text-center space-y-2">
-            <h3 className="text-3xl font-extrabold text-purple-600">{homeData.statistics.verifiedBeauticians}</h3>
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">5-Stage Verified Beauticians</span>
-          </div>
-
-          <div className="p-6 rounded-[32px] bg-white border border-[#ECECEC] shadow-xl text-center space-y-2">
-            <h3 className="text-3xl font-extrabold text-emerald-600">{homeData.statistics.completedBookings}</h3>
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Doorstep Sessions Delivered</span>
-          </div>
-
-          <div className="p-6 rounded-[32px] bg-white border border-[#ECECEC] shadow-xl text-center space-y-2">
-            <h3 className="text-3xl font-extrabold text-amber-500">{homeData.statistics.averageRating}</h3>
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Average Satisfaction Score</span>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. DYNAMIC CATEGORIES GRID */}
+      {/* 2. CATEGORY QUICK FILTERS */}
       <section className="max-w-7xl mx-auto px-4 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111827]">Browse Treatment Categories</h2>
-            <p className="text-xs text-[#64748B] font-semibold mt-1">Explore certified doorstep salon & wellness experiences</p>
+            <span className="text-xs font-bold text-[#FF2E7E] uppercase font-mono tracking-wider block">
+              TREATMENT CATEGORIES
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111827]">Explore Home Salon Treatments</h2>
           </div>
           <Link to="/services" className="text-xs font-bold text-[#FF2E7E] hover:underline flex items-center gap-1">
-            <span>View Full Menu</span>
+            <span>View All</span>
             <ArrowRight size={14} />
           </Link>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          {homeData.categories.map((cat: any) => (
+          {homeData.categories.map((cat) => (
             <Link
               key={cat.id}
-              to={`/services?category=${encodeURIComponent(cat.title)}`}
-              className="p-5 rounded-[28px] bg-white border border-[#ECECEC] shadow-md hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col items-center justify-center text-center space-y-3 group"
+              to={`/services?category=${cat.title.toUpperCase().replace(/\s+/g, '_')}`}
+              className="p-4 rounded-2xl bg-white border border-[#ECECEC] hover:border-[#FF2E7E] hover:shadow-lg transition-all space-y-3 text-center group cursor-pointer"
             >
-              <img src={cat.image} alt={cat.title} className="w-14 h-14 rounded-2xl object-cover border border-[#ECECEC] group-hover:scale-110 transition-transform" />
-              <span className="text-xs font-bold text-[#111827]">{cat.title}</span>
+              <div className="w-16 h-16 rounded-2xl mx-auto overflow-hidden bg-pink-50 border border-pink-100 group-hover:scale-105 transition-transform">
+                <img src={cat.image} alt={cat.title} className="w-full h-full object-cover" />
+              </div>
+              <span className="text-xs font-extrabold text-[#111827] group-hover:text-[#FF2E7E] block truncate">
+                {cat.title}
+              </span>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* 4. DYNAMIC FEATURED SERVICES */}
-      <section className="max-w-7xl mx-auto px-4 space-y-6">
+      {/* 3. FEATURED & POPULAR SERVICES */}
+      <section className="max-w-7xl mx-auto px-4 space-y-8">
         <div className="flex items-center justify-between">
           <div>
-            <span className="px-3 py-1 rounded-full bg-pink-50 text-[#FF2E7E] text-xs font-bold border border-pink-200">
-              ✨ Customer Favorites
+            <span className="text-xs font-bold text-[#FF2E7E] uppercase font-mono tracking-wider block">
+              MOST BOOKED
             </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111827] mt-2">Featured Doorstep Treatments</h2>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111827]">Featured Doorstep Treatments</h2>
           </div>
-          <Link to="/services" className="text-xs font-bold text-[#FF2E7E] hover:underline flex items-center gap-1">
-            <span>Explore All Services</span>
-            <ArrowRight size={14} />
-          </Link>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {homeData.featuredServices.map((service) => (
             <ServiceCard key={service.id} service={service} />
-          ))}
-        </div>
-      </section>
-
-      {/* 5. DYNAMIC CUSTOMER REVIEWS */}
-      <section className="max-w-7xl mx-auto px-4 space-y-6">
-        <div className="text-center space-y-2">
-          <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-800 text-xs font-bold border border-amber-200">
-            ★ Verified Community Reviews
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111827]">Loved by Thousands of Customers</h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {homeData.customerReviews.map((rev) => (
-            <div key={rev.id} className="p-8 rounded-[32px] bg-white border border-[#ECECEC] shadow-xl space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <img src={rev.image} alt={rev.name} className="w-12 h-12 rounded-full object-cover border border-pink-200" />
-                  <div>
-                    <h4 className="text-sm font-bold text-[#111827]">{rev.name}</h4>
-                    <span className="text-[11px] text-[#64748B] font-medium">{rev.serviceName} • {rev.date}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1 text-amber-500 font-bold text-xs">
-                  <Star size={16} className="fill-amber-400" /> {rev.rating}.0★
-                </div>
-              </div>
-              <p className="text-xs text-slate-700 leading-relaxed font-medium">"{rev.comment}"</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 6. DYNAMIC FAQS */}
-      <section className="max-w-4xl mx-auto px-4 space-y-6">
-        <div className="text-center space-y-2">
-          <HelpCircle className="w-10 h-10 text-[#FF2E7E] mx-auto" />
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#111827]">Frequently Asked Questions</h2>
-        </div>
-
-        <div className="space-y-4">
-          {homeData.faqs.map((faq, i) => (
-            <div key={i} className="p-6 rounded-[28px] bg-white border border-[#ECECEC] shadow-md space-y-2">
-              <h4 className="text-base font-bold text-[#111827]">{faq.question}</h4>
-              <p className="text-xs text-[#64748B] leading-relaxed font-medium">{faq.answer}</p>
-            </div>
           ))}
         </div>
       </section>

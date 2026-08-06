@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Sparkles, Menu, X, Search, User, Bot } from 'lucide-react';
+import { Sparkles, Menu, X, Search, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProfileMenu } from './ProfileMenu';
 import { NotificationBell } from './NotificationBell';
@@ -14,7 +14,6 @@ export const Navbar: React.FC = () => {
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Services', path: '/services' },
-    { name: '✨ AI Concierge', path: '/ai-concierge' },
     { name: 'About Us', path: '/about' },
     { name: 'Contact', path: '/contact' },
     { name: 'Become a Pro', path: '/become-pro' },

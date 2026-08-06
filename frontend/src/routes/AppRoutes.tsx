@@ -16,7 +16,6 @@ import { SearchResults } from '@/pages/public/SearchResults';
 import { About } from '@/pages/public/About';
 import { Contact } from '@/pages/public/Contact';
 import { BecomePro } from '@/pages/public/BecomePro';
-import { AIConciergePage } from '@/pages/public/AIConciergePage';
 import { NotFound } from '@/pages/public/NotFound';
 import { Unauthorized403 } from '@/pages/public/Unauthorized403';
 import { ServerError } from '@/pages/public/ServerError';
@@ -75,7 +74,6 @@ export const AppRoutes: React.FC = () => {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/become-pro" element={<BecomePro />} />
-        <Route path="/ai-concierge" element={<AIConciergePage />} />
 
         {/* RBAC 403 & Error Pages */}
         <Route path="/403" element={<Unauthorized403 />} />
