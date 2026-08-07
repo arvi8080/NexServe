@@ -1,122 +1,106 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNotifications } from '@/context/NotificationContext';
-import { NotificationCategory } from '@/types';
-import { Bell, Check, Trash2, Calendar, CreditCard, Wallet, ShieldAlert, Sparkles, RefreshCw, X, ArrowRight } from 'lucide-react';
+import { Bell, CheckCheck, Trash2, ShieldCheck, AlertCircle, Info, Sparkles, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { SkeletonLoader } from '@/components/common/SkeletonLoader';
-import { EmptyState } from '@/components/common/EmptyState';
-import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 export const Notifications: React.FC = () => {
-  const navigate = useNavigate();
-  const { notifications, unreadCount, isLoading, markAsRead, markAllAsRead, deleteNotification, clearAll } = useNotifications();
-  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
+  const { notifications, unreadCount, markAsRead, markAllAsRead, clearAll } = useNotifications();
 
-  const categories = [
-    { id: 'ALL', label: 'All Notifications' },
-    { id: 'BOOKING', label: 'Bookings' },
-    { id: 'PAYMENT', label: 'Payments' },
-    { id: 'WALLET', label: 'Wallet & Cashback' },
-    { id: 'SECURITY', label: 'Security Alerts' },
-  ];
-
-  const filteredNotifications = notifications.filter((n) => {
-    if (selectedCategory === 'ALL') return true;
-    return n.category === selectedCategory;
-  });
-
-  const getCategoryIcon = (category?: NotificationCategory) => {
-    switch (category) {
-      case 'BOOKING':
-        return <Calendar size={20} className="text-[#FF2E7E]" />;
-      case 'PAYMENT':
-        return <CreditCard size={20} className="text-emerald-600" />;
-      case 'WALLET':
-        return <Wallet size={20} className="text-[#FF2E7E]" />;
-      case 'SECURITY':
-        return <ShieldAlert size={20} className="text-amber-500" />;
-      case 'PROMOTION':
-        return <Sparkles size={20} className="text-purple-600" />;
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'SUCCESS':
+        return <CheckCheck className="text-emerald-500" size={20} />;
+      case 'WARNING':
+        return <AlertCircle className="text-amber-500" size={20} />;
+      case 'HIGH':
+        return <Sparkles className="text-[#FF2E7E]" size={20} />;
       default:
-        return <Bell size={20} className="text-blue-600" />;
-    }
-  };
-
-  const handleCardClick = (id: string, actionUrl?: string) => {
-    markAsRead(id);
-    if (actionUrl) {
-      navigate(actionUrl);
+        return <Info className="text-sky-500" size={20} />;
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 pb-24 px-4 bg-[#FFFDFE] text-[#111827]">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold text-[#111827]">Notification Center</h1>
-          <p className="text-xs text-[#64748B] font-semibold mt-1">
-            Real-time updates on doorstep sessions, payment receipts, cashbacks, and security alerts
-          </p>
+    <div className="max-w-4xl mx-auto space-y-8 pb-20 bg-[#FFFDFE] text-[#111827]">
+      {/* Header Bar */}
+      <div className="p-8 rounded-[36px] bg-white border border-[#ECECEC] shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-3">
+            <h2 className="text-3xl font-extrabold text-[#111827]">Notifications</h2>
+            {unreadCount > 0 && (
+              <span className="px-3 py-1 rounded-full bg-[#FF2E7E] text-white text-xs font-extrabold shadow-sm">
+                {unreadCount} UNREAD
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-[#64748B] font-medium">Real-time alerts for doorstep sessions, beautician status & account security</p>
         </div>
 
         <div className="flex items-center gap-2">
           {unreadCount > 0 && (
-            <Button variant="outline" size="sm" onClick={markAllAsRead} leftIcon={<Check size={14} />} className="h-10 px-4 text-xs font-bold rounded-2xl">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={markAllAsRead}
+              leftIcon={<CheckCheck size={16} />}
+              className="h-10 px-4 text-xs font-bold rounded-2xl border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+            >
               Mark All Read
             </Button>
           )}
+
           {notifications.length > 0 && (
-            <Button variant="secondary" size="sm" onClick={clearAll} leftIcon={<Trash2 size={14} />} className="h-10 px-4 text-xs font-bold rounded-2xl">
-              Clear History
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearAll}
+              leftIcon={<Trash2 size={16} />}
+              className="h-10 px-3 text-xs font-bold text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-2xl"
+            >
+              Clear All
             </Button>
           )}
         </div>
       </div>
 
-      {/* Category Filter Chips */}
-      <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-2 border-b border-[#ECECEC]">
-        {categories.map((cat) => (
-          <button
-            key={cat.id}
-            onClick={() => setSelectedCategory(cat.id)}
-            className={`px-4 py-2 rounded-2xl text-xs font-bold shrink-0 transition-all cursor-pointer ${
-              selectedCategory === cat.id
-                ? 'bg-gradient-to-r from-[#FF2E7E] to-[#FF5CA8] text-white shadow-md'
-                : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-            }`}
-          >
-            {cat.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Notifications List */}
-      {isLoading ? (
-        <SkeletonLoader type="list" count={5} />
-      ) : filteredNotifications.length === 0 ? (
-        <EmptyState
-          iconType="calendar"
-          title="No Notifications Found"
-          description={`No notification alerts in "${categories.find((c) => c.id === selectedCategory)?.label}".`}
-        />
+      {/* Notification Items List */}
+      {notifications.length === 0 ? (
+        <div className="p-16 rounded-[36px] bg-white border border-[#ECECEC] shadow-lg text-center space-y-4">
+          <div className="w-16 h-16 rounded-full bg-pink-50 text-[#FF2E7E] flex items-center justify-center mx-auto shadow-inner">
+            <Bell size={28} />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-lg font-bold text-[#111827]">No Notifications Yet</h3>
+            <p className="text-xs text-slate-400 max-w-sm mx-auto">
+              You're all caught up! Booking updates and doorstep beautician alerts will appear here.
+            </p>
+          </div>
+        </div>
       ) : (
         <div className="space-y-4">
-          {filteredNotifications.map((notif) => (
-            <div
+          {notifications.map((notif, idx) => (
+            <motion.div
               key={notif.id}
-              onClick={() => handleCardClick(notif.id, notif.actionUrl)}
-              className={`p-6 rounded-[32px] border transition-all cursor-pointer flex items-start justify-between gap-5 group ${
-                !notif.isRead
-                  ? 'bg-white border-[#FF2E7E]/40 shadow-xl ring-1 ring-[#FF2E7E]/10'
-                  : 'bg-slate-50/70 border-[#ECECEC] opacity-85 hover:bg-white'
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.05 }}
+              onClick={() => markAsRead(notif.id)}
+              className={`p-6 rounded-[28px] border transition-all cursor-pointer flex items-start justify-between gap-4 group ${
+                notif.isRead
+                  ? 'bg-white border-[#ECECEC] hover:border-pink-200 opacity-90'
+                  : 'bg-gradient-to-r from-pink-50/60 to-rose-50/40 border-pink-200 shadow-md'
               }`}
             >
               <div className="flex items-start gap-4">
-                <div className="p-3 rounded-2xl bg-slate-100 border border-[#ECECEC] shrink-0">
-                  {getCategoryIcon(notif.category)}
+                <div
+                  className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border ${
+                    notif.isRead ? 'bg-slate-50 border-slate-200' : 'bg-white border-pink-200 shadow-xs'
+                  }`}
+                >
+                  {getNotificationIcon(notif.type)}
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-1 text-left">
                   <div className="flex items-center gap-3">
                     <h3 className="text-base font-bold text-[#111827]">{notif.title}</h3>
                     {!notif.isRead && (
@@ -127,7 +111,7 @@ export const Notifications: React.FC = () => {
                   </div>
                   <p className="text-xs text-[#64748B] font-medium leading-relaxed max-w-xl">{notif.message}</p>
                   <span className="text-[11px] text-slate-400 font-semibold block pt-1">
-                    {new Date(notif.createdAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
+                    {notif.createdAt ? new Date(notif.createdAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : ''}
                   </span>
                 </div>
               </div>
@@ -138,18 +122,8 @@ export const Notifications: React.FC = () => {
                     View <ArrowRight size={14} className="ml-1" />
                   </Button>
                 )}
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteNotification(notif.id);
-                  }}
-                  className="p-2 text-slate-400 hover:text-rose-500 rounded-xl hover:bg-rose-50 transition-colors"
-                >
-                  <Trash2 size={16} />
-                </button>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       )}

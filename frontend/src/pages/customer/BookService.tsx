@@ -74,6 +74,8 @@ export const BookService: React.FC = () => {
   if (isLoading) return <Loader fullScreen message="Loading appointment schedule..." />;
   if (!service) return <div className="text-center py-20 text-slate-400 font-bold">Selected service is unavailable.</div>;
 
+  const displayPrice = Number(service?.price) || 1499;
+
   return (
     <div className="max-w-6xl mx-auto space-y-8 pb-20 bg-[#FFFDFE] text-[#111827]">
       {/* Step Progress Indicator */}
@@ -181,7 +183,7 @@ export const BookService: React.FC = () => {
               rightIcon={<ArrowRight size={18} />}
               className="w-full h-14 rounded-2xl text-sm font-extrabold shadow-xl shadow-[#FF2E7E]/20"
             >
-              Continue to Payment (रु {service.price.toLocaleString()})
+              Continue to Payment (रु {displayPrice.toLocaleString()})
             </Button>
           </form>
         </div>
@@ -208,7 +210,7 @@ export const BookService: React.FC = () => {
             <div className="p-4 rounded-2xl bg-slate-50 space-y-2 border border-slate-100 text-xs">
               <div className="flex justify-between text-slate-600">
                 <span>Treatment Cost</span>
-                <span className="font-bold text-slate-900">रु {service.price.toLocaleString()}</span>
+                <span className="font-bold text-slate-900">रु {displayPrice.toLocaleString()}</span>
               </div>
               <div className="flex justify-between text-slate-600">
                 <span>Doorstep Travel & Setup Fee</span>
@@ -216,7 +218,7 @@ export const BookService: React.FC = () => {
               </div>
               <div className="border-t border-slate-200 pt-2 flex justify-between font-extrabold text-sm text-[#111827]">
                 <span>Total Amount</span>
-                <span className="text-[#FF2E7E]">रु {service.price.toLocaleString()}</span>
+                <span className="text-[#FF2E7E]">रु {displayPrice.toLocaleString()}</span>
               </div>
             </div>
 
