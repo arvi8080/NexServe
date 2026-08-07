@@ -34,7 +34,7 @@ export const VendorProfile: React.FC = () => {
       <div className="p-8 rounded-[32px] bg-white border border-[#ECECEC] shadow-xl flex flex-col md:flex-row items-center gap-6">
         <div className="relative">
           <img
-            src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=300&q=80"
+            src="https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=300&q=80"
             alt="Studio Profile"
             className="w-24 h-24 rounded-3xl object-cover border-2 border-pink-200 shadow-md"
           />

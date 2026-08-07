@@ -24,7 +24,7 @@ export const CATEGORIES: CategoryInfo[] = [
     description: 'Trending cuts, precision styling and blow dry treatments',
     iconName: 'Scissors',
     badgeColor: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
-    imageUrl: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=600&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=600&q=80',
   },
   {
     id: 'HAIR_SPA',

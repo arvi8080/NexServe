@@ -87,7 +87,7 @@ export const Wishlist: React.FC = () => {
               <div className="space-y-3">
                 <div className="relative rounded-2xl overflow-hidden h-44">
                   <img
-                    src={service.image || 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=400&q=80'}
+                    src={service.image || 'https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=400&q=80'}
                     alt={service.title}
                     className="w-full h-full object-cover"
                   />

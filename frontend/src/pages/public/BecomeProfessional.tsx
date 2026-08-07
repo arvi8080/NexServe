@@ -152,7 +152,7 @@ export const BecomeProfessional: React.FC = () => {
 
             <div className="relative rounded-[32px] overflow-hidden border-4 border-white shadow-2xl shadow-[#FF2E7A]/15 max-w-md">
               <img
-                src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80"
+                src="https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=800&q=80"
                 alt="GlowHome Verified Beauty Professional"
                 className="w-full h-[420px] object-cover"
               />

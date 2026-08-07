@@ -48,7 +48,7 @@ export const MOCK_VENDORS: Vendor[] = [
     status: 'APPROVED',
     averageRating: 4.9,
     totalReviews: 128,
-    profileImage: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=400&q=80',
+    profileImage: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=400&q=80',
     createdAt: '2026-01-15T00:00:00Z',
   },
   {
@@ -108,7 +108,7 @@ export const MOCK_SERVICES: Service[] = [
     minPrice: 400,
     maxPrice: 5000,
     duration: 45,
-    image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=600&q=80',
+    image: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=600&q=80',
     isActive: true,
     vendor: MOCK_VENDORS[1],
   },
@@ -131,7 +131,7 @@ export const MOCK_SERVICES: Service[] = [
 export const MOCK_CATEGORIES = [
   { id: 'c1', title: 'Facial Cleanup', image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=300&q=80' },
   { id: 'c2', title: 'Hair Spa', image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=300&q=80' },
-  { id: 'c3', title: 'Hair Cut & Styling', image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=300&q=80' },
+  { id: 'c3', title: 'Hair Cut & Styling', image: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=300&q=80' },
   { id: 'c4', title: 'Party Makeup', image: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=300&q=80' },
   { id: 'c5', title: 'Waxing & Threading', image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=300&q=80' },
   { id: 'c6', title: 'Pedicure & Manicure', image: 'https://images.unsplash.com/photo-1519014816548-bf5fe059798b?auto=format&fit=crop&w=300&q=80' },

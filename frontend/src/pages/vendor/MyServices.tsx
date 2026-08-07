@@ -204,7 +204,7 @@ export const MyServices: React.FC = () => {
               <div className="flex items-center justify-between border-b border-[#ECECEC] pb-4">
                 <div className="flex items-center gap-3">
                   <img
-                    src={master?.image || 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=200&q=80'}
+                    src={master?.image || 'https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=200&q=80'}
                     alt=""
                     className="w-14 h-14 rounded-2xl object-cover border-2 border-pink-200"
                   />

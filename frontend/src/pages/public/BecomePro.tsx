@@ -185,7 +185,7 @@ export const BecomePro: React.FC = () => {
       status: 'APPROVED',
       averageRating: 4.9,
       totalReviews: 120,
-      profileImage: photos[0] || 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=400&q=80',
+      profileImage: photos[0] || 'https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=400&q=80',
       createdAt: new Date().toISOString(),
     };
 

@@ -207,7 +207,7 @@ export const CustomerWelcome: React.FC = () => {
                 className="p-4 rounded-3xl bg-slate-50 border border-slate-200 hover:border-pink-300 transition-all space-y-3 block"
               >
                 <img
-                  src={service.image || 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=300&q=80'}
+                  src={service.image || 'https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=300&q=80'}
                   alt={service.title}
                   className="w-full h-32 object-cover rounded-2xl"
                 />

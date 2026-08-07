@@ -19,7 +19,7 @@ export const VendorCard: React.FC<VendorCardProps> = ({ vendor }) => {
     >
       <div className="relative aspect-video w-full bg-slate-100 rounded-t-2xl overflow-hidden">
         <img
-          src={vendor.profileImage || 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=600&q=80'}
+          src={vendor.profileImage || 'https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=600&q=80'}
           alt={vendor.businessName}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
