@@ -1,16 +1,36 @@
-import React, { useState } from 'react';
-import { Store, MapPin, Phone, Mail, Award, ShieldCheck, Camera, Save } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Store, MapPin, Phone, Mail, Award, ShieldCheck, Camera, Upload, Save } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useToast } from '@/context/ToastContext';
 
 export const VendorProfile: React.FC = () => {
   const { showToast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [businessName, setBusinessName] = useState('Glow & Grace Luxury Studio');
-  const [phone, setPhone] = useState('+91 98765 43210');
-  const [city, setCity] = useState('Bengaluru');
-  const [address, setAddress] = useState('100 Feet Road, Indiranagar, Bengaluru');
-  const [description, setDescription] = useState('Certified luxury doorstep beauty salon specializing in diamond hydra-facials, organic hair spa, and airbrush party makeovers.');
+  const [businessName, setBusinessName] = useState('Glow & Grace Kathmandu Luxury Salon');
+  const [phone, setPhone] = useState('+977 98123 45678');
+  const [city, setCity] = useState('Kathmandu');
+  const [address, setAddress] = useState('Durbar Marg, Ward 1, Kathmandu, Nepal');
+  const [description, setDescription] = useState('Certified luxury doorstep beauty salon in Kathmandu specializing in diamond hydra-facials, organic hair spa, and airbrush party makeovers.');
+  const [profileImage, setProfileImage] = useState('https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=300&q=80');
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('File Too Large', 'Please select an image smaller than 5MB.', 'error');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        setProfileImage(result);
+        showToast('Studio Logo/Photo Updated!', 'New vendor profile image loaded.', 'success');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,6 +39,15 @@ export const VendorProfile: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 bg-[#FFFDFE] text-[#111827] pb-16">
+      {/* Hidden File Input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        accept="image/*"
+        onChange={handlePhotoUpload}
+        className="hidden"
+      />
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -32,13 +61,18 @@ export const VendorProfile: React.FC = () => {
 
       {/* Main Studio Card Header */}
       <div className="p-8 rounded-[32px] bg-white border border-[#ECECEC] shadow-xl flex flex-col md:flex-row items-center gap-6">
-        <div className="relative">
+        <div className="relative group shrink-0">
           <img
-            src="https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=300&q=80"
+            src={profileImage}
             alt="Studio Profile"
             className="w-24 h-24 rounded-3xl object-cover border-2 border-pink-200 shadow-md"
           />
-          <button className="absolute -bottom-2 -right-2 p-2 rounded-xl bg-[#FF2E7E] text-white shadow-md cursor-pointer">
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="absolute -bottom-2 -right-2 p-2.5 rounded-2xl bg-[#FF2E7E] text-white shadow-lg hover:scale-110 transition-transform cursor-pointer border-2 border-white"
+            title="Change Studio Profile Photo"
+          >
             <Camera size={14} />
           </button>
         </div>
@@ -53,6 +87,16 @@ export const VendorProfile: React.FC = () => {
           <p className="text-xs text-[#64748B] font-medium">{address}</p>
           <span className="text-[11px] font-bold text-[#FF2E7E] block pt-1">8+ Years Experience • 450+ Completed Doorstep Sessions</span>
         </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => fileInputRef.current?.click()}
+          leftIcon={<Upload size={16} />}
+          className="h-10 px-4 rounded-2xl text-xs font-bold border-pink-200 text-[#FF2E7E] hover:bg-pink-50"
+        >
+          Upload Studio Logo
+        </Button>
       </div>
 
       {/* Profile Form */}
