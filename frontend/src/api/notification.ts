@@ -53,8 +53,20 @@ const SEEDED_NOTIFICATIONS: Notification[] = [
   },
 ];
 
+const hasAuthToken = (): boolean => {
+  try {
+    const token = localStorage.getItem('glowhome_access_token') || localStorage.getItem('token');
+    return !!token;
+  } catch {
+    return false;
+  }
+};
+
 export const notificationApi = {
   getNotifications: async (): Promise<Notification[]> => {
+    if (!hasAuthToken()) {
+      return SEEDED_NOTIFICATIONS;
+    }
     try {
       const response = await axiosInstance.get(API_ENDPOINTS.NOTIFICATION.BASE);
       return response.data?.data ?? response.data;
@@ -64,16 +76,23 @@ export const notificationApi = {
   },
 
   getUnreadCount: async (): Promise<number> => {
+    if (!hasAuthToken()) {
+      return 0;
+    }
     try {
       const response = await axiosInstance.get(API_ENDPOINTS.NOTIFICATION.BASE + '/unread-count');
       const body = response.data?.data ?? response.data;
       return body?.unread ?? body?.count ?? 0;
     } catch {
-      return SEEDED_NOTIFICATIONS.filter((n) => !n.isRead).length;
+      return 0;
     }
   },
 
   markAllAsRead: async (): Promise<void> => {
+    if (!hasAuthToken()) {
+      SEEDED_NOTIFICATIONS.forEach((n) => (n.isRead = true));
+      return;
+    }
     try {
       await axiosInstance.patch(API_ENDPOINTS.NOTIFICATION.READ_ALL);
     } catch {
@@ -82,6 +101,11 @@ export const notificationApi = {
   },
 
   markAsRead: async (id: string): Promise<Notification> => {
+    if (!hasAuthToken()) {
+      const notif = SEEDED_NOTIFICATIONS.find((n) => n.id === id);
+      if (notif) notif.isRead = true;
+      return notif || SEEDED_NOTIFICATIONS[0];
+    }
     try {
       const response = await axiosInstance.patch(API_ENDPOINTS.NOTIFICATION.READ_BY_ID(id));
       return response.data?.data ?? response.data;
@@ -93,6 +117,11 @@ export const notificationApi = {
   },
 
   deleteNotification: async (id: string): Promise<void> => {
+    if (!hasAuthToken()) {
+      const idx = SEEDED_NOTIFICATIONS.findIndex((n) => n.id === id);
+      if (idx !== -1) SEEDED_NOTIFICATIONS.splice(idx, 1);
+      return;
+    }
     try {
       await axiosInstance.delete(API_ENDPOINTS.NOTIFICATION.BY_ID(id));
     } catch {
@@ -102,6 +131,10 @@ export const notificationApi = {
   },
 
   clearAll: async (): Promise<void> => {
+    if (!hasAuthToken()) {
+      SEEDED_NOTIFICATIONS.length = 0;
+      return;
+    }
     try {
       await axiosInstance.delete(API_ENDPOINTS.NOTIFICATION.BASE);
     } catch {

@@ -2,38 +2,36 @@ import { Request, Response, NextFunction } from "express";
 import { NotificationService } from "./notification.service";
 
 class NotificationController {
-
-  private service =
-    new NotificationService();
+  private service = new NotificationService();
 
   async getMyNotifications(
     req: Request,
     res: Response,
     next: NextFunction
   ) {
-
     try {
-
-      const userId =
-        req.user!.id;
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: "Unauthorized access"
+        });
+      }
 
       const { limit, offset } = req.query as any;
 
-      const notifications =
-        await this.service.getMyNotifications(
-          userId,
-          { limit, offset }
-        );
+      const notifications = await this.service.getMyNotifications(
+        userId,
+        { limit, offset }
+      );
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         data: notifications
       });
-
     } catch (error) {
       next(error);
     }
-
   }
 
   async getUnreadCount(
@@ -41,28 +39,27 @@ class NotificationController {
     res: Response,
     next: NextFunction
   ) {
-
     try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(200).json({
+          success: true,
+          data: { unread: 0 }
+        });
+      }
 
-      const userId =
-        req.user!.id;
+      const count = await this.service.getUnreadCount(userId);
 
-      const count =
-        await this.service.getUnreadCount(
-          userId
-        );
-
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
-        data: {
-          unread: count
-        }
+        data: { unread: count }
       });
-
     } catch (error) {
-      next(error);
+      return res.status(200).json({
+        success: true,
+        data: { unread: 0 }
+      });
     }
-
   }
 
   async markAsRead(
@@ -70,32 +67,32 @@ class NotificationController {
     res: Response,
     next: NextFunction
   ) {
-
     try {
-
-      const userId =
-        req.user!.id;
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: "Unauthorized access"
+        });
+      }
 
       const notificationId = Array.isArray(req.params.id)
         ? req.params.id[0]
         : req.params.id;
 
-      const notification =
-        await this.service.markAsRead(
-          userId,
-          notificationId
-        );
+      const notification = await this.service.markAsRead(
+        userId,
+        notificationId
+      );
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         message: "Notification marked as read",
         data: notification
       });
-
     } catch (error) {
       next(error);
     }
-
   }
 
   async markAllAsRead(
@@ -103,25 +100,24 @@ class NotificationController {
     res: Response,
     next: NextFunction
   ) {
-
     try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: "Unauthorized access"
+        });
+      }
 
-      const userId =
-        req.user!.id;
+      await this.service.markAllAsRead(userId);
 
-      await this.service.markAllAsRead(
-        userId
-      );
-
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         message: "All notifications marked as read"
       });
-
     } catch (error) {
       next(error);
     }
-
   }
 
   async deleteNotification(
@@ -129,11 +125,14 @@ class NotificationController {
     res: Response,
     next: NextFunction
   ) {
-
     try {
-
-      const userId =
-        req.user!.id;
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: "Unauthorized access"
+        });
+      }
 
       const notificationId = Array.isArray(req.params.id)
         ? req.params.id[0]
@@ -144,15 +143,13 @@ class NotificationController {
         notificationId
       );
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         message: "Notification deleted"
       });
-
     } catch (error) {
       next(error);
     }
-
   }
 
   async deleteAllNotifications(
@@ -160,28 +157,25 @@ class NotificationController {
     res: Response,
     next: NextFunction
   ) {
-
     try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: "Unauthorized access"
+        });
+      }
 
-      const userId =
-        req.user!.id;
+      await this.service.deleteAllNotifications(userId);
 
-      await this.service.deleteAllNotifications(
-        userId
-      );
-
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         message: "All notifications deleted"
       });
-
     } catch (error) {
       next(error);
     }
-
   }
-
 }
 
-export const notificationController =
-  new NotificationController();
+export const notificationController = new NotificationController();
