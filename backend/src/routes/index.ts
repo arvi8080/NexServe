@@ -56,6 +56,7 @@ router.use("/admin", adminDashboardRoutes);
 router.use("/chat", chatRoutes);
 router.use("/invoice", invoiceRoutes);
 router.use("/service", serviceRoutes);
+router.use("/vendor-services", serviceRoutes);
 router.use("/booking", bookingRoutes);
 router.use("/review", reviewRoutes);
 router.use("/notification", notificationRoutes);

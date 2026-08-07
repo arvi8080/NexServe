@@ -3,6 +3,15 @@ import { API_ENDPOINTS } from '@/constants/apiEndpoints';
 import { Booking } from '@/types';
 import { MOCK_BOOKINGS, MOCK_SERVICES, MOCK_VENDORS } from '@/services/mockDataService';
 
+const hasAuthToken = (): boolean => {
+  try {
+    const token = localStorage.getItem('glowhome_access_token') || localStorage.getItem('token');
+    return !!token;
+  } catch {
+    return false;
+  }
+};
+
 export const bookingApi = {
   createBooking: async (bookingData: { serviceId: string; bookingDate: string; address: string; notes?: string }): Promise<Booking> => {
     try {
@@ -30,6 +39,9 @@ export const bookingApi = {
   },
 
   getMyBookings: async (): Promise<Booking[]> => {
+    if (!hasAuthToken()) {
+      return MOCK_BOOKINGS;
+    }
     try {
       const response = await axiosInstance.get(API_ENDPOINTS.BOOKING.MY);
       return response.data?.data ?? response.data;
@@ -39,6 +51,9 @@ export const bookingApi = {
   },
 
   getVendorBookings: async (): Promise<Booking[]> => {
+    if (!hasAuthToken()) {
+      return MOCK_BOOKINGS;
+    }
     try {
       const response = await axiosInstance.get(API_ENDPOINTS.BOOKING.VENDOR);
       return response.data?.data ?? response.data;
