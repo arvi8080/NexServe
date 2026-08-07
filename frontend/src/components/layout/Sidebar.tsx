@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   Calendar,
-  Bell,
   Wallet,
   User as UserIcon,
   Scissors,
@@ -39,7 +38,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ role }) => {
     { name: 'Dashboard', path: '/customer/dashboard', icon: LayoutDashboard },
     { name: 'My Bookings', path: '/customer/bookings', icon: Calendar },
     { name: 'Wallet & Invoices', path: '/customer/wallet', icon: Wallet },
-    { name: 'Notifications', path: '/customer/notifications', icon: Bell },
     { name: 'My Profile', path: '/customer/profile', icon: UserIcon },
     { name: 'Help & Support', path: '/customer/support', icon: HelpCircle },
     { name: 'Settings', path: '/customer/settings', icon: Settings },
@@ -53,7 +51,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ role }) => {
     { name: 'Earnings', path: '/vendor/earnings', icon: DollarSign },
     { name: 'Wallet', path: '/vendor/wallet', icon: Wallet },
     { name: 'Reviews', path: '/vendor/reviews', icon: Star },
-    { name: 'Notifications', path: '/vendor/notifications', icon: Bell },
     { name: 'Documents & Verification', path: '/vendor/verification', icon: FileText },
     { name: 'Vendor Profile', path: '/vendor/profile', icon: UserIcon },
     { name: 'Settings', path: '/vendor/settings', icon: Settings },

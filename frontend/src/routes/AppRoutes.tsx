@@ -34,7 +34,6 @@ import { Checkout } from '@/pages/customer/Checkout';
 import { BookingHistory } from '@/pages/customer/BookingHistory';
 import { BookingTracking } from '@/pages/customer/BookingTracking';
 import { Chat } from '@/pages/customer/Chat';
-import { Notifications } from '@/pages/customer/Notifications';
 import { Wallet } from '@/pages/customer/Wallet';
 import { Invoice } from '@/pages/customer/Invoice';
 import { Profile } from '@/pages/customer/Profile';
@@ -103,7 +102,6 @@ export const AppRoutes: React.FC = () => {
         <Route path="/customer/bookings" element={<BookingHistory />} />
         <Route path="/customer/bookings/:id" element={<BookingTracking />} />
         <Route path="/customer/chat/:id" element={<Chat />} />
-        <Route path="/customer/notifications" element={<Notifications />} />
         <Route path="/customer/wallet" element={<Wallet />} />
         <Route path="/customer/invoice/:id" element={<Invoice />} />
         <Route path="/customer/profile" element={<Profile />} />

@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom';
 import { Sparkles, Menu, X, Search, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProfileMenu } from './ProfileMenu';
-import { NotificationBell } from './NotificationBell';
 import { useAuth } from '@/context/AuthContext';
 
 export const Navbar: React.FC = () => {
@@ -64,8 +63,6 @@ export const Navbar: React.FC = () => {
 
         {/* Action Controls (Right) */}
         <div className="flex items-center gap-2.5 sm:gap-4">
-          <NotificationBell />
-
           {user ? (
             <ProfileMenu />
           ) : (
