@@ -39,7 +39,6 @@ import { Wallet } from '@/pages/customer/Wallet';
 import { Invoice } from '@/pages/customer/Invoice';
 import { Profile } from '@/pages/customer/Profile';
 import { Membership } from '@/pages/customer/Membership';
-import { Referral } from '@/pages/customer/Referral';
 import { Wishlist } from '@/pages/customer/Wishlist';
 import { CustomerReviews } from '@/pages/customer/CustomerReviews';
 import { AddressesPage } from '@/pages/customer/AddressesPage';
@@ -109,7 +108,6 @@ export const AppRoutes: React.FC = () => {
         <Route path="/customer/invoice/:id" element={<Invoice />} />
         <Route path="/customer/profile" element={<Profile />} />
         <Route path="/customer/membership" element={<Membership />} />
-        <Route path="/customer/referral" element={<Referral />} />
         <Route path="/customer/wishlist" element={<Wishlist />} />
         <Route path="/customer/reviews" element={<CustomerReviews />} />
         <Route path="/customer/addresses" element={<AddressesPage />} />
